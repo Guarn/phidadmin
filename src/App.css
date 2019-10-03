@@ -1,22 +1,10 @@
-.App {
-  text-align: center;
+@import "~antd/dist/antd.css";
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap");
+
+.ql-tooltip {
+    z-index: 2;
 }
 
-.App-logo {
-  height: 40vmin;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #09d3ac;
+.ql-editor {
+    font-size: 1.2em;
 }
