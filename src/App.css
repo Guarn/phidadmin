@@ -8,3 +8,7 @@
 .ql-editor {
     font-size: 1.2em;
 }
+
+.ql-editor p {
+    text-indent: 30px;
+}

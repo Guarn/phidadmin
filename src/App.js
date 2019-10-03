@@ -3,10 +3,9 @@ import styled from "styled-components";
 import "./App.css";
 import { ReactComponent as Logo } from "./Logo.svg";
 import axios from "axios";
-import ReactQuill, { Quill } from "react-quill";
+import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
-import "react-quill/dist/quill.core.css";
 import {
     Slider,
     Divider,
@@ -14,34 +13,13 @@ import {
     Select,
     Radio,
     Card,
-    Checkbox,
     Button,
-    Popconfirm,
     Drawer,
     Tooltip,
     InputNumber,
     Input,
     notification
 } from "antd";
-
-const key = "updatable";
-
-const openNotification = () => {
-    notification.open({
-        key,
-        placement: "bottomRight",
-        message: "Mise à jour en cours",
-        icon: <Icon type="loading" style={{ color: "#108ee9" }} />
-    });
-    setTimeout(() => {
-        notification.open({
-            placement: "bottomRight",
-            key,
-            message: "Changement effectué !",
-            icon: <Icon type="check-circle" style={{ color: "#52c41a" }} />
-        });
-    }, 1000);
-};
 
 const ax = axios.create({
     baseURL: "http://192.168.0.85:4000/",
@@ -54,6 +32,10 @@ const ConteneurGlobal = styled.div`
     height: 100vh;
     width: 100vw;
     display: flex;
+
+    .ant-select-selection__choice {
+        visibility: ${(props) => (props.chargement ? "hidden" : "")};
+    }
 `;
 
 const ConteneurMenu = styled.div`
@@ -132,6 +114,7 @@ const Contenu = styled.div`
 `;
 const ConteneurFiltres = styled.div`
     margin-bottom: 20px;
+    display: flex;
 `;
 const ConteneurResultats = styled.div`
     display: flex;
@@ -185,6 +168,7 @@ const ConteneurContenu = styled.div`
 `;
 
 function App() {
+    const [idTemp, setIdtemp] = useState();
     const [loading, setLoading] = useState(true);
     const [sujets, setSujets] = useState([]);
     const [nbResultats, setNbResultats] = useState();
@@ -198,10 +182,35 @@ function App() {
     const [elementsCoches, setElementsCoches] = useState({
         notions: [],
         series: [],
-        annees: [],
+        annees: [
+            1996,
+            1997,
+            1998,
+            1999,
+            2000,
+            2001,
+            2002,
+            2003,
+            2004,
+            2005,
+            2006,
+            2007,
+            2008,
+            2009,
+            2010,
+            2011,
+            2012,
+            2013,
+            2014,
+            2015,
+            2016,
+            2017,
+            2018,
+            9999
+        ],
         destinations: [],
         auteurs: [],
-        sessions: [],
+        sessions: ["NORMALE", "REMPLACEMENT", "SECOURS", "NONDEFINI"],
         recherche: "",
         typeRecherche: "tousLesMots"
     });
@@ -209,8 +218,10 @@ function App() {
         id: 0,
         Sujet: {}
     });
-    let test;
+
     const SwitchSujet = (val) => {
+        setLoading(true);
+
         if (val === "+") {
             setTexte1(sujets[idSujet + 1].Sujet1);
             setTexte2(sujets[idSujet + 1].Sujet2);
@@ -230,19 +241,20 @@ function App() {
 
     const RechercheFiltres = async () => {
         setMenuFiltres(false);
-        await ax
-            .post("/resultats", { elementsCoches, offset: 0 })
-            .then((rep) => {
-                console.log(rep);
-                let state1 = rep.data.rows;
-                state1.sort((a, b) => a["id"] - b["id"]);
-                setSujets(state1);
-                setState({ ...state, Sujet: sujets[0] });
-                setTexte1(state1[0].Sujet1);
-                setTexte2(state1[0].Sujet2);
-                setTexte3(state1[0].Sujet3);
-                console.log(state1[0]);
-            });
+        console.log(elementsCoches);
+        await ax.post("/resultatsAdmin", { elementsCoches }).then((rep) => {
+            console.log(rep);
+            setIdSujet(0);
+            let state1 = rep.data.rows;
+            state1.sort((a, b) => a["id"] - b["id"]);
+            setSujets(state1);
+            setNbResultats(rep.data.count);
+            setState({ ...state, Sujet: state1[0] });
+            setTexte1(state1[0].Sujet1);
+            setTexte2(state1[0].Sujet2);
+            setTexte3(state1[0].Sujet3);
+            console.log(state1[0]);
+        });
     };
 
     const ConfirmModif = () => {
@@ -280,9 +292,23 @@ function App() {
     };
 
     const changeFiltres = (e, cat) => {
-        let state = { ...elementsCoches, [cat]: e };
-        setElementsCoches(state);
-        console.log(state);
+        if (cat === "annees") {
+            let tabAnnees = [];
+            for (let i = e[0]; i <= e[1]; i++) {
+                tabAnnees.push(i);
+            }
+            let state = { ...elementsCoches, [cat]: tabAnnees };
+            setElementsCoches(state);
+            console.log(state);
+        } else if (cat === "sessions") {
+            let state = { ...elementsCoches, [cat]: [e] };
+            setElementsCoches(state);
+            console.log(state);
+        } else {
+            let state = { ...elementsCoches, [cat]: e };
+            setElementsCoches(state);
+            console.log(state);
+        }
     };
 
     const modules = {
@@ -307,19 +333,88 @@ function App() {
                 setSujets(state1);
                 setNbResultats(rep.data.length);
                 setState({ ...state, Sujet: state1[0] });
-                setTexte1(state1[0].Sujet1);
-                setTexte2(state1[0].Sujet2);
-                setTexte3(state1[0].Sujet3);
+                let regex1 = /É/g;
+                let regex1b = /é/g;
+                let regex2 = /ù/g;
+                let regex3 = /è/g;
+                let regex4 = /à/g;
+                let regex5 = /î/g;
+                let regex6 = /’/g;
+                let regex7 = /ô/g;
+                let regex8 = /û/g;
+                let regex9 = /â/g;
+                let regex10 = /È/g;
+                let regex11 = /	/g;
+                let textesT = [
+                    state1[0].Sujet1,
+                    state1[0].Sujet2,
+                    state1[0].Sujet3
+                ];
+                let texte = [];
+                textesT.map((el, index) => {
+                    texte[index] = el.replace(regex1, "É");
+                    texte[index] = texte[index].replace(regex1b, "é");
+                    texte[index] = texte[index].replace(regex2, "ù");
+                    texte[index] = texte[index].replace(regex3, "è");
+                    texte[index] = texte[index].replace(regex4, "à");
+                    texte[index] = texte[index].replace(regex5, "î");
+                    texte[index] = texte[index].replace(regex6, "'");
+                    texte[index] = texte[index].replace(regex7, "ô");
+                    texte[index] = texte[index].replace(regex8, "û");
+                    texte[index] = texte[index].replace(regex9, "â");
+                    texte[index] = texte[index].replace(regex10, "È");
+                    texte[index] = texte[index].replace(regex11, "<BR />");
+
+                    return null;
+                });
+                setTexte1(texte[0]);
+                setTexte2(texte[1]);
+                setTexte3(texte[2]);
             });
         } else {
             setState({ ...state, Sujet: sujets[idSujet] });
-            setTexte1(sujets[idSujet].Sujet1);
-            setTexte2(sujets[idSujet].Sujet2);
-            setTexte3(sujets[idSujet].Sujet3);
+            let regex1 = /É/g;
+            let regex1b = /é/g;
+            let regex2 = /ù/g;
+            let regex3 = /è/g;
+            let regex4 = /à/g;
+            let regex5 = /î/g;
+            let regex6 = /’/g;
+            let regex7 = /ô/g;
+            let regex8 = /û/g;
+            let regex9 = /â/g;
+            let regex10 = /È/g;
+            let regex11 = /	/g;
+            let textesT = [
+                sujets[idSujet].Sujet1,
+                sujets[idSujet].Sujet2,
+                sujets[idSujet].Sujet3
+            ];
+            let texte = [];
+            textesT.map((el, index) => {
+                texte[index] = el.replace(regex1, "É");
+                texte[index] = texte[index].replace(regex1b, "é");
+                texte[index] = texte[index].replace(regex2, "ù");
+                texte[index] = texte[index].replace(regex3, "è");
+                texte[index] = texte[index].replace(regex4, "à");
+                texte[index] = texte[index].replace(regex5, "î");
+                texte[index] = texte[index].replace(regex6, "'");
+                texte[index] = texte[index].replace(regex7, "ô");
+                texte[index] = texte[index].replace(regex8, "û");
+                texte[index] = texte[index].replace(regex9, "â");
+                texte[index] = texte[index].replace(regex10, "È");
+                texte[index] = texte[index].replace(regex11, "<BR />");
+                return null;
+            });
+            setTexte1(texte[0]);
+            setTexte2(texte[1]);
+            setTexte3(texte[2]);
+            setLoading(false);
         }
         if (sujets.length === 0) {
-            ax.get("/menu").then((rep) => {
+            ax.get("/menuAdmin").then((rep) => {
                 let state = rep.data;
+                console.log(rep.data);
                 state.annees.sort((a, b) => a["Annee"] - b["Annee"]);
                 state.auteurs.sort((a, b) =>
                     a["Auteur"].localeCompare(b["Auteur"])
@@ -334,7 +429,9 @@ function App() {
             });
         }
     }, [idSujet]);
+
     const changementTexte = (val, texte) => {
+        console.log("oO");
         if (texte === 1) {
             setTexte1(val);
             setState({
@@ -431,7 +528,7 @@ function App() {
 */
 
     return (
-        <ConteneurGlobal>
+        <ConteneurGlobal chargement={loading}>
             <ConteneurMenu>
                 <ConteneurMenuHeader>
                     <Logo height="40px" style={{ margin: "8px" }} />
@@ -497,15 +594,20 @@ function App() {
                         {menu.notions &&
                             menu.notions.map((el, index) => {
                                 return (
-                                    <Option key={el["Notion"]}>
+                                    <Option
+                                        key={el["Notion"]}
+                                        style={{
+                                            color: el["Au_Programme"]
+                                                ? "green"
+                                                : "red"
+                                        }}
+                                    >
                                         {el["Notion"]}
                                     </Option>
                                 );
                             })}
                     </Select>
-                    <Checkbox style={{ marginTop: "10px" }}>
-                        Inclure les anciennes notions
-                    </Checkbox>
+
                     <Divider>Séries</Divider>
                     <Select
                         mode="multiple"
@@ -574,16 +676,33 @@ function App() {
                     <Divider>Années</Divider>
                     <Slider
                         range
-                        marks={{ 1997: "1997", 2018: "2018" }}
+                        marks={{ 1996: "1996", 2018: "2018" }}
                         max={2018}
-                        min={1997}
+                        min={1996}
                         tooltipPlacement="bottom"
                         step={1}
-                        defaultValue={[1997, 2018]}
+                        defaultValue={[1996, 2018]}
+                        onChange={(val) => changeFiltres(val, "annees")}
                     />
 
                     <Divider style={{ marginTop: "60px" }} />
-                    <Button size="small" style={{ marginBottom: "10px" }} block>
+                    <Button
+                        onClick={() =>
+                            setElementsCoches({
+                                notions: [],
+                                series: [],
+                                annees: [],
+                                destinations: [],
+                                auteurs: [],
+                                sessions: "TOUTES",
+                                recherche: "",
+                                typeRecherche: "tousLesMots"
+                            })
+                        }
+                        size="small"
+                        style={{ marginBottom: "10px" }}
+                        block
+                    >
                         Réinitialiser les filtres
                         <Icon type="reload" />
                     </Button>
@@ -611,6 +730,19 @@ function App() {
                                 Filtres
                             </Button>
                         </Tooltip>
+                        <Input
+                            size="large"
+                            style={{ width: "80px", marginLeft: "20px" }}
+                            onChange={(val) => setIdtemp(val.target.value)}
+                        />
+                        <Button
+                            size="large"
+                            icon="search"
+                            onClick={() => {
+                                setLoading(true);
+                                setIdSujet(parseInt(idTemp) - 1);
+                            }}
+                        />
                     </ConteneurFiltres>
                     <ConteneurResultats>
                         <Card loading={loading}>
@@ -669,16 +801,31 @@ function App() {
                                         showArrow
                                         mode="multiple"
                                         value={state.Sujet.Notions1}
-                                        onChange={(val) =>
-                                            changementTexte(val, 1)
-                                        }
                                         style={{ width: "100%" }}
+                                        onChange={(val) =>
+                                            setState({
+                                                ...state,
+                                                Sujet: {
+                                                    ...state.Sujet,
+                                                    Notions1: val
+                                                }
+                                            })
+                                        }
                                         placeholder="Choisir une ou plusieurs notions"
                                     >
                                         {menu.notions &&
                                             menu.notions.map((el, index) => {
                                                 return (
-                                                    <Option key={el["Notion"]}>
+                                                    <Option
+                                                        key={el["Notion"]}
+                                                        style={{
+                                                            color: el[
+                                                                "Au_Programme"
+                                                            ]
+                                                                ? "green"
+                                                                : "red"
+                                                        }}
+                                                    >
                                                         {el["Notion"]}
                                                     </Option>
                                                 );
@@ -701,16 +848,7 @@ function App() {
                                     value={texte1}
                                     modules={modules}
                                     theme="bubble"
-                                    onChange={(val) => {
-                                        setTexte1(val);
-                                        setState({
-                                            ...state,
-                                            Sujet: {
-                                                ...state.Sujet,
-                                                Sujet1: val
-                                            }
-                                        });
-                                    }}
+                                    onChange={(val) => changementTexte(val, 1)}
                                 />
                                 <Divider orientation="left">Sujet 2</Divider>
                                 <div
@@ -739,7 +877,16 @@ function App() {
                                         {menu.notions &&
                                             menu.notions.map((el, index) => {
                                                 return (
-                                                    <Option key={el["Notion"]}>
+                                                    <Option
+                                                        key={el["Notion"]}
+                                                        style={{
+                                                            color: el[
+                                                                "Au_Programme"
+                                                            ]
+                                                                ? "green"
+                                                                : "red"
+                                                        }}
+                                                    >
                                                         {el["Notion"]}
                                                     </Option>
                                                 );
@@ -793,7 +940,16 @@ function App() {
                                         {menu.notions &&
                                             menu.notions.map((el, index) => {
                                                 return (
-                                                    <Option key={el["Notion"]}>
+                                                    <Option
+                                                        key={el["Notion"]}
+                                                        style={{
+                                                            color: el[
+                                                                "Au_Programme"
+                                                            ]
+                                                                ? "green"
+                                                                : "red"
+                                                        }}
+                                                    >
                                                         {el["Notion"]}
                                                     </Option>
                                                 );
@@ -1052,7 +1208,7 @@ function App() {
                                     Année
                                 </NomChamp>
                                 <InputNumber
-                                    min={1997}
+                                    min={1996}
                                     max={2018}
                                     value={state.Sujet.Annee}
                                     onChange={(val) =>
