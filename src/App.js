@@ -349,6 +349,7 @@ function App() {
                 let regex9 = /â/g;
                 let regex10 = /È/g;
                 let regex11 = /	/g;
+                let regex12 = /À/g;
                 let textesT = [
                     state1[0].Sujet1,
                     state1[0].Sujet2,
@@ -368,6 +369,7 @@ function App() {
                     texte[index] = texte[index].replace(regex9, "â");
                     texte[index] = texte[index].replace(regex10, "È");
                     texte[index] = texte[index].replace(regex11, "<BR />");
+                    texte[index] = texte[index].replace(regex12, "À");
 
                     return null;
                 });
@@ -389,6 +391,7 @@ function App() {
             let regex9 = /â/g;
             let regex10 = /È/g;
             let regex11 = /	/g;
+            let regex12 = /À/g;
             let textesT = [
                 sujets[idSujet].Sujet1,
                 sujets[idSujet].Sujet2,
@@ -408,6 +411,7 @@ function App() {
                 texte[index] = texte[index].replace(regex9, "â");
                 texte[index] = texte[index].replace(regex10, "È");
                 texte[index] = texte[index].replace(regex11, "<BR />");
+                texte[index] = texte[index].replace(regex12, "À");
                 return null;
             });
             setTexte1(texte[0]);
