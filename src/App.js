@@ -590,7 +590,7 @@ function App() {
         color: black;
         border-radius: 0 0 5px 5px;
     `;
-
+    /*
     const FleG = () => <span>{"«"}</span>;
     const FleD = () => <span>{"»"}</span>;
     const Ag = () => <span>{"À"}</span>;
@@ -620,7 +620,7 @@ function App() {
                 <button className="ql-indent" value="+1" />
             </span>
             <span className="ql-formats">
-                <button className="ql-align" defaultValue />
+                <button className="ql-align" />
                 <button className="ql-align" value="center" />
                 <button className="ql-align" value="right" />
                 <button className="ql-align" value="justify" />
@@ -719,7 +719,7 @@ function App() {
         this.quill.insertText(cursorPosition, "« ");
     }
     function insertFleD() {
-        let cursorPosition = this.quill.getSelection().index;
+    let cursorPosition = this.quill.getSelection().index;
         this.quill.insertText(cursorPosition, " »");
     }
     function insertAg() {
@@ -727,7 +727,7 @@ function App() {
         this.quill.insertText(cursorPosition, "À");
     }
     function insertEg() {
-        let cursorPosition = this.quill.getSelection().index;
+       let cursorPosition = this.quill.getSelection().index;
         this.quill.insertText(cursorPosition, "È");
     }
     function insertEa() {
@@ -735,19 +735,19 @@ function App() {
         this.quill.insertText(cursorPosition, "É");
     }
     function insertoe() {
-        let cursorPosition = this.quill.getSelection().index;
+      let cursorPosition = this.quill.getSelection().index;
         this.quill.insertText(cursorPosition, "œ");
     }
     function insertOE() {
-        let cursorPosition = this.quill.getSelection().index;
+       let cursorPosition = this.quill.getSelection().index;
         this.quill.insertText(cursorPosition, "Œ");
     }
     function insertae() {
-        let cursorPosition = this.quill.getSelection().index;
+       let cursorPosition = this.quill.getSelection().index;
         this.quill.insertText(cursorPosition, "æ");
     }
     function insertAE() {
-        let cursorPosition = this.quill.getSelection().index;
+       let cursorPosition = this.quill.getSelection().index;
         this.quill.insertText(cursorPosition, "Æ");
     }
     function insertCC() {
@@ -780,7 +780,19 @@ function App() {
                 FineInsecable: insertFineInsecable
             }
         }
-    };
+    }; 
+    
+    <div className="text-editor">
+                                        <CustomToolbar />
+                                        <ReactQuill
+                                            value={texte3}
+                                            onChange={(val) => {
+                                                changementTexte(val, 3);
+                                            }}
+                                            modules={modules}
+                                        />
+                                    </div>
+    */
     return (
         <ConteneurGlobal chargement={loading}>
             <ConteneurMenu>
@@ -985,6 +997,7 @@ function App() {
                             </Button>
                         </Tooltip>
                         <Input.Search
+                            key="test"
                             placeholder="ID"
                             onSearch={() => {
                                 setLoading(true);
@@ -1254,18 +1267,13 @@ function App() {
                                             />
                                         </Tooltip>
                                     </div>
-
-                                    <div className="text-editor">
-                                        <CustomToolbar />
-                                        <ReactQuill
-                                            value={texte3}
-                                            onChange={(val) => {
-                                                changementTexte(val, 3);
-                                            }}
-                                            modules={modules2}
-                                        />
-                                    </div>
-
+                                    <ReactQuill
+                                        value={texte3}
+                                        modules={modules}
+                                        onChange={(val) =>
+                                            changementTexte(val, 1)
+                                        }
+                                    />
                                     <div
                                         style={{
                                             display: "flex",
