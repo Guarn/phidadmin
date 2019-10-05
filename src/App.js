@@ -1272,7 +1272,6 @@ function App() {
                                     <ReactQuill
                                         value={texte3}
                                         modules={modules}
-                                        theme="bubble"
                                         onChange={(val) =>
                                             changementTexte(val, 3)
                                         }
