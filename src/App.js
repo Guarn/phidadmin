@@ -625,7 +625,9 @@ function App() {
                 <button className="ql-align" value="right" />
                 <button className="ql-align" value="justify" />
             </span>
+
             <span className="ql-formats">
+                <button className="ql-script" value="super" />
                 <select className="ql-color" />
                 <select className="ql-background" />
             </span>
@@ -654,8 +656,7 @@ function App() {
                 >
                     <FleD />
                 </button>
-            </span>
-            <span className="ql-formats">
+
                 <button
                     className="ql-Ag"
                     style={{ fontFamily: "Roboto", fontWeight: "bold" }}
@@ -1253,7 +1254,7 @@ function App() {
                                             />
                                         </Tooltip>
                                     </div>
-                                    
+
                                     <div className="text-editor">
                                         <CustomToolbar />
                                         <ReactQuill
