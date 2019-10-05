@@ -3,7 +3,7 @@ import styled from "styled-components";
 import "./App.css";
 import { ReactComponent as Logo } from "./Logo.svg";
 import axios from "axios";
-import ReactQuill, { Quill } from "react-quill";
+import ReactQuill, { Quill, Mixin } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
 import {
@@ -591,22 +591,22 @@ function App() {
         border-radius: 0 0 5px 5px;
     `;
     /*
-    const FleG = () => <span>{"«"}</span>;
-    const FleD = () => <span>{"»"}</span>;
-    const Ag = () => <span>{"À"}</span>;
-    const Eg = () => <span>{"È"}</span>;
-    const Ea = () => <span>{"É"}</span>;
-    const Oe = () => <span>{"œ"}</span>;
-    const OE = () => <span>{"Œ"}</span>;
-    const Ae = () => <span>{"æ"}</span>;
-    const AE = () => <span>{"Æ"}</span>;
-    const CC = () => <span>{"Ç"}</span>;
+    const FleG = () => <span>«</span>;
+    const FleD = () => <span>»</span>;
+    const Ag = () => <span>À</span>;
+    const Eg = () => <span>È</span>;
+    const Ea = () => <span>É</span>;
+    const Oe = () => <span>œ</span>;
+    const OE = () => <span>Œ</span>;
+    const Ae = () => <span>æ</span>;
+    const AE = () => <span>Æ</span>;
+    const CC = () => <span>Ç</span>;
     const Insecable = () => (
         <span style={{ backgroundColor: "grey", color: "grey" }}>ii</span>
     );
 
     const FineInsecable = () => (
-        <span style={{ backgroundColor: "grey" }}>{" "}</span>
+        <span style={{ backgroundColor: "grey" }}> </span>
     );
 
     const CustomToolbar = () => (
@@ -620,7 +620,7 @@ function App() {
                 <button className="ql-indent" value="+1" />
             </span>
             <span className="ql-formats">
-                <button className="ql-align" />
+                <button className="ql-align" value="test" />
                 <button className="ql-align" value="center" />
                 <button className="ql-align" value="right" />
                 <button className="ql-align" value="justify" />
@@ -715,39 +715,39 @@ function App() {
         </div>
     );
     function insertFleG() {
-        let cursorPosition = this.quill.getSelection().index;
+        let cursorPosition = this.quill.getSelection(false).index;
         this.quill.insertText(cursorPosition, "« ");
     }
     function insertFleD() {
-    let cursorPosition = this.quill.getSelection().index;
+        let cursorPosition = this.quill.getSelection(false).index;
         this.quill.insertText(cursorPosition, " »");
     }
     function insertAg() {
-        let cursorPosition = this.quill.getSelection().index;
+        let cursorPosition = this.quill.getSelection(false).index;
         this.quill.insertText(cursorPosition, "À");
     }
     function insertEg() {
-       let cursorPosition = this.quill.getSelection().index;
+        let cursorPosition = this.quill.getSelection(false).index;
         this.quill.insertText(cursorPosition, "È");
     }
     function insertEa() {
-        let cursorPosition = this.quill.getSelection().index;
+        let cursorPosition = this.quill.getSelection(false).index;
         this.quill.insertText(cursorPosition, "É");
     }
     function insertoe() {
-      let cursorPosition = this.quill.getSelection().index;
+        let cursorPosition = this.quill.getSelection().index;
         this.quill.insertText(cursorPosition, "œ");
     }
     function insertOE() {
-       let cursorPosition = this.quill.getSelection().index;
+        let cursorPosition = this.quill.getSelection().index;
         this.quill.insertText(cursorPosition, "Œ");
     }
     function insertae() {
-       let cursorPosition = this.quill.getSelection().index;
+        let cursorPosition = this.quill.getSelection().index;
         this.quill.insertText(cursorPosition, "æ");
     }
     function insertAE() {
-       let cursorPosition = this.quill.getSelection().index;
+        let cursorPosition = this.quill.getSelection().index;
         this.quill.insertText(cursorPosition, "Æ");
     }
     function insertCC() {
@@ -780,19 +780,21 @@ function App() {
                 FineInsecable: insertFineInsecable
             }
         }
-    }; 
-    
+    };
+
     <div className="text-editor">
                                         <CustomToolbar />
                                         <ReactQuill
                                             value={texte3}
+                                            onFocus={(err) => console.log(err)}
                                             onChange={(val) => {
                                                 changementTexte(val, 3);
                                             }}
-                                            modules={modules}
-                                        />
+                                            modules={modules2}
+                                        >
+                                        </ReactQuill>
                                     </div>
-    */
+*/
     return (
         <ConteneurGlobal chargement={loading}>
             <ConteneurMenu>
@@ -1270,8 +1272,9 @@ function App() {
                                     <ReactQuill
                                         value={texte3}
                                         modules={modules}
+                                        theme="bubble"
                                         onChange={(val) =>
-                                            changementTexte(val, 1)
+                                            changementTexte(val, 3)
                                         }
                                     />
                                     <div
@@ -1526,6 +1529,7 @@ function App() {
                                             Année
                                         </NomChamp>
                                         <InputNumber
+                                            key="RechercheID"
                                             min={1996}
                                             max={2018}
                                             value={state.Sujet.Annee}
