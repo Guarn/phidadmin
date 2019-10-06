@@ -19,23 +19,42 @@ const Insecable = () => (
 
 const FineInsecable = () => <span style={{ backgroundColor: "grey" }}> </span>;
 function insertFleG() {
-    let cursorPosition = this.quill.getSelection(false).index;
-    this.quill.insertText(cursorPosition, "« ");
+    let cursorPosition = this.quill.getSelection().index;
+    let Length = this.quill.getSelection().length;
+    let texteRempl = this.quill.getText(cursorPosition, Length);
+
+    if (Length == 0) {
+        this.quill.insertText(cursorPosition, "« ");
+    } else {
+        if (
+            texteRempl[texteRempl.length - 1] === " " ||
+            texteRempl[texteRempl.length - 1] === " " ||
+            texteRempl[texteRempl.length - 1] === " "
+        ) {
+            this.quill.insertText(cursorPosition + Length - 1, " »");
+            this.quill.insertText(cursorPosition, "« ");
+            this.quill.setSelection(cursorPosition + Length + 3);
+        } else {
+            this.quill.insertText(cursorPosition + Length, " »");
+            this.quill.insertText(cursorPosition, "« ");
+            this.quill.setSelection(cursorPosition + Length + 4);
+        }
+    }
 }
 function insertFleD() {
-    let cursorPosition = this.quill.getSelection(false).index;
+    let cursorPosition = this.quill.getSelection().index;
     this.quill.insertText(cursorPosition, " »");
 }
 function insertAg() {
-    let cursorPosition = this.quill.getSelection(false).index;
+    let cursorPosition = this.quill.getSelection().index;
     this.quill.insertText(cursorPosition, "À");
 }
 function insertEg() {
-    let cursorPosition = this.quill.getSelection(false).index;
+    let cursorPosition = this.quill.getSelection().index;
     this.quill.insertText(cursorPosition, "È");
 }
 function insertEa() {
-    let cursorPosition = this.quill.getSelection(false).index;
+    let cursorPosition = this.quill.getSelection().index;
     this.quill.insertText(cursorPosition, "É");
 }
 function insertoe() {
@@ -60,11 +79,21 @@ function insertCC() {
 }
 function insertInsecable() {
     let cursorPosition = this.quill.getSelection().index;
-    this.quill.insertText(cursorPosition, " ");
+    if (this.quill.getSelection().length > 0) {
+        this.quill.deleteText(cursorPosition, this.quill.getSelection().length);
+        this.quill.insertText(cursorPosition, " ");
+    } else {
+        this.quill.insertText(cursorPosition, " ");
+    }
 }
 function insertFineInsecable() {
     let cursorPosition = this.quill.getSelection().index;
-    this.quill.insertText(cursorPosition, " ");
+    if (this.quill.getSelection().length > 0) {
+        this.quill.deleteText(cursorPosition, this.quill.getSelection().length);
+        this.quill.insertText(cursorPosition, " ");
+    } else {
+        this.quill.insertText(cursorPosition, " ");
+    }
 }
 const CustomToolbar = () => (
     <div id="toolbar">
