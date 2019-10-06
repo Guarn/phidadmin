@@ -3,9 +3,10 @@ import styled from "styled-components";
 import "./App.css";
 import { ReactComponent as Logo } from "./Logo.svg";
 import axios from "axios";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
+import Editor from "./Composants/Fonctionnels/Editor";
 import {
     Slider,
     Divider,
@@ -504,72 +505,6 @@ function App() {
         }
     };
 
-    /*
-    const columns = [
-        {
-            title: "ID",
-            dataIndex: "id",
-            key: "id",
-            width: "80px",
-            sorter: (a, b) => a.id - b.id
-        },
-        {
-            title: "Num",
-            dataIndex: "Num",
-            width: "90px",
-            key: "Num",
-            sorter: (a, b) => a.Num - b.Num
-        },
-        {
-            title: "Série",
-            dataIndex: "Serie",
-            width: "150px",
-
-            key: "2",
-            sorter: (a, b) => a.Serie.localeCompare(b.Serie)
-        },
-        {
-            title: "Destination",
-            dataIndex: "Destination",
-            width: "150px",
-
-            key: "3",
-            render: (a, b) => {
-                return a.map((el, index) => {
-                    if (index + 1 < a.length)
-                        return (
-                            <span key={b.id + "-" + index}>{el + ", "}</span>
-                        );
-                    if (index + 1 === a.length)
-                        return <span key={b.id + "-" + index}>{el}</span>;
-                    return null;
-                });
-            }
-        },
-
-        { title: "Code", dataIndex: "Code", width: "140px", key: "4" },
-        { title: "Auteur", dataIndex: "Auteur", width: "150px", key: "5" },
-
-        {
-            title: "",
-            key: "operation",
-            fixed: "right",
-            render: () => (
-                <Button.Group>
-                    <Button type="primary" icon="edit" />
-                    <Popconfirm
-                        title="Confirmer la suppression ?"
-                        okText="Oui"
-                        cancelText="Non"
-                    >
-                        <Button type="danger" icon="delete" />
-                    </Popconfirm>
-                </Button.Group>
-            )
-        }
-    ];
-*/
-
     const Sujet = styled.div`
         display: flex;
         flex-direction: column;
@@ -630,211 +565,6 @@ function App() {
         color: black;
         border-radius: 0 0 5px 5px;
     `;
-    /*
-    const FleG = () => <span>«</span>;
-    const FleD = () => <span>»</span>;
-    const Ag = () => <span>À</span>;
-    const Eg = () => <span>È</span>;
-    const Ea = () => <span>É</span>;
-    const Oe = () => <span>œ</span>;
-    const OE = () => <span>Œ</span>;
-    const Ae = () => <span>æ</span>;
-    const AE = () => <span>Æ</span>;
-    const CC = () => <span>Ç</span>;
-    const Insecable = () => (
-        <span style={{ backgroundColor: "grey", color: "grey" }}>ii</span>
-    );
-
-    const FineInsecable = () => (
-        <span style={{ backgroundColor: "grey" }}> </span>
-    );
-
-    const CustomToolbar = () => (
-        <div id="toolbar">
-            <span className="ql-formats">
-                <button className="ql-bold" />
-                <button className="ql-italic" />
-            </span>
-            <span className="ql-formats">
-                <button className="ql-indent" value="-1" />
-                <button className="ql-indent" value="+1" />
-            </span>
-            <span className="ql-formats">
-                <button className="ql-align" value="test" />
-                <button className="ql-align" value="center" />
-                <button className="ql-align" value="right" />
-                <button className="ql-align" value="justify" />
-            </span>
-
-            <span className="ql-formats">
-                <button className="ql-script" value="super" />
-                <select className="ql-color" />
-                <select className="ql-background" />
-            </span>
-            <span className="ql-formats">
-                <button
-                    className="ql-FleG"
-                    style={{
-                        position: "relative",
-                        bottom: "10px",
-                        fontSize: "1.6em",
-                        fontWeight: "bold",
-                        fontFamily: "Roboto"
-                    }}
-                >
-                    <FleG />
-                </button>
-                <button
-                    className="ql-FleD"
-                    style={{
-                        position: "relative",
-                        bottom: "10px",
-                        fontSize: "1.6em",
-                        fontWeight: "bold",
-                        fontFamily: "Roboto"
-                    }}
-                >
-                    <FleD />
-                </button>
-
-                <button
-                    className="ql-Ag"
-                    style={{ fontFamily: "Roboto", fontWeight: "bold" }}
-                >
-                    <Ag />
-                </button>
-                <button
-                    className="ql-Eg"
-                    style={{ fontFamily: "Roboto", fontWeight: "bold" }}
-                >
-                    <Eg />
-                </button>
-                <button
-                    className="ql-Ea"
-                    style={{ fontFamily: "Roboto", fontWeight: "bold" }}
-                >
-                    <Ea />
-                </button>
-                <button
-                    className="ql-Oe"
-                    style={{ fontFamily: "Roboto", fontWeight: "bold" }}
-                >
-                    <Oe />
-                </button>
-                <button
-                    className="ql-OE"
-                    style={{ fontFamily: "Roboto", fontWeight: "bold" }}
-                >
-                    <OE />
-                </button>
-                <button
-                    className="ql-Ae"
-                    style={{ fontFamily: "Roboto", fontWeight: "bold" }}
-                >
-                    <Ae />
-                </button>
-                <button
-                    className="ql-AE"
-                    style={{ fontFamily: "Roboto", fontWeight: "bold" }}
-                >
-                    <AE />
-                </button>
-                <button
-                    className="ql-CC"
-                    style={{ fontFamily: "Roboto", fontWeight: "bold" }}
-                >
-                    <CC />
-                </button>
-                <button className="ql-Insecable">
-                    <Insecable />
-                </button>
-                <button className="ql-FineInsecable">
-                    <FineInsecable />
-                </button>
-            </span>
-        </div>
-    );
-    function insertFleG() {
-        let cursorPosition = this.quill.getSelection(false).index;
-        this.quill.insertText(cursorPosition, "« ");
-    }
-    function insertFleD() {
-        let cursorPosition = this.quill.getSelection(false).index;
-        this.quill.insertText(cursorPosition, " »");
-    }
-    function insertAg() {
-        let cursorPosition = this.quill.getSelection(false).index;
-        this.quill.insertText(cursorPosition, "À");
-    }
-    function insertEg() {
-        let cursorPosition = this.quill.getSelection(false).index;
-        this.quill.insertText(cursorPosition, "È");
-    }
-    function insertEa() {
-        let cursorPosition = this.quill.getSelection(false).index;
-        this.quill.insertText(cursorPosition, "É");
-    }
-    function insertoe() {
-        let cursorPosition = this.quill.getSelection().index;
-        this.quill.insertText(cursorPosition, "œ");
-    }
-    function insertOE() {
-        let cursorPosition = this.quill.getSelection().index;
-        this.quill.insertText(cursorPosition, "Œ");
-    }
-    function insertae() {
-        let cursorPosition = this.quill.getSelection().index;
-        this.quill.insertText(cursorPosition, "æ");
-    }
-    function insertAE() {
-        let cursorPosition = this.quill.getSelection().index;
-        this.quill.insertText(cursorPosition, "Æ");
-    }
-    function insertCC() {
-        let cursorPosition = this.quill.getSelection().index;
-        this.quill.insertText(cursorPosition, "Ç");
-    }
-    function insertInsecable() {
-        let cursorPosition = this.quill.getSelection().index;
-        this.quill.insertText(cursorPosition, " ");
-    }
-    function insertFineInsecable() {
-        let cursorPosition = this.quill.getSelection().index;
-        this.quill.insertText(cursorPosition, " ");
-    }
-    let modules2 = {
-        toolbar: {
-            container: "#toolbar",
-            handlers: {
-                FleG: insertFleG,
-                FleD: insertFleD,
-                Ag: insertAg,
-                Eg: insertEg,
-                Ea: insertEa,
-                Oe: insertoe,
-                OE: insertOE,
-                Ae: insertae,
-                AE: insertAE,
-                CC: insertCC,
-                Insecable: insertInsecable,
-                FineInsecable: insertFineInsecable
-            }
-        }
-    };
-
-    <div className="text-editor">
-                                        <CustomToolbar />
-                                        <ReactQuill
-                                            value={texte3}
-                                            onFocus={(err) => console.log(err)}
-                                            onChange={(val) => {
-                                                changementTexte(val, 3);
-                                            }}
-                                            modules={modules2}
-                                        >
-                                        </ReactQuill>
-                                    </div>
-*/
 
     const PremierProbleme = () => {
         for (let i = 0; i < sujets.length; i++) {
@@ -1593,10 +1323,10 @@ function App() {
                                                 />
                                             </Tooltip>
                                         </div>
-                                        <ReactQuill
+
+                                        <Editor
                                             value={texte3}
-                                            modules={modules}
-                                            onChange={(val) =>
+                                            changement={(val) =>
                                                 changementTexte(val, 3)
                                             }
                                         />
