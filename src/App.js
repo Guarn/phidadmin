@@ -343,8 +343,8 @@ function App() {
             ax.get("/sujets").then((rep) => {
                 if (
                     rep.data.length > 0 &&
-                    idSujet <= rep.data.length &&
-                    idSujet > 0
+                    idSujet < rep.data.length &&
+                    idSujet >= 0
                 ) {
                     setLoading(false);
                     let state1 = rep.data;
