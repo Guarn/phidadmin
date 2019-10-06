@@ -341,53 +341,57 @@ function App() {
         // ANCHOR Premier affichage ou filtres0
         if (sujets.length === 0) {
             ax.get("/sujets").then((rep) => {
-                setLoading(false);
-                let state1 = rep.data;
-                state1.sort((a, b) => a["id"] - b["id"]);
-                setSujets(state1);
-                setNbResultats(rep.data.length);
-                setState({ ...state, Sujet: state1[idSujet] });
-                let regex1 = /É/g;
-                let regex1b = /é/g;
-                let regex2 = /ù/g;
-                let regex3 = /è/g;
-                let regex4 = /à/g;
-                let regex5 = /î/g;
-                let regex6 = /’/g;
-                let regex7 = /ô/g;
-                let regex8 = /û/g;
-                let regex9 = /â/g;
-                let regex10 = /È/g;
-                let regex11 = /	/g;
-                let regex12 = /À/g;
-                let regex13 = /ê/g;
-                let textesT = [
-                    state1[idSujet].Sujet1,
-                    state1[idSujet].Sujet2,
-                    state1[idSujet].Sujet3
-                ];
-                let texte = [];
-                textesT.map((el, index) => {
-                    texte[index] = el.replace(regex1, "É");
-                    texte[index] = texte[index].replace(regex1b, "é");
-                    texte[index] = texte[index].replace(regex2, "ù");
-                    texte[index] = texte[index].replace(regex3, "è");
-                    texte[index] = texte[index].replace(regex4, "à");
-                    texte[index] = texte[index].replace(regex5, "î");
-                    texte[index] = texte[index].replace(regex6, "'");
-                    texte[index] = texte[index].replace(regex7, "ô");
-                    texte[index] = texte[index].replace(regex8, "û");
-                    texte[index] = texte[index].replace(regex9, "â");
-                    texte[index] = texte[index].replace(regex10, "È");
-                    texte[index] = texte[index].replace(regex11, "<BR />");
-                    texte[index] = texte[index].replace(regex12, "À");
-                    texte[index] = texte[index].replace(regex13, "ê");
+                if (rep.data.length > 0 && idSujet <= rep.data.length) {
+                    setLoading(false);
+                    let state1 = rep.data;
+                    state1.sort((a, b) => a["id"] - b["id"]);
+                    setSujets(state1);
+                    setNbResultats(rep.data.length);
+                    setState({ ...state, Sujet: state1[idSujet] });
+                    let regex1 = /É/g;
+                    let regex1b = /é/g;
+                    let regex2 = /ù/g;
+                    let regex3 = /è/g;
+                    let regex4 = /à/g;
+                    let regex5 = /î/g;
+                    let regex6 = /’/g;
+                    let regex7 = /ô/g;
+                    let regex8 = /û/g;
+                    let regex9 = /â/g;
+                    let regex10 = /È/g;
+                    let regex11 = /	/g;
+                    let regex12 = /À/g;
+                    let regex13 = /ê/g;
+                    let textesT = [
+                        state1[idSujet].Sujet1,
+                        state1[idSujet].Sujet2,
+                        state1[idSujet].Sujet3
+                    ];
+                    let texte = [];
+                    textesT.map((el, index) => {
+                        texte[index] = el.replace(regex1, "É");
+                        texte[index] = texte[index].replace(regex1b, "é");
+                        texte[index] = texte[index].replace(regex2, "ù");
+                        texte[index] = texte[index].replace(regex3, "è");
+                        texte[index] = texte[index].replace(regex4, "à");
+                        texte[index] = texte[index].replace(regex5, "î");
+                        texte[index] = texte[index].replace(regex6, "'");
+                        texte[index] = texte[index].replace(regex7, "ô");
+                        texte[index] = texte[index].replace(regex8, "û");
+                        texte[index] = texte[index].replace(regex9, "â");
+                        texte[index] = texte[index].replace(regex10, "È");
+                        texte[index] = texte[index].replace(regex11, "<BR />");
+                        texte[index] = texte[index].replace(regex12, "À");
+                        texte[index] = texte[index].replace(regex13, "ê");
 
-                    return null;
-                });
-                setTexte1(texte[0]);
-                setTexte2(texte[1]);
-                setTexte3(texte[2]);
+                        return null;
+                    });
+                    setTexte1(texte[0]);
+                    setTexte2(texte[1]);
+                    setTexte3(texte[2]);
+                } else {
+                    setNbResultats(0);
+                }
             });
         } else {
             // ANCHOR Si Resultats > 0
@@ -1140,15 +1144,21 @@ function App() {
                             key="test"
                             placeholder="ID"
                             onSearch={() => {
-                                RefNotions.current.rcSelect.state.value = [];
-                                RefAuteurs.current.rcSelect.state.value = [];
-                                RefSeries.current.rcSelect.state.value = [];
-                                RefDestinations.current.rcSelect.state.value = [];
-                                RefSessions.current.state.value = "TOUTES";
-                                RefAnnees.current.rcSlider.state.bounds = [
-                                    1996,
-                                    2018
-                                ];
+                                if (RefNotions.current)
+                                    RefNotions.current.rcSelect.state.value = [];
+                                if (RefAuteurs.current)
+                                    RefAuteurs.current.rcSelect.state.value = [];
+                                if (RefSeries.current)
+                                    RefSeries.current.rcSelect.state.value = [];
+                                if (RefDestinations.current)
+                                    RefDestinations.current.rcSelect.state.value = [];
+                                if (RefSessions.current)
+                                    RefSessions.current.state.value = "TOUTES";
+                                if (RefAnnees.current)
+                                    RefAnnees.current.rcSlider.state.bounds = [
+                                        1996,
+                                        2018
+                                    ];
                                 setFiltres(false);
                                 setLoading(true);
                                 setIdSujet(parseInt(idTemp) - 1);
