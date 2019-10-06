@@ -316,6 +316,7 @@ function App() {
         toolbar: [
             ["bold", "italic"],
             [{ indent: "-1" }, { indent: "+1" }],
+            [{ script: "super" }],
             [
                 { align: "" },
                 { align: "center" },
@@ -439,7 +440,7 @@ function App() {
                 setMenu(state);
             });
         }
-    }, [idSujet]);
+    }, [idSujet, elementsCoches]);
 
     const changementTexte = (val, texte) => {
         if (texte === 1) {
@@ -862,8 +863,10 @@ function App() {
                 >
                     <Divider>Notions</Divider>
                     <Select
+                        ref={RefNotions1}
                         mode="multiple"
                         style={{ width: "100%" }}
+                        defaultValue={elementsCoches.Notions1}
                         placeholder="Toutes les notions"
                         onChange={(e) => changeFiltres(e, "notions")}
                     >
@@ -963,18 +966,50 @@ function App() {
 
                     <Divider style={{ marginTop: "60px" }} />
                     <Button
-                        onClick={() =>
+                        onClick={() => {
+                            RefNotions1.current.rcSelect.state.value = [];
+
                             setElementsCoches({
                                 notions: [],
                                 series: [],
-                                annees: [],
+                                annees: [
+                                    1996,
+                                    1997,
+                                    1998,
+                                    1999,
+                                    2000,
+                                    2001,
+                                    2002,
+                                    2003,
+                                    2004,
+                                    2005,
+                                    2006,
+                                    2007,
+                                    2008,
+                                    2009,
+                                    2010,
+                                    2011,
+                                    2012,
+                                    2013,
+                                    2014,
+                                    2015,
+                                    2016,
+                                    2017,
+                                    2018,
+                                    9999
+                                ],
                                 destinations: [],
                                 auteurs: [],
-                                sessions: "TOUTES",
+                                sessions: [
+                                    "NORMALE",
+                                    "REMPLACEMENT",
+                                    "SECOURS",
+                                    "NONDEFINI"
+                                ],
                                 recherche: "",
                                 typeRecherche: "tousLesMots"
-                            })
-                        }
+                            });
+                        }}
                         size="small"
                         style={{ marginBottom: "10px" }}
                         block
@@ -1088,7 +1123,6 @@ function App() {
                                     >
                                         <NomChamp>Notions</NomChamp>
                                         <Select
-                                            ref={RefNotions1}
                                             showArrow
                                             mode="multiple"
                                             value={state.Sujet.Notions1}
