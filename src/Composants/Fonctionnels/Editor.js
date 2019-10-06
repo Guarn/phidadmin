@@ -83,7 +83,7 @@ function insertInsecable() {
         this.quill.deleteText(cursorPosition, this.quill.getSelection().length);
         this.quill.insertText(cursorPosition, " ");
     } else {
-        this.quill.insertText(cursorPosition, " ");
+        this.quill.insertText(cursorPosition, "  ");
     }
 }
 function insertFineInsecable() {
