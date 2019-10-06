@@ -341,7 +341,11 @@ function App() {
         // ANCHOR Premier affichage ou filtres0
         if (sujets.length === 0) {
             ax.get("/sujets").then((rep) => {
-                if (rep.data.length > 0 && idSujet <= rep.data.length) {
+                if (
+                    rep.data.length > 0 &&
+                    idSujet <= rep.data.length &&
+                    idSujet > 0
+                ) {
                     setLoading(false);
                     let state1 = rep.data;
                     state1.sort((a, b) => a["id"] - b["id"]);
