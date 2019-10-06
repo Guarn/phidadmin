@@ -23,14 +23,13 @@ import {
 } from "antd";
 
 const ax = axios.create({
-    baseURL: "http://phidbac.fr:4000/",
+    baseURL: "http://192.168.0.85:4000/",
     responseType: "json"
 });
 
 const { Option } = Select;
 
 const ConteneurGlobal = styled.div`
-    height: 100vh;
     width: 100vw;
     display: flex;
 
@@ -106,12 +105,13 @@ const ContenuHeader = styled.div`
 const Contenu = styled.div`
     display: flex;
     flex-direction: column;
-    position: relative;
-    background-color: rgba(0, 0, 0, 0.03);
+    position: absolute;
     padding: 20px;
     top: 56px;
     left: 250px;
-    height: calc(100vh - 56px);
+    width: 100%;
+    min-height: calc(100% - 56px);
+    background-color: rgba(0, 0, 0, 0.03);
 `;
 const ConteneurFiltres = styled.div`
     margin-bottom: 20px;
@@ -166,7 +166,8 @@ const ContenuLabel = styled.div`
 const ConteneurBoutons = styled.div``;
 
 const ConteneurContenu = styled.div`
-    width: calc(100% - 250px);
+    width: 100%;
+    height: 100%;
 `;
 
 function App() {
@@ -269,7 +270,11 @@ function App() {
         });
     };
 
-    const ConfirmModif = () => {
+    const ConfirmModif = async () => {
+        await setState({
+            ...state,
+            Sujet: { ...state.Sujet, Problemes: false }
+        });
         const key = "updatable";
 
         notification.open({
@@ -279,7 +284,11 @@ function App() {
             icon: <Icon type="loading" style={{ color: "#108ee9" }} />
         });
 
-        ax.post(`/sujets/${state.Sujet.id}`, state.Sujet)
+        await ax
+            .post(`/sujets/${state.Sujet.id}`, {
+                ...state.Sujet,
+                Problemes: false
+            })
             .then((rep) => {
                 notification.open({
                     placement: "bottomRight",
@@ -827,6 +836,70 @@ function App() {
                                     </div>
 */
 
+    const PremierProbleme = () => {
+        for (let i = 0; i < sujets.length; i++) {
+            if (sujets[i].Problemes === true) {
+                if (RefNotions.current)
+                    RefNotions.current.rcSelect.state.value = [];
+                if (RefAuteurs.current)
+                    RefAuteurs.current.rcSelect.state.value = [];
+                if (RefSeries.current)
+                    RefSeries.current.rcSelect.state.value = [];
+                if (RefDestinations.current)
+                    RefDestinations.current.rcSelect.state.value = [];
+                if (RefSessions.current)
+                    RefSessions.current.state.value = "TOUTES";
+                if (RefAnnees.current)
+                    RefAnnees.current.rcSlider.state.bounds = [1996, 2018];
+                setFiltres(false);
+                setIdSujet(i);
+                setSujets([]);
+
+                setElementsCoches({
+                    notions: [],
+                    series: [],
+                    annees: [
+                        1996,
+                        1997,
+                        1998,
+                        1999,
+                        2000,
+                        2001,
+                        2002,
+                        2003,
+                        2004,
+                        2005,
+                        2006,
+                        2007,
+                        2008,
+                        2009,
+                        2010,
+                        2011,
+                        2012,
+                        2013,
+                        2014,
+                        2015,
+                        2016,
+                        2017,
+                        2018,
+                        9999
+                    ],
+                    destinations: [],
+                    auteurs: [],
+                    sessions: [
+                        "NORMALE",
+                        "REMPLACEMENT",
+                        "SECOURS",
+                        "NONDEFINI"
+                    ],
+                    recherche: "",
+                    typeRecherche: "tousLesMots"
+                });
+                return null;
+            }
+        }
+    };
+
     return (
         <ConteneurGlobal chargement={loading}>
             <ConteneurMenu>
@@ -1218,18 +1291,39 @@ function App() {
                             // ANCHOR CARD
                             <Card loading={loading} style={{ width: 798 }}>
                                 <InfosEntete>
-                                    <DoubleLabel
-                                        style={{
-                                            marginRight: 20,
-                                            width: 70,
-                                            borderRadius: 5
-                                        }}
-                                    >
-                                        <NomLabel>ID</NomLabel>
-                                        <ContenuLabel>
-                                            {state.Sujet.id}
-                                        </ContenuLabel>
-                                    </DoubleLabel>
+                                    <div style={{ display: "flex" }}>
+                                        <DoubleLabel
+                                            style={{
+                                                marginRight: 5,
+                                                width: 70,
+                                                borderRadius: 5
+                                            }}
+                                        >
+                                            <NomLabel>ID</NomLabel>
+                                            <ContenuLabel>
+                                                {state.Sujet.id}
+                                            </ContenuLabel>
+                                        </DoubleLabel>
+                                        <Button
+                                            icon={
+                                                state.Sujet.Problemes
+                                                    ? "stop"
+                                                    : "check"
+                                            }
+                                            style={
+                                                state.Sujet.Problemes
+                                                    ? {
+                                                          color: "red",
+                                                          borderColor: "red"
+                                                      }
+                                                    : {
+                                                          color: "green",
+                                                          borderColor: "green"
+                                                      }
+                                            }
+                                            onClick={() => PremierProbleme()}
+                                        />
+                                    </div>
                                     <div style={{ display: "flex" }}>
                                         <Button
                                             disabled={
@@ -1265,9 +1359,14 @@ function App() {
                                             <Icon type="right" />
                                         </Button>
                                     </div>
+
                                     <Switch
-                                        checkedChildren={<Icon type="edit" />}
-                                        unCheckedChildren={<Icon type="edit" />}
+                                        checkedChildren={
+                                            <Icon type="edit" size="large" />
+                                        }
+                                        unCheckedChildren={
+                                            <Icon type="edit" size="large" />
+                                        }
                                         checked={modeEdition}
                                         onClick={(checked, e) =>
                                             setModeEdition(checked)
