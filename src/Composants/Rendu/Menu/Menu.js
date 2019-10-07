@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Divider from "antd/es/divider";
-import Icon from "antd/es/icon";
+import {Divider,Icon} from "antd";
 import { ReactComponent as Logo } from "../../Assets/Logo.svg";
 
 const ConteneurMenu = styled.div`

@@ -5,8 +5,11 @@
     "dependencies": {
         "antd": "^3.23.5",
         "axios": "^0.19.0",
+        "babel-plugin-import": "^1.12.2",
+        "customize-cra": "^0.8.0",
         "progress-bar-webpack-plugin": "^1.12.1",
         "react": "^16.10.1",
+        "react-app-rewired": "^2.1.3",
         "react-dom": "^16.10.1",
         "react-quill": "^1.3.3",
         "react-scripts": "3.1.2",
@@ -14,8 +17,8 @@
         "webpack-bundle-analyzer": "^3.5.2"
     },
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
+        "start": "react-app-rewired start",
+        "build": "react-app-rewired build",
         "serve": "run-script serve -s build -l 3001",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
