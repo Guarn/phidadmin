@@ -31,24 +31,6 @@ const ax = axios.create({
 //SECTION Compo. STYLED
 
 // ANCHOR Squelette
-const ConteneurContenu = styled.div`
-    height: 100%;
-    width: 100%;
-    .ant-select-selection__choice {
-        visibility: ${(props) => (props.chargement ? "hidden" : "")};
-    }
-`;
-
-const ContenuHeader = styled.div`
-    background-color: white;
-    box-shadow: 0 1px 1px 1px hsla(0, 0%, 78%, 0.2);
-    height: 56px;
-    width: calc(100% - 250px);
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    right: 0;
-`;
 
 const Contenu = styled.div`
     display: flex;
@@ -470,139 +452,9 @@ const Consultation = () => {
 
     //!SECTION
 
-    //SECTION  USEEFFECT
-
-    useEffect(() => {
-        // ANCHOR Premier affichage ou filtres0
-        if (sujets.length === 0) {
-            ax.get("/sujets").then((rep) => {
-                if (
-                    rep.data.length > 0 &&
-                    idSujet < rep.data.length &&
-                    idSujet >= 0
-                ) {
-                    setLoading(false);
-                    let state1 = rep.data;
-                    state1.sort((a, b) => a["id"] - b["id"]);
-                    setSujets(state1);
-                    setNbResultats(rep.data.length);
-                    setState({ ...state, Sujet: state1[idSujet] });
-                    let regex1 = /É/g;
-                    let regex1b = /é/g;
-                    let regex2 = /ù/g;
-                    let regex3 = /è/g;
-                    let regex4 = /à/g;
-                    let regex5 = /î/g;
-                    let regex6 = /’/g;
-                    let regex7 = /ô/g;
-                    let regex8 = /û/g;
-                    let regex9 = /â/g;
-                    let regex10 = /È/g;
-                    let regex11 = /	/g;
-                    let regex12 = /À/g;
-                    let regex13 = /ê/g;
-                    let textesT = [
-                        state1[idSujet].Sujet1,
-                        state1[idSujet].Sujet2,
-                        state1[idSujet].Sujet3
-                    ];
-                    let texte = [];
-                    textesT.map((el, index) => {
-                        texte[index] = el.replace(regex1, "É");
-                        texte[index] = texte[index].replace(regex1b, "é");
-                        texte[index] = texte[index].replace(regex2, "ù");
-                        texte[index] = texte[index].replace(regex3, "è");
-                        texte[index] = texte[index].replace(regex4, "à");
-                        texte[index] = texte[index].replace(regex5, "î");
-                        texte[index] = texte[index].replace(regex6, "'");
-                        texte[index] = texte[index].replace(regex7, "ô");
-                        texte[index] = texte[index].replace(regex8, "û");
-                        texte[index] = texte[index].replace(regex9, "â");
-                        texte[index] = texte[index].replace(regex10, "È");
-                        texte[index] = texte[index].replace(regex11, "<BR />");
-                        texte[index] = texte[index].replace(regex12, "À");
-                        texte[index] = texte[index].replace(regex13, "ê");
-
-                        return null;
-                    });
-                    setTexte1(texte[0]);
-                    setTexte2(texte[1]);
-                    setTexte3(texte[2]);
-                } else {
-                    setNbResultats(0);
-                }
-            });
-        } else {
-            // ANCHOR Si Resultats > 0
-
-            if (nbResultats !== 0) {
-                setState({ ...state, Sujet: sujets[idSujet] });
-                let regex1 = /É/g;
-                let regex1b = /é/g;
-                let regex2 = /ù/g;
-                let regex3 = /è/g;
-                let regex4 = /à/g;
-                let regex5 = /î/g;
-                let regex6 = /’/g;
-                let regex7 = /ô/g;
-                let regex8 = /û/g;
-                let regex9 = /â/g;
-                let regex10 = /È/g;
-                let regex11 = /	/g;
-                let regex12 = /À/g;
-                let regex13 = /ê/g;
-                let textesT = [
-                    sujets[idSujet].Sujet1,
-                    sujets[idSujet].Sujet2,
-                    sujets[idSujet].Sujet3
-                ];
-                let texte = [];
-                textesT.map((el, index) => {
-                    texte[index] = el.replace(regex1, "É");
-                    texte[index] = texte[index].replace(regex1b, "é");
-                    texte[index] = texte[index].replace(regex2, "ù");
-                    texte[index] = texte[index].replace(regex3, "è");
-                    texte[index] = texte[index].replace(regex4, "à");
-                    texte[index] = texte[index].replace(regex5, "î");
-                    texte[index] = texte[index].replace(regex6, "'");
-                    texte[index] = texte[index].replace(regex7, "ô");
-                    texte[index] = texte[index].replace(regex8, "û");
-                    texte[index] = texte[index].replace(regex9, "â");
-                    texte[index] = texte[index].replace(regex10, "È");
-                    texte[index] = texte[index].replace(regex11, "<BR />");
-                    texte[index] = texte[index].replace(regex12, "À");
-                    texte[index] = texte[index].replace(regex13, "ê");
-                    return null;
-                });
-                setTexte1(texte[0]);
-                setTexte2(texte[1]);
-                setTexte3(texte[2]);
-                setLoading(false);
-            }
-        }
-        if (sujets.length === 0) {
-            ax.get("/menuAdmin").then((rep) => {
-                let state = rep.data;
-                state.annees.sort((a, b) => a["Annee"] - b["Annee"]);
-                state.auteurs.sort((a, b) =>
-                    a["Auteur"].localeCompare(b["Auteur"])
-                );
-                state.destinations.sort((a, b) =>
-                    a["Destination"].localeCompare(b["Destination"])
-                );
-                state.notions.sort((a, b) =>
-                    a["Notion"].localeCompare(b["Notion"])
-                );
-                setMenu(state);
-            });
-        }
-    }, [idSujet, elementsCoches, filtres]);
-    //!SECTION
-
-    return (
-        <ConteneurContenu>
-            <ContenuHeader style={{ zIndex: "100" }}></ContenuHeader>
-            //SECTION Menu Filtres
+    //SECTION Menu Filtres
+    const Filtres = () => {
+        return (
             <Drawer
                 title="Filtres"
                 width="350px"
@@ -783,8 +635,143 @@ const Consultation = () => {
                     Recherche
                 </Button>
             </Drawer>
-            //!SECTION
+        );
+    };
+    //!SECTION
+
+    //SECTION  USEEFFECT
+
+    useEffect(() => {
+        // ANCHOR Premier affichage ou filtres0
+        if (sujets.length === 0) {
+            ax.get("/sujets").then((rep) => {
+                if (
+                    rep.data.length > 0 &&
+                    idSujet < rep.data.length &&
+                    idSujet >= 0
+                ) {
+                    setLoading(false);
+                    let state1 = rep.data;
+                    state1.sort((a, b) => a["id"] - b["id"]);
+                    setSujets(state1);
+                    setNbResultats(rep.data.length);
+                    setState({ ...state, Sujet: state1[idSujet] });
+                    let regex1 = /É/g;
+                    let regex1b = /é/g;
+                    let regex2 = /ù/g;
+                    let regex3 = /è/g;
+                    let regex4 = /à/g;
+                    let regex5 = /î/g;
+                    let regex6 = /’/g;
+                    let regex7 = /ô/g;
+                    let regex8 = /û/g;
+                    let regex9 = /â/g;
+                    let regex10 = /È/g;
+                    let regex11 = /	/g;
+                    let regex12 = /À/g;
+                    let regex13 = /ê/g;
+                    let textesT = [
+                        state1[idSujet].Sujet1,
+                        state1[idSujet].Sujet2,
+                        state1[idSujet].Sujet3
+                    ];
+                    let texte = [];
+                    textesT.map((el, index) => {
+                        texte[index] = el.replace(regex1, "É");
+                        texte[index] = texte[index].replace(regex1b, "é");
+                        texte[index] = texte[index].replace(regex2, "ù");
+                        texte[index] = texte[index].replace(regex3, "è");
+                        texte[index] = texte[index].replace(regex4, "à");
+                        texte[index] = texte[index].replace(regex5, "î");
+                        texte[index] = texte[index].replace(regex6, "'");
+                        texte[index] = texte[index].replace(regex7, "ô");
+                        texte[index] = texte[index].replace(regex8, "û");
+                        texte[index] = texte[index].replace(regex9, "â");
+                        texte[index] = texte[index].replace(regex10, "È");
+                        texte[index] = texte[index].replace(regex11, "<BR />");
+                        texte[index] = texte[index].replace(regex12, "À");
+                        texte[index] = texte[index].replace(regex13, "ê");
+
+                        return null;
+                    });
+                    setTexte1(texte[0]);
+                    setTexte2(texte[1]);
+                    setTexte3(texte[2]);
+                } else {
+                    setNbResultats(0);
+                }
+            });
+        } else {
+            // ANCHOR Si Resultats > 0
+
+            if (nbResultats !== 0) {
+                setState({ ...state, Sujet: sujets[idSujet] });
+                let regex1 = /É/g;
+                let regex1b = /é/g;
+                let regex2 = /ù/g;
+                let regex3 = /è/g;
+                let regex4 = /à/g;
+                let regex5 = /î/g;
+                let regex6 = /’/g;
+                let regex7 = /ô/g;
+                let regex8 = /û/g;
+                let regex9 = /â/g;
+                let regex10 = /È/g;
+                let regex11 = /	/g;
+                let regex12 = /À/g;
+                let regex13 = /ê/g;
+                let textesT = [
+                    sujets[idSujet].Sujet1,
+                    sujets[idSujet].Sujet2,
+                    sujets[idSujet].Sujet3
+                ];
+                let texte = [];
+                textesT.map((el, index) => {
+                    texte[index] = el.replace(regex1, "É");
+                    texte[index] = texte[index].replace(regex1b, "é");
+                    texte[index] = texte[index].replace(regex2, "ù");
+                    texte[index] = texte[index].replace(regex3, "è");
+                    texte[index] = texte[index].replace(regex4, "à");
+                    texte[index] = texte[index].replace(regex5, "î");
+                    texte[index] = texte[index].replace(regex6, "'");
+                    texte[index] = texte[index].replace(regex7, "ô");
+                    texte[index] = texte[index].replace(regex8, "û");
+                    texte[index] = texte[index].replace(regex9, "â");
+                    texte[index] = texte[index].replace(regex10, "È");
+                    texte[index] = texte[index].replace(regex11, "<BR />");
+                    texte[index] = texte[index].replace(regex12, "À");
+                    texte[index] = texte[index].replace(regex13, "ê");
+                    return null;
+                });
+                setTexte1(texte[0]);
+                setTexte2(texte[1]);
+                setTexte3(texte[2]);
+                setLoading(false);
+            }
+        }
+        if (sujets.length === 0) {
+            ax.get("/menuAdmin").then((rep) => {
+                let state = rep.data;
+                state.annees.sort((a, b) => a["Annee"] - b["Annee"]);
+                state.auteurs.sort((a, b) =>
+                    a["Auteur"].localeCompare(b["Auteur"])
+                );
+                state.destinations.sort((a, b) =>
+                    a["Destination"].localeCompare(b["Destination"])
+                );
+                state.notions.sort((a, b) =>
+                    a["Notion"].localeCompare(b["Notion"])
+                );
+                setMenu(state);
+            });
+        }
+    }, [idSujet, elementsCoches, filtres]);
+    //!SECTION
+
+    return (
+        <div style={{ overflow: "auto", height: "50px" }}>
             <Contenu>
+                <Filtres />
                 <ConteneurFiltres>
                     <Tooltip
                         placement="bottomLeft"
@@ -1516,9 +1503,8 @@ const Consultation = () => {
                                     </Button>
                                 </ConteneurTextes>
                             )}
-                            {
-                                //NOTE Mode Vue
-                                !modeEdition && (
+                            {//NOTE Mode Vue
+                            !modeEdition && (
                                 <ConteneurTextes>
                                     <Sujet>
                                         <TitreNotions>
@@ -1604,7 +1590,7 @@ const Consultation = () => {
                     )}
                 </ConteneurResultats>
             </Contenu>
-        </ConteneurContenu>
+        </div>
     );
 };
 
