@@ -1,5 +1,4 @@
 import React from "react";
-import { render } from "react-dom";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
@@ -18,25 +17,26 @@ const Insecable = () => (
 );
 
 const FineInsecable = () => <span style={{ backgroundColor: "grey" }}> </span>;
+
 function insertFleG() {
     let cursorPosition = this.quill.getSelection().index;
     let Length = this.quill.getSelection().length;
     let texteRempl = this.quill.getText(cursorPosition, Length);
-
-    if (Length == 0) {
-        this.quill.insertText(cursorPosition, "« ");
+    if (Length === 0) {
+        this.quill.insertText(cursorPosition, "«&nbsp;");
+        this.quill.setSelection(cursorPosition + 2);
     } else {
         if (
             texteRempl[texteRempl.length - 1] === " " ||
             texteRempl[texteRempl.length - 1] === " " ||
             texteRempl[texteRempl.length - 1] === " "
         ) {
-            this.quill.insertText(cursorPosition + Length - 1, " »");
-            this.quill.insertText(cursorPosition, "« ");
+            this.quill.insertText(cursorPosition + Length - 1, "&nbsp;»");
+            this.quill.insertText(cursorPosition, "«&nbsp;");
             this.quill.setSelection(cursorPosition + Length + 3);
         } else {
-            this.quill.insertText(cursorPosition + Length, " »");
-            this.quill.insertText(cursorPosition, "« ");
+            this.quill.insertText(cursorPosition + Length, "&nbsp;»");
+            this.quill.insertText(cursorPosition, "«&nbsp;");
             this.quill.setSelection(cursorPosition + Length + 4);
         }
     }
@@ -81,19 +81,24 @@ function insertInsecable() {
     let cursorPosition = this.quill.getSelection().index;
     if (this.quill.getSelection().length > 0) {
         this.quill.deleteText(cursorPosition, this.quill.getSelection().length);
-        this.quill.insertText(cursorPosition, " ");
+        this.quill.insertText(cursorPosition, "&nbsp;");
+        this.quill.setSelection(cursorPosition + 1);
     } else {
-        this.quill.insertText(cursorPosition, "  ");
+        this.quill.insertText(cursorPosition, "&nbsp;");
+        this.quill.setSelection(cursorPosition + 1);
     }
 }
 function insertFineInsecable() {
+    /*
     let cursorPosition = this.quill.getSelection().index;
     if (this.quill.getSelection().length > 0) {
         this.quill.deleteText(cursorPosition, this.quill.getSelection().length);
-        this.quill.insertText(cursorPosition, " ");
+        this.quill.insertText(cursorPosition, "thinsp;");
+        this.quill.setSelection(cursorPosition + 1);
     } else {
-        this.quill.insertText(cursorPosition, " ");
-    }
+        this.quill.insertText(cursorPosition, "thinsp;");
+        this.quill.setSelection(cursorPosition + 1);
+    }*/
 }
 const CustomToolbar = () => (
     <div id="toolbar">

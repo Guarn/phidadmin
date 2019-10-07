@@ -1016,7 +1016,8 @@ const Consultation = () => {
                                     defaultChecked
                                 />
                             </InfosEntete>
-                            {modeEdition && (
+                            {//NOTE Sujet1
+                            modeEdition && (
                                 <ConteneurTextes>
                                     <Divider orientation="left">
                                         Sujet 1
@@ -1088,6 +1089,9 @@ const Consultation = () => {
                                         }
                                     />
                                     <Divider orientation="left">
+                                        {
+                                            //NOTE Sujet2
+                                        }
                                         Sujet 2
                                     </Divider>
                                     <div
@@ -1157,6 +1161,9 @@ const Consultation = () => {
                                         }}
                                     />
                                     <Divider orientation="left">
+                                        {
+                                            //NOTE Sujet3
+                                        }
                                         Sujet 3
                                     </Divider>
                                     <div
@@ -1220,9 +1227,13 @@ const Consultation = () => {
 
                                     <Editor
                                         value={texte3}
-                                        changement={(val) =>
-                                            changementTexte(val, 3)
-                                        }
+                                        changement={(val) => {
+                                            let t = val.replace(
+                                                "&amp;nbsp;",
+                                                "&nbsp;"
+                                            );
+                                            changementTexte(t, 3);
+                                        }}
                                     />
                                     <div
                                         style={{
@@ -1491,6 +1502,9 @@ const Consultation = () => {
                                             }
                                         />
                                     </div>
+                                    {
+                                        //NOTE Bouton confirm
+                                    }
                                     <Button
                                         size="large"
                                         style={{ marginTop: "30px" }}
@@ -1502,7 +1516,9 @@ const Consultation = () => {
                                     </Button>
                                 </ConteneurTextes>
                             )}
-                            {!modeEdition && (
+                            {
+                                //NOTE Mode Vue
+                                !modeEdition && (
                                 <ConteneurTextes>
                                     <Sujet>
                                         <TitreNotions>
