@@ -450,193 +450,6 @@ const Consultation = () => {
 
     //!SECTION
 
-    //SECTION Menu Filtres
-    const Filtres = () => {
-        return (
-            <Drawer
-                title="Filtres"
-                width="350px"
-                placement="right"
-                closable={true}
-                onClose={() => setMenuFiltres(false)}
-                visible={menuFiltres}
-            >
-                <Divider>Notions</Divider>
-                <Select
-                    ref={RefNotions}
-                    mode="multiple"
-                    style={{ width: "100%" }}
-                    defaultValue={elementsCoches.Notions1}
-                    placeholder="Toutes les notions"
-                    onChange={(e) => changeFiltres(e, "notions")}
-                >
-                    {menu.notions &&
-                        menu.notions.map((el, index) => {
-                            return (
-                                <Option
-                                    key={el["Notion"]}
-                                    style={{
-                                        color: el["Au_Programme"]
-                                            ? "green"
-                                            : "red"
-                                    }}
-                                >
-                                    {el["Notion"]}
-                                </Option>
-                            );
-                        })}
-                </Select>
-
-                <Divider>Séries</Divider>
-                <Select
-                    ref={RefSeries}
-                    mode="multiple"
-                    style={{ width: "100%" }}
-                    placeholder="Toutes les séries"
-                    onChange={(e) => changeFiltres(e, "series")}
-                >
-                    {menu.series &&
-                        menu.series.map((el, index) => {
-                            return (
-                                <Option key={el["Serie"]}>{el["Serie"]}</Option>
-                            );
-                        })}
-                </Select>
-                <Divider>Destinations</Divider>
-                <Select
-                    ref={RefDestinations}
-                    mode="multiple"
-                    style={{ width: "100%" }}
-                    placeholder="Toutes les destinations"
-                    onChange={(e) => changeFiltres(e, "destinations")}
-                >
-                    {menu.destinations &&
-                        menu.destinations.map((el, index) => {
-                            return (
-                                <Option key={el["Destination"]}>
-                                    {el["Destination"]}
-                                </Option>
-                            );
-                        })}
-                </Select>
-                <Divider>Auteurs</Divider>
-                <Select
-                    ref={RefAuteurs}
-                    mode="multiple"
-                    style={{ width: "100%" }}
-                    placeholder="Tous les auteurs"
-                    onChange={(e) => changeFiltres(e, "auteurs")}
-                >
-                    {menu.auteurs &&
-                        menu.auteurs.map((el) => {
-                            return (
-                                <Option key={el["Auteur"]}>
-                                    {el["Auteur"] + " (" + el["NbSujets"] + ")"}
-                                </Option>
-                            );
-                        })}
-                </Select>
-                <Divider>Sessions</Divider>
-                <Radio.Group
-                    ref={RefSessions}
-                    style={{ width: "100%" }}
-                    size="small"
-                    defaultValue="TOUTES"
-                    onChange={(e) => changeFiltres(e.target.value, "sessions")}
-                >
-                    <Radio.Button value="TOUTES">Toutes</Radio.Button>
-                    <Radio.Button value="NORMALE">Norm.</Radio.Button>
-                    <Radio.Button value="REMPLACEMENT">Rempl.</Radio.Button>
-                    <Radio.Button value="SECOURS">Secours</Radio.Button>
-                </Radio.Group>
-                <Divider>Années</Divider>
-                <Slider
-                    ref={RefAnnees}
-                    range
-                    marks={{ 1996: "1996", 2018: "2018" }}
-                    max={2018}
-                    min={1996}
-                    tooltipPlacement="bottom"
-                    step={1}
-                    defaultValue={[1996, 2018]}
-                    onChange={(val) => changeFiltres(val, "annees")}
-                />
-
-                <Divider style={{ marginTop: "60px" }} />
-                <Button
-                    onClick={() => {
-                        RefNotions.current.rcSelect.state.value = [];
-                        RefAuteurs.current.rcSelect.state.value = [];
-                        RefSeries.current.rcSelect.state.value = [];
-                        RefDestinations.current.rcSelect.state.value = [];
-                        RefSessions.current.state.value = "TOUTES";
-                        RefAnnees.current.rcSlider.state.bounds = [1996, 2018];
-                        setFiltres(false);
-                        setIdSujet(0);
-                        setSujets([]);
-
-                        setElementsCoches({
-                            notions: [],
-                            series: [],
-                            annees: [
-                                1996,
-                                1997,
-                                1998,
-                                1999,
-                                2000,
-                                2001,
-                                2002,
-                                2003,
-                                2004,
-                                2005,
-                                2006,
-                                2007,
-                                2008,
-                                2009,
-                                2010,
-                                2011,
-                                2012,
-                                2013,
-                                2014,
-                                2015,
-                                2016,
-                                2017,
-                                2018,
-                                9999
-                            ],
-                            destinations: [],
-                            auteurs: [],
-                            sessions: [
-                                "NORMALE",
-                                "REMPLACEMENT",
-                                "SECOURS",
-                                "NONDEFINI"
-                            ],
-                            recherche: "",
-                            typeRecherche: "tousLesMots"
-                        });
-                    }}
-                    size="small"
-                    style={{ marginBottom: "10px" }}
-                    block
-                >
-                    Réinitialiser les filtres
-                    <Icon type="reload" />
-                </Button>
-                <Button
-                    size="large"
-                    type="primary"
-                    block
-                    onClick={() => RechercheFiltres()}
-                >
-                    <Icon type="search" />
-                    Recherche
-                </Button>
-            </Drawer>
-        );
-    };
-    //!SECTION
-
     //SECTION  USEEFFECT
 
     useEffect(() => {
@@ -769,7 +582,203 @@ const Consultation = () => {
     return (
         <div style={{ overflow: "auto", height: "50px" }}>
             <Contenu>
-                <Filtres />
+                {
+                    //SECTION Menu Filtres
+                }
+
+                <Drawer
+                    title="Filtres"
+                    width="350px"
+                    placement="right"
+                    closable={true}
+                    onClose={() => setMenuFiltres(false)}
+                    visible={menuFiltres}
+                >
+                    <Divider>Notions</Divider>
+                    <Select
+                        ref={RefNotions}
+                        mode="multiple"
+                        style={{ width: "100%" }}
+                        defaultValue={elementsCoches.Notions1}
+                        placeholder="Toutes les notions"
+                        onChange={(e) => changeFiltres(e, "notions")}
+                    >
+                        {menu.notions &&
+                            menu.notions.map((el, index) => {
+                                return (
+                                    <Option
+                                        key={el["Notion"]}
+                                        style={{
+                                            color: el["Au_Programme"]
+                                                ? "green"
+                                                : "red"
+                                        }}
+                                    >
+                                        {el["Notion"]}
+                                    </Option>
+                                );
+                            })}
+                    </Select>
+
+                    <Divider>Séries</Divider>
+                    <Select
+                        ref={RefSeries}
+                        mode="multiple"
+                        style={{ width: "100%" }}
+                        placeholder="Toutes les séries"
+                        onChange={(e) => changeFiltres(e, "series")}
+                    >
+                        {menu.series &&
+                            menu.series.map((el, index) => {
+                                return (
+                                    <Option key={el["Serie"]}>
+                                        {el["Serie"]}
+                                    </Option>
+                                );
+                            })}
+                    </Select>
+                    <Divider>Destinations</Divider>
+                    <Select
+                        ref={RefDestinations}
+                        mode="multiple"
+                        style={{ width: "100%" }}
+                        placeholder="Toutes les destinations"
+                        onChange={(e) => changeFiltres(e, "destinations")}
+                    >
+                        {menu.destinations &&
+                            menu.destinations.map((el, index) => {
+                                return (
+                                    <Option key={el["Destination"]}>
+                                        {el["Destination"]}
+                                    </Option>
+                                );
+                            })}
+                    </Select>
+                    <Divider>Auteurs</Divider>
+                    <Select
+                        ref={RefAuteurs}
+                        mode="multiple"
+                        style={{ width: "100%" }}
+                        placeholder="Tous les auteurs"
+                        onChange={(e) => changeFiltres(e, "auteurs")}
+                    >
+                        {menu.auteurs &&
+                            menu.auteurs.map((el) => {
+                                return (
+                                    <Option key={el["Auteur"]}>
+                                        {el["Auteur"] +
+                                            " (" +
+                                            el["NbSujets"] +
+                                            ")"}
+                                    </Option>
+                                );
+                            })}
+                    </Select>
+                    <Divider>Sessions</Divider>
+                    <Radio.Group
+                        ref={RefSessions}
+                        style={{ width: "100%" }}
+                        size="small"
+                        defaultValue="TOUTES"
+                        onChange={(e) =>
+                            changeFiltres(e.target.value, "sessions")
+                        }
+                    >
+                        <Radio.Button value="TOUTES">Toutes</Radio.Button>
+                        <Radio.Button value="NORMALE">Norm.</Radio.Button>
+                        <Radio.Button value="REMPLACEMENT">Rempl.</Radio.Button>
+                        <Radio.Button value="SECOURS">Secours</Radio.Button>
+                    </Radio.Group>
+                    <Divider>Années</Divider>
+                    <Slider
+                        ref={RefAnnees}
+                        range
+                        marks={{ 1996: "1996", 2018: "2018" }}
+                        max={2018}
+                        min={1996}
+                        tooltipPlacement="bottom"
+                        step={1}
+                        defaultValue={[1996, 2018]}
+                        onChange={(val) => changeFiltres(val, "annees")}
+                    />
+
+                    <Divider style={{ marginTop: "60px" }} />
+                    <Button
+                        onClick={() => {
+                            RefNotions.current.rcSelect.state.value = [];
+                            RefAuteurs.current.rcSelect.state.value = [];
+                            RefSeries.current.rcSelect.state.value = [];
+                            RefDestinations.current.rcSelect.state.value = [];
+                            RefSessions.current.state.value = "TOUTES";
+                            RefAnnees.current.rcSlider.state.bounds = [
+                                1996,
+                                2018
+                            ];
+                            setFiltres(false);
+                            setIdSujet(0);
+                            setSujets([]);
+
+                            setElementsCoches({
+                                notions: [],
+                                series: [],
+                                annees: [
+                                    1996,
+                                    1997,
+                                    1998,
+                                    1999,
+                                    2000,
+                                    2001,
+                                    2002,
+                                    2003,
+                                    2004,
+                                    2005,
+                                    2006,
+                                    2007,
+                                    2008,
+                                    2009,
+                                    2010,
+                                    2011,
+                                    2012,
+                                    2013,
+                                    2014,
+                                    2015,
+                                    2016,
+                                    2017,
+                                    2018,
+                                    9999
+                                ],
+                                destinations: [],
+                                auteurs: [],
+                                sessions: [
+                                    "NORMALE",
+                                    "REMPLACEMENT",
+                                    "SECOURS",
+                                    "NONDEFINI"
+                                ],
+                                recherche: "",
+                                typeRecherche: "tousLesMots"
+                            });
+                        }}
+                        size="small"
+                        style={{ marginBottom: "10px" }}
+                        block
+                    >
+                        Réinitialiser les filtres
+                        <Icon type="reload" />
+                    </Button>
+                    <Button
+                        size="large"
+                        type="primary"
+                        block
+                        onClick={() => RechercheFiltres()}
+                    >
+                        <Icon type="search" />
+                        Recherche
+                    </Button>
+                </Drawer>
+                {
+                    //!SECTION
+                }
                 <ConteneurFiltres>
                     <Tooltip
                         placement="bottomLeft"
