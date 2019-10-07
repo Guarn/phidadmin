@@ -3,24 +3,22 @@ import styled from "styled-components";
 import Editor from "../../Fonctionnels/Editor";
 import ReactQuill, { Quill } from "react-quill";
 import axios from "axios";
+import Divider from "antd/es/divider";
+import Slider from "antd/es/slider";
+import Icon from "antd/es/icon";
+import Select from "antd/es/select";
+import Radio from "antd/es/radio";
+import Card from "antd/es/card";
+import Button from "antd/es/button";
+import Drawer from "antd/es/drawer";
+import Tooltip from "antd/es/tooltip";
+import InputNumber from "antd/es/input-number";
+import Input from "antd/es/input";
+import notification from "antd/es/notification";
+import Switch from "antd/es/switch";
 
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
-import {
-    Slider,
-    Divider,
-    Icon,
-    Select,
-    Radio,
-    Card,
-    Button,
-    Drawer,
-    Tooltip,
-    InputNumber,
-    Input,
-    notification,
-    Switch
-} from "antd";
 
 const { Option } = Select;
 const ax = axios.create({

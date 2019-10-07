@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import { Divider, Icon } from "antd";
+import Divider from "antd/es/divider";
+import Icon from "antd/es/icon";
 import { ReactComponent as Logo } from "../../Assets/Logo.svg";
 
 const ConteneurMenu = styled.div`
@@ -63,7 +64,7 @@ const Menu = () => {
     return (
         <ConteneurMenu>
             <ConteneurMenuHeader>
-                <Logo  style={{ margin: "8px" ,height:"40px"}} />
+                <Logo style={{ margin: "8px", height: "40px" }} />
                 <HeaderTexte>Administration</HeaderTexte>
             </ConteneurMenuHeader>
             <ConteneurMenuLiens>
