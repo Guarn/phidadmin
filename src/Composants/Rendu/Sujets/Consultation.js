@@ -400,6 +400,10 @@ const Consultation = () => {
     const PremierProbleme = () => {
         setLoading(true);
         ax.get("/problemesAdmin").then((rep) => {
+            setState({ ...state, Sujet: rep.data.Sujet[0] });
+            setNbResultats(rep.data.Count);
+            setSujets(rep.data.Sujet);
+
             if (filtres) {
                 console.log("filtres");
                 RefNotions.current.rcSelect.state.value = [];
@@ -449,18 +453,13 @@ const Consultation = () => {
                     recherche: "",
                     typeRecherche: "tousLesMots"
                 });
-                setFiltres(false);
                 console.log("setFiltres");
+                setFiltres(false);
             }
 
-            setNbResultats(rep.data.Count);
-            console.log("SetNbResultats");
-            setSujets(rep.data.Sujet);
-            console.log("SetSujets");
             setIdSujet(rep.data.Sujet[0].id);
-
-            console.log(rep.data.Sujet);
         });
+        setLoading(false);
 
         return null;
     };
@@ -528,6 +527,7 @@ const Consultation = () => {
                     setNbResultats(0);
                 }
             });
+            console.log("Loading : " + loading);
         } else {
             // ANCHOR Si Resultats > 0
             if (nbResultats > 0) {
@@ -556,7 +556,6 @@ const Consultation = () => {
                     ];
                 } else {
                     setState({ ...state, Sujet: sujets[0] });
-
                     textesT = [
                         sujets[0].Sujet1,
                         sujets[0].Sujet2,
@@ -564,6 +563,7 @@ const Consultation = () => {
                     ];
                 }
                 console.log(sujets);
+                console.log(filtres);
                 let texte = [];
                 textesT.map((el, index) => {
                     texte[index] = el.replace(regex1, "É");
@@ -587,6 +587,7 @@ const Consultation = () => {
                 setTexte3(texte[2]);
                 setLoading(false);
                 console.log("Etat : " + idSujet);
+                console.log(loading);
             }
         }
         if (!menu.annees) {
