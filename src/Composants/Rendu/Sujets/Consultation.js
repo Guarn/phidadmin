@@ -405,7 +405,6 @@ const Consultation = () => {
             setSujets(rep.data.Sujet);
 
             if (filtres) {
-                console.log("filtres");
                 RefNotions.current.rcSelect.state.value = [];
                 RefAuteurs.current.rcSelect.state.value = [];
                 RefSeries.current.rcSelect.state.value = [];
@@ -453,7 +452,6 @@ const Consultation = () => {
                     recherche: "",
                     typeRecherche: "tousLesMots"
                 });
-                console.log("setFiltres");
                 setFiltres(false);
             }
 
@@ -527,7 +525,6 @@ const Consultation = () => {
                     setNbResultats(0);
                 }
             });
-            console.log("Loading : " + loading);
         } else {
             // ANCHOR Si Resultats > 0
             if (nbResultats > 0) {
@@ -562,8 +559,6 @@ const Consultation = () => {
                         sujets[0].Sujet3
                     ];
                 }
-                console.log(sujets);
-                console.log(filtres);
                 let texte = [];
                 textesT.map((el, index) => {
                     texte[index] = el.replace(regex1, "É");
@@ -586,8 +581,6 @@ const Consultation = () => {
                 setTexte2(texte[1]);
                 setTexte3(texte[2]);
                 setLoading(false);
-                console.log("Etat : " + idSujet);
-                console.log(loading);
             }
         }
         if (!menu.annees) {
