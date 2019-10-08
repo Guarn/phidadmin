@@ -267,7 +267,6 @@ const Consultation = () => {
         ax.post("/resultatsAdmin", { elementsCoches }).then((rep) => {
             if (rep.data.count > 0) {
                 let state1 = rep.data.rows;
-                state1.sort((a, b) => a["id"] - b["id"]);
                 setSujets(state1);
                 setNbResultats(rep.data.count);
                 setState({ ...state, Sujet: state1[0] });
@@ -889,66 +888,69 @@ const Consultation = () => {
                         key="test"
                         placeholder="ID"
                         onSearch={() => {
-                            if (RefNotions.current)
-                                RefNotions.current.rcSelect.state.value = [];
-                            if (RefAuteurs.current)
-                                RefAuteurs.current.rcSelect.state.value = [];
-                            if (RefSeries.current)
-                                RefSeries.current.rcSelect.state.value = [];
-                            if (RefDestinations.current)
-                                RefDestinations.current.rcSelect.state.value = [];
-                            if (RefSessions.current)
-                                RefSessions.current.state.value = "TOUTES";
-                            if (RefAnnees.current)
-                                RefAnnees.current.rcSlider.state.bounds = [
-                                    1996,
-                                    2018
-                                ];
-                            setFiltres(false);
-                            setLoading(true);
-                            setIdSujet(parseInt(idTemp) - 1);
-                            setSujets([]);
+                            if (filtres) {
+                                if (RefNotions.current)
+                                    RefNotions.current.rcSelect.state.value = [];
+                                if (RefAuteurs.current)
+                                    RefAuteurs.current.rcSelect.state.value = [];
+                                if (RefSeries.current)
+                                    RefSeries.current.rcSelect.state.value = [];
+                                if (RefDestinations.current)
+                                    RefDestinations.current.rcSelect.state.value = [];
+                                if (RefSessions.current)
+                                    RefSessions.current.state.value = "TOUTES";
+                                if (RefAnnees.current)
+                                    RefAnnees.current.rcSlider.state.bounds = [
+                                        1996,
+                                        2018
+                                    ];
 
-                            setElementsCoches({
-                                notions: [],
-                                series: [],
-                                annees: [
-                                    1996,
-                                    1997,
-                                    1998,
-                                    1999,
-                                    2000,
-                                    2001,
-                                    2002,
-                                    2003,
-                                    2004,
-                                    2005,
-                                    2006,
-                                    2007,
-                                    2008,
-                                    2009,
-                                    2010,
-                                    2011,
-                                    2012,
-                                    2013,
-                                    2014,
-                                    2015,
-                                    2016,
-                                    2017,
-                                    2018,
-                                    9999
-                                ],
-                                destinations: [],
-                                auteurs: [],
-                                sessions: [
-                                    "NORMALE",
-                                    "REMPLACEMENT",
-                                    "SECOURS",
-                                    "NONDEFINI"
-                                ],
-                                recherche: "",
-                                typeRecherche: "tousLesMots"
-                            });
+                                setElementsCoches({
+                                    notions: [],
+                                    series: [],
+                                    annees: [
+                                        1996,
+                                        1997,
+                                        1998,
+                                        1999,
+                                        2000,
+                                        2001,
+                                        2002,
+                                        2003,
+                                        2004,
+                                        2005,
+                                        2006,
+                                        2007,
+                                        2008,
+                                        2009,
+                                        2010,
+                                        2011,
+                                        2012,
+                                        2013,
+                                        2014,
+                                        2015,
+                                        2016,
+                                        2017,
+                                        2018,
+                                        9999
+                                    ],
+                                    destinations: [],
+                                    auteurs: [],
+                                    sessions: [
+                                        "NORMALE",
+                                        "REMPLACEMENT",
+                                        "SECOURS",
+                                        "NONDEFINI"
+                                    ],
+                                    recherche: "",
+                                    typeRecherche: "tousLesMots"
+                                });
+                                setFiltres(false);
+                            }
+
+                            setLoading(true);
+                            setIdSujet(parseInt(idTemp));
+                            setSujets([]);
                         }}
                         onChange={(val) => setIdtemp(val.target.value)}
                         style={{ width: 100, marginLeft: 20, zIndex: 1 }}
