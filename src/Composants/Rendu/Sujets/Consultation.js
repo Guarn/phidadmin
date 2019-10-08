@@ -170,7 +170,7 @@ const Consultation = () => {
     const [sujets, setSujets] = useState([]);
     const [nbResultats, setNbResultats] = useState();
     const [menu, setMenu] = useState([]);
-    const [idSujet, setIdSujet] = useState(0);
+    const [idSujet, setIdSujet] = useState(1);
     const [menuFiltres, setMenuFiltres] = useState(false);
     const [filtres, setFiltres] = useState(false);
     const [texte1, setTexte1] = useState("");
@@ -230,31 +230,42 @@ const Consultation = () => {
     const SwitchSujet = (val) => {
         setLoading(true);
 
-        if (val === "+") {
-            setTexte1(sujets[idSujet + 1].Sujet1);
-            setTexte2(sujets[idSujet + 1].Sujet2);
-            setTexte3(sujets[idSujet + 1].Sujet3);
-            setState({ id: 0, Sujet: sujets[idSujet + 1] });
-            setIdSujet(idSujet + 1);
-        }
-        if (val === "-") {
-            setTexte1(sujets[idSujet - 1].Sujet1);
-            setTexte2(sujets[idSujet - 1].Sujet2);
-            setTexte3(sujets[idSujet - 1].Sujet3);
-            setState({ id: 0, Sujet: sujets[idSujet - 1] });
-            setIdSujet(idSujet - 1);
+        if (filtres) {
+            if (val === "+") {
+                setTexte1(sujets[idSujet + 1].Sujet1);
+                setTexte2(sujets[idSujet + 1].Sujet2);
+                setTexte3(sujets[idSujet + 1].Sujet3);
+                setState({ id: 0, Sujet: sujets[idSujet + 1] });
+                setIdSujet(idSujet + 1);
+            }
+            if (val === "-") {
+                setTexte1(sujets[idSujet - 1].Sujet1);
+                setTexte2(sujets[idSujet - 1].Sujet2);
+                setTexte3(sujets[idSujet - 1].Sujet3);
+                setState({ id: 0, Sujet: sujets[idSujet - 1] });
+                setIdSujet(idSujet - 1);
+            }
+        } else {
+            if (val === "+") {
+                setSujets([]);
+                setState();
+                setIdSujet(idSujet + 1);
+            }
+            if (val === "-") {
+                setSujets([]);
+                setState();
+                setIdSujet(idSujet - 1);
+            }
         }
         return null;
     };
 
     //NOTE Recherche par filtres avec récupération données sur base
 
-    const RechercheFiltres = async () => {
+    const RechercheFiltres = () => {
         setMenuFiltres(false);
-        setFiltres(true);
-        await ax.post("/resultatsAdmin", { elementsCoches }).then((rep) => {
-            if (rep.data.count !== 0) {
-                setIdSujet(0);
+        ax.post("/resultatsAdmin", { elementsCoches }).then((rep) => {
+            if (rep.data.count > 0) {
                 let state1 = rep.data.rows;
                 state1.sort((a, b) => a["id"] - b["id"]);
                 setSujets(state1);
@@ -263,6 +274,8 @@ const Consultation = () => {
                 setTexte1(state1[0].Sujet1);
                 setTexte2(state1[0].Sujet2);
                 setTexte3(state1[0].Sujet3);
+                setIdSujet(0);
+                setFiltres(true);
             } else {
                 setSujets({});
                 setNbResultats(0);
@@ -272,8 +285,8 @@ const Consultation = () => {
 
     //NOTE Enregistrement des modifs de sujet en ligne
 
-    const ConfirmModif = async () => {
-        await setState({
+    const ConfirmModif = () => {
+        setState({
             ...state,
             Sujet: { ...state.Sujet, Problemes: false }
         });
@@ -286,11 +299,10 @@ const Consultation = () => {
             icon: <Icon type="loading" style={{ color: "#108ee9" }} />
         });
 
-        await ax
-            .post(`/sujets/${state.Sujet.id}`, {
-                ...state.Sujet,
-                Problemes: false
-            })
+        ax.post(`/sujets/${state.Sujet.id}`, {
+            ...state.Sujet,
+            Problemes: false
+        })
             .then((rep) => {
                 notification.open({
                     placement: "bottomRight",
@@ -384,26 +396,19 @@ const Consultation = () => {
         }
     };
 
-    //NOTE Logique d'affichage pour Problemes
+    //NOTE Premier Problemes : Logique d'affichage pour Problemes
 
     const PremierProbleme = () => {
-        for (let i = 0; i < sujets.length; i++) {
-            if (sujets[i].Problemes === true) {
-                if (RefNotions.current)
-                    RefNotions.current.rcSelect.state.value = [];
-                if (RefAuteurs.current)
-                    RefAuteurs.current.rcSelect.state.value = [];
-                if (RefSeries.current)
-                    RefSeries.current.rcSelect.state.value = [];
-                if (RefDestinations.current)
-                    RefDestinations.current.rcSelect.state.value = [];
-                if (RefSessions.current)
-                    RefSessions.current.state.value = "TOUTES";
-                if (RefAnnees.current)
-                    RefAnnees.current.rcSlider.state.bounds = [1996, 2018];
-                setFiltres(false);
-                setIdSujet(i);
-                setSujets([]);
+        setLoading(true);
+        ax.get("/problemesAdmin").then((rep) => {
+            if (filtres) {
+                console.log("filtres");
+                RefNotions.current.rcSelect.state.value = [];
+                RefAuteurs.current.rcSelect.state.value = [];
+                RefSeries.current.rcSelect.state.value = [];
+                RefDestinations.current.rcSelect.state.value = [];
+                RefSessions.current.state.value = "TOUTES";
+                RefAnnees.current.rcSlider.state.bounds = [1996, 2018];
 
                 setElementsCoches({
                     notions: [],
@@ -445,9 +450,20 @@ const Consultation = () => {
                     recherche: "",
                     typeRecherche: "tousLesMots"
                 });
-                return null;
+                setFiltres(false);
+                console.log("setFiltres");
             }
-        }
+
+            setNbResultats(rep.data.Count);
+            console.log("SetNbResultats");
+            setSujets(rep.data.Sujet);
+            console.log("SetSujets");
+            setIdSujet(rep.data.Sujet[0].id);
+
+            console.log(rep.data.Sujet);
+        });
+
+        return null;
     };
 
     //!SECTION
@@ -457,18 +473,16 @@ const Consultation = () => {
     useEffect(() => {
         // ANCHOR Premier affichage ou filtres0
         if (sujets.length === 0) {
-            ax.get("/sujets").then((rep) => {
+            ax.get(`/sujets/${idSujet}`).then((rep) => {
                 if (
-                    rep.data.length > 0 &&
-                    idSujet < rep.data.length &&
-                    idSujet >= 0
+                    rep.data.Count > 0 &&
+                    idSujet <= rep.data.Count &&
+                    idSujet >= 1
                 ) {
-                    setLoading(false);
-                    let state1 = rep.data;
-                    state1.sort((a, b) => a["id"] - b["id"]);
+                    let state1 = rep.data.Sujet;
                     setSujets(state1);
-                    setNbResultats(rep.data.length);
-                    setState({ ...state, Sujet: state1[idSujet] });
+                    setNbResultats(rep.data.Count);
+                    setState({ ...state, Sujet: rep.data.Sujet });
                     let regex1 = /É/g;
                     let regex1b = /é/g;
                     let regex2 = /ù/g;
@@ -484,9 +498,9 @@ const Consultation = () => {
                     let regex12 = /À/g;
                     let regex13 = /ê/g;
                     let textesT = [
-                        state1[idSujet].Sujet1,
-                        state1[idSujet].Sujet2,
-                        state1[idSujet].Sujet3
+                        rep.data.Sujet.Sujet1,
+                        rep.data.Sujet.Sujet2,
+                        rep.data.Sujet.Sujet3
                     ];
                     let texte = [];
                     textesT.map((el, index) => {
@@ -510,15 +524,14 @@ const Consultation = () => {
                     setTexte1(texte[0]);
                     setTexte2(texte[1]);
                     setTexte3(texte[2]);
+                    setLoading(false);
                 } else {
                     setNbResultats(0);
                 }
             });
         } else {
             // ANCHOR Si Resultats > 0
-
-            if (nbResultats !== 0) {
-                setState({ ...state, Sujet: sujets[idSujet] });
+            if (nbResultats > 0) {
                 let regex1 = /É/g;
                 let regex1b = /é/g;
                 let regex2 = /ù/g;
@@ -533,11 +546,25 @@ const Consultation = () => {
                 let regex11 = /	/g;
                 let regex12 = /À/g;
                 let regex13 = /ê/g;
-                let textesT = [
-                    sujets[idSujet].Sujet1,
-                    sujets[idSujet].Sujet2,
-                    sujets[idSujet].Sujet3
-                ];
+                let textesT;
+                if (filtres) {
+                    setState({ ...state, Sujet: sujets[idSujet] });
+
+                    textesT = [
+                        sujets[idSujet].Sujet1,
+                        sujets[idSujet].Sujet2,
+                        sujets[idSujet].Sujet3
+                    ];
+                } else {
+                    setState({ ...state, Sujet: sujets[0] });
+
+                    textesT = [
+                        sujets[0].Sujet1,
+                        sujets[0].Sujet2,
+                        sujets[0].Sujet3
+                    ];
+                }
+                console.log(sujets);
                 let texte = [];
                 textesT.map((el, index) => {
                     texte[index] = el.replace(regex1, "É");
@@ -560,9 +587,10 @@ const Consultation = () => {
                 setTexte2(texte[1]);
                 setTexte3(texte[2]);
                 setLoading(false);
+                console.log("Etat : " + idSujet);
             }
         }
-        if (sujets.length === 0) {
+        if (!menu.annees) {
             ax.get("/menuAdmin").then((rep) => {
                 let state = rep.data;
                 state.annees.sort((a, b) => a["Annee"] - b["Annee"]);
@@ -578,7 +606,7 @@ const Consultation = () => {
                 setMenu(state);
             });
         }
-    }, [idSujet, elementsCoches, filtres]);
+    }, [idSujet, filtres]);
     //!SECTION
 
     return (
@@ -717,7 +745,7 @@ const Consultation = () => {
                                 2018
                             ];
                             setFiltres(false);
-                            setIdSujet(0);
+                            setIdSujet(1);
                             setSujets([]);
 
                             setElementsCoches({
@@ -808,7 +836,7 @@ const Consultation = () => {
                                 ];
                                 setFiltres(false);
                                 setSujets([]);
-                                setIdSujet(0);
+                                setIdSujet(1);
 
                                 setElementsCoches({
                                     notions: [],
@@ -927,7 +955,7 @@ const Consultation = () => {
                     />
                 </ConteneurFiltres>
                 <ConteneurResultats>
-                    {nbResultats > 0 && (
+                    {nbResultats > 0 && !loading && (
                         // SECTION RESULTATS
                         <Card loading={loading} style={{ width: 798 }}>
                             <InfosEntete>
@@ -966,7 +994,15 @@ const Consultation = () => {
                                 </div>
                                 <div style={{ display: "flex" }}>
                                     <Button
-                                        disabled={idSujet === 0 ? true : false}
+                                        disabled={
+                                            !filtres
+                                                ? idSujet === 1
+                                                    ? true
+                                                    : false
+                                                : idSujet === 0
+                                                ? true
+                                                : false
+                                        }
                                         onClick={() => {
                                             SwitchSujet("-");
                                         }}
@@ -983,11 +1019,16 @@ const Consultation = () => {
                                             justifyContent: "center",
                                             display: "flex"
                                         }}
-                                    >{`${idSujet +
-                                        1} / ${nbResultats}`}</NomLabel>
+                                    >{`${
+                                        filtres ? idSujet + 1 : idSujet
+                                    } / ${nbResultats}`}</NomLabel>
                                     <Button
                                         disabled={
-                                            idSujet < sujets.length - 1
+                                            filtres
+                                                ? idSujet + 1 < nbResultats
+                                                    ? false
+                                                    : true
+                                                : idSujet < nbResultats
                                                 ? false
                                                 : true
                                         }
