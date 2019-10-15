@@ -13,7 +13,7 @@ import {
     notification,
     Icon
 } from "antd";
-import ReactQuill, { Quill } from "react-quill";
+import ReactQuill from "react-quill";
 import axios from "axios";
 import Editor from "../../Fonctionnels/Editor";
 import "react-quill/dist/quill.snow.css";
@@ -45,25 +45,6 @@ const Conteneur = styled.div`
     padding: 20px;
     overflow: auto;
 `;
-const InfosEntete = styled.div`
-    display: flex;
-    margin-bottom: 20px;
-    justify-content: space-between;
-`;
-
-const DoubleLabel = styled.div`
-    display: flex;
-    border: 1px solid lightgrey;
-    overflow: hidden;
-    margin-right: 10px;
-`;
-
-const NomLabel = styled.div`
-    background-color: lightgrey;
-    font-family: "Roboto";
-    padding: 5px;
-    color: white;
-`;
 
 const NomChamp = styled.div`
     background-color: lightgrey;
@@ -76,10 +57,6 @@ const NomChamp = styled.div`
     border-radius: 5px 0 0 5px;
 `;
 
-const ContenuLabel = styled.div`
-    font-family: "Roboto";
-    padding: 5px;
-`;
 const ConteneurTextes = styled.div`
     display: flex;
     flex-direction: column;
@@ -87,7 +64,7 @@ const ConteneurTextes = styled.div`
 
 const Creation = (props) => {
     const ax = axios.create({
-        baseURL: "http://phidbac.fr:4000/",
+        baseURL: "http://192.168.0.85:4000/",
         headers: { Authorization: props.cookies.get("token") },
         responseType: "json"
     });
@@ -146,7 +123,6 @@ const Creation = (props) => {
             Problemes: false
         })
             .then((rep) => {
-                console.log(rep);
                 if (rep.status === 202) {
                     notification.open({
                         placement: "bottomRight",
@@ -173,7 +149,6 @@ const Creation = (props) => {
                 }
             })
             .catch((err) => {
-                console.log(err);
                 notification.open({
                     placement: "bottomRight",
                     key,
@@ -184,8 +159,8 @@ const Creation = (props) => {
     };
 
     useEffect(() => {
+        console.log('TEST');
         ax.get("/menuAdmin").then((rep) => {
-            console.log(rep);
             let state1 = rep.data;
             state1.annees.sort((a, b) => a["Annee"] - b["Annee"]);
             state1.auteurs.sort((a, b) =>

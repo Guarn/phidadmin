@@ -22,7 +22,7 @@
     "scripts": {
         "start": "react-app-rewired start",
         "build": "react-app-rewired build",
-        "serve": "run-script serve -s build -l 3001",
+        "serve": "serve -s build -l 3001",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
         "analyze": "source-map-explorer 'build/static/js/*.js'"

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { Card, Progress, Divider, Icon } from "antd";
+import { Card, Progress, Icon } from "antd";
 import axios from "axios";
 
 const Conteneur = styled.div`
@@ -8,13 +8,17 @@ const Conteneur = styled.div`
     height: 100%;
     width: 100%;
     padding: 20px;
+    overflow: auto;
 `;
 
-const Tableau = () => {
+const Tableau = (props) => {
     const [countSujets, setCountSujets] = useState(0);
     const [countProb, setCountProb] = useState(0);
+
+    const [t, tt] = useState(false);
+
     const ax = axios.create({
-        baseURL: "http://phidbac.fr:4000/",
+        baseURL: "http://192.168.0.85:4000/",
         responseType: "json"
     });
 
@@ -23,7 +27,7 @@ const Tableau = () => {
             setCountProb(rep.data.countProblemes);
             setCountSujets(rep.data.countSujets);
         });
-    });
+    }, []);
 
     return (
         <Conteneur>
@@ -39,7 +43,9 @@ const Tableau = () => {
                         type="dashboard"
                     />
                 }
-                actions={[<Icon type="eye" key="view" />]}
+                actions={[
+                    <Icon type="eye" key="view" onClick={() => tt(!t)} />
+                ]}
                 title="Sujets"
             >
                 <div

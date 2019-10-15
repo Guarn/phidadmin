@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { withRouter } from "react-router-dom";
+import { withCookies } from "react-cookie";
 import { Dropdown, Menu, Icon, Badge } from "antd";
+import axios from "axios";
 
 const ContenuHeader = styled.div`
     background-color: white;
@@ -27,13 +29,18 @@ const PartieD = styled.div`
 `;
 
 const ConteneurHeader = (props) => {
-    const { history, location } = props;
+    const ax = axios.create({
+        baseURL: "http://192.168.0.85:4000/",
+        headers: { Authorization: props.cookies.get("token") },
+        responseType: "json"
+    });
+    const [loading, setLoading] = useState(true);
+    const { location } = props;
     const [user, setUser] = useState(props.user);
     const menu = (
         <Menu style={{ marginLeft: "-25px" }}>
             <Menu.Item
                 onClick={() => {
-                    setUser("");
                     props.cookies.remove("token");
                 }}
             >
@@ -41,6 +48,14 @@ const ConteneurHeader = (props) => {
             </Menu.Item>
         </Menu>
     );
+    useEffect(() => {
+        setLoading(true);
+        ax.get("/p").then((rep) => {
+            setUser(rep.data);
+            setLoading(false);
+        });
+
+    }, []);
     return (
         <ContenuHeader>
             <ConteneurChemin>
@@ -65,10 +80,10 @@ const ConteneurHeader = (props) => {
                     type="setting"
                     style={{ fontSize: "20px", marginRight: "25px" }}
                 />
-                {user !== "" ? (
+                {!loading ? (
                     <Dropdown overlay={menu}>
                         <span style={{ color: "orange", fontSize: "20px" }}>
-                            {user.Prenom}
+                            {user.prenom + " " + user.nom}
                             <Icon type="down" />
                         </span>
                     </Dropdown>
@@ -80,4 +95,4 @@ const ConteneurHeader = (props) => {
     );
 };
 
-export default withRouter(ConteneurHeader);
+export default withCookies(withRouter(ConteneurHeader));

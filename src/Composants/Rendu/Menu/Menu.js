@@ -130,7 +130,9 @@ const Menu = () => {
                 </Categorie>
                 <Categorie>
                     <Divider orientation="left">Utilisateurs</Divider>
-                    <Lien>
+                    <Lien
+                        onClick={() => changementPage("/Utilisateurs/Gestion")}
+                    >
                         <Icon
                             style={{
                                 fontSize: "25px",

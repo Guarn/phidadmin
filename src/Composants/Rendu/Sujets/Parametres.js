@@ -1,5 +1,5 @@
 import { withCookies } from "react-cookie";
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import {
     Transfer,
@@ -28,7 +28,7 @@ const Conteneur = styled.div`
 
 const Parametres = (props) => {
     const ax = axios.create({
-        baseURL: "http://phidbac.fr:4000/",
+        baseURL: "http://192.168.0.85:4000/",
         headers: { Authorization: props.cookies.get("token") },
         responseType: "json"
     });
@@ -49,18 +49,19 @@ const Parametres = (props) => {
     const [selNot, setSelNot] = useState();
 
     const change = (targetKeys, direction, moveKeys) => {
-        console.log(targetKeys, direction, moveKeys);
-        setCoc(targetKeys);
         ax.post("/NotionProgramme", {
             notion: moveKeys,
             prog: direction === "left" ? false : true
-        });
+        })
+            .then(() => {
+                setCoc(targetKeys);
+            })
+            .catch((err, ed) => console.log(err.response, ed));
     };
 
     const nouvelleNotion = () => {
         ax.post("/NotionAjout", { notion: notion, prog: notCheck }).then(
             (rep) => {
-                console.log(rep);
                 if (rep.status === 201) {
                     notification["success"]({
                         message: "Nouvelle notion ajoutée"
@@ -80,7 +81,6 @@ const Parametres = (props) => {
             ax.post("/NotionSuppression", {
                 notion: selNot
             }).then((rep) => {
-                console.log(rep);
                 if (rep.status === 201) {
                     notification["success"]({
                         message: "Notion supprimée"
@@ -98,7 +98,6 @@ const Parametres = (props) => {
 
     const nouvelAuteur = () => {
         ax.post("/AuteurAjout", { auteur: auteur }).then((rep) => {
-            console.log(rep);
             if (rep.status === 201) {
                 notification["success"]({
                     message: "Nouvel Auteur ajouté"
@@ -116,7 +115,6 @@ const Parametres = (props) => {
     const suppressionAuteur = () => {
         if (selAuteur !== "") {
             ax.post("/AuteurSuppression", { auteur: selAuteur }).then((rep) => {
-                console.log(rep);
                 if (rep.status === 201) {
                     notification["success"]({
                         message: "Auteur supprimé"
@@ -134,7 +132,6 @@ const Parametres = (props) => {
     const nouvelleDestination = () => {
         ax.post("/DestinationAjout", { destination: destination }).then(
             (rep) => {
-                console.log(rep);
                 if (rep.status === 201) {
                     notification["success"]({
                         message: "Nouvelle Destination ajoutée"
@@ -156,7 +153,6 @@ const Parametres = (props) => {
                 destination: selDestination
             })
                 .then((rep) => {
-                    console.log(rep);
                     if (rep.status === 201) {
                         notification["success"]({
                             message: "Destination supprimée"
@@ -239,7 +235,6 @@ const Parametres = (props) => {
         let tab = [];
         let prog = [];
         ax.get("/notionsAdmin").then((rep) => {
-            console.log(rep);
             rep.data.map((el, id) => {
                 tab.push({
                     title: el.Notion,
@@ -249,16 +244,15 @@ const Parametres = (props) => {
                 if (el.Au_Programme) {
                     prog.push(el.Notion);
                 }
+                return null;
             });
             setDataSource(tab);
             setCoc(prog);
         });
         ax.get("/auteurs").then((rep) => {
-            console.log(rep);
             setAuteurs(rep.data);
         });
         ax.get("/destinations").then((rep) => {
-            console.log(rep);
             setDestinations(rep.data);
         });
     }, []);
@@ -296,7 +290,6 @@ const Parametres = (props) => {
                     selectedKeys={sk}
                     onSelectChange={(a, b) => {
                         setSk([...a, ...b]);
-                        console.log(sk);
                     }}
                     onChange={(targetKeys, direction, moveKeys) =>
                         change(targetKeys, direction, moveKeys)

@@ -1,17 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import styled from "styled-components";
 import "./App.css";
-import ConsultationSujets from "./Composants/Rendu/Sujets/ConsultationSujets";
-import ParametresSujets from "./Composants/Rendu/Sujets/Parametres";
-import CreationSujets from "./Composants/Rendu/Sujets/CreationSujets";
 import Menu from "./Composants/Rendu/Menu/Menu";
 import ConteneurHeader from "./Composants/Rendu/ConteneurHeader/ConteneurHeader";
 import { Card, Input } from "antd";
 import axios from "axios";
 import { withCookies } from "react-cookie";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Tableau from "./Composants/Rendu/Tableau/Tableau";
 
+const ConsultationSujets = React.lazy(() =>
+    import("./Composants/Rendu/Sujets/ConsultationSujets")
+);
+const Tableau = React.lazy(() => import("./Composants/Rendu/Tableau/Tableau"));
+const CreationSujets = React.lazy(() =>
+    import("./Composants/Rendu/Sujets/CreationSujets")
+);
+const ParametresSujets = React.lazy(() =>
+    import("./Composants/Rendu/Sujets/Parametres")
+);
+const GestionUtilisateurs = React.lazy(() =>
+    import("./Composants/Rendu/Utilisateurs/Gestion")
+);
 const ConteneurGlobal = styled.div`
     width: 100%;
     height: 100%;
@@ -36,7 +45,7 @@ const Login1 = styled.div`
 
 function App(props) {
     const ax = axios.create({
-        baseURL: "http://phidbac.fr:4000/",
+        baseURL: "http://192.168.0.85:4000/",
         headers: { Authorization: props.cookies.get("token") },
         responseType: "json"
     });
@@ -57,7 +66,7 @@ function App(props) {
                     props.cookies.set("token", "Bearer " + rep.data.token, {
                         path: "/"
                     });
-                    setUser(rep.data.prenom);
+                    setUser(rep);
                     formIdent = "";
                     formPass = "";
                 })
@@ -65,70 +74,71 @@ function App(props) {
         }
     };
 
-    const RouteProtected = ({ children, ...rest }) => {
-        return (
-            <Route
-                {...rest}
-                render={() =>
-                    user.Prenom !== "" ? (
-                        children
-                    ) : (
-                        <Login1>
-                            <Card>
-                                <Input
-                                    key="1"
-                                    placeholder="Identifiant"
-                                    onChange={(e) =>
-                                        (formIdent = e.target.value)
-                                    }
-                                />
-                                <Input.Password
-                                    key="2"
-                                    placeholder="Mot de passe"
-                                    onChange={(e) =>
-                                        (formPass = e.target.value)
-                                    }
-                                    onPressEnter={() => identification()}
-                                />
-                            </Card>
-                        </Login1>
-                    )
-                }
-            />
-        );
-    };
-
     useEffect(() => {
-        ax.get("/p").then((rep) => {
-            setUser({ ...user, Prenom: rep.data.req });
-            console.log(rep);
-        });
-    }, []);
+        if (props.cookies.get("token"))
+            ax.get("/p")
+                .then((rep) => {
+                    setUser(rep.data);
+                })
+                .catch((err) =>
+                    setUser({
+                        Nom: "",
+                        Prenom: "",
+                        Mail: "",
+                        Grade: ""
+                    })
+                );
+    }, [user.Nom]);
     return (
-        <Router>
-            <Switch>
-                <RouteProtected path="/">
+        <>
+            {props.cookies.get("token") && (
+                <Router>
                     <ConteneurGlobal>
                         <Menu />
                         <ConteneurContenu>
-                            <ConteneurHeader user={user} />
-                            <Route exact path="/">
-                                <Tableau />
-                            </Route>
-                            <Route path="/Sujets/Consultation">
-                                <ConsultationSujets />
-                            </Route>
-                            <Route path="/Sujets/Parametres">
-                                <ParametresSujets />
-                            </Route>
-                            <Route path="/Sujets/Creation">
-                                <CreationSujets />
-                            </Route>
+                            <ConteneurHeader />
+                            <Switch>
+                                <Suspense fallback={<div>Chargement...</div>}>
+                                    <Route exact path="/">
+                                        <Tableau />
+                                    </Route>
+                                    <Route
+                                        path="/Sujets/Consultation"
+                                        component={ConsultationSujets}
+                                    />
+                                    <Route path="/Sujets/Parametres">
+                                        <ParametresSujets />
+                                    </Route>
+                                    <Route path="/Sujets/Creation">
+                                        <CreationSujets />
+                                    </Route>
+                                    <Route path="/Utilisateurs/Gestion">
+                                        <GestionUtilisateurs />
+                                    </Route>
+                                </Suspense>
+                            </Switch>
                         </ConteneurContenu>
                     </ConteneurGlobal>
-                </RouteProtected>
-            </Switch>
-        </Router>
+                </Router>
+            )}
+            {!props.cookies.get("token") && (
+                <Login1>
+                    <Card>
+                        <Input
+                            key="1"
+                            placeholder="Identifiant"
+                            onChange={(e) => (formIdent = e.target.value)}
+                        />
+                        <Input.Password
+                            key="2"
+                            placeholder="Mot de passe"
+                            onChange={(e) => (formPass = e.target.value)}
+                            onPressEnter={() => identification()}
+                        />
+                    </Card>
+                </Login1>
+            )}
+        </>
     );
 }
 
