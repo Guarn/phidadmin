@@ -23,6 +23,7 @@ const Conteneur = styled.div`
     height: 100%;
     width: 100%;
     padding: 20px;
+    overflow: auto;
 `;
 
 const Parametres = (props) => {
@@ -34,6 +35,11 @@ const Parametres = (props) => {
     const [auteur, setAuteur] = useState();
     const [auteurs, setAuteurs] = useState();
     const [selAuteur, setSelAuteur] = useState();
+
+    const [destination, setDestination] = useState();
+    const [destinations, setDestinations] = useState();
+    const [selDestination, setSelDestination] = useState();
+
     const [sk, setSk] = useState();
     const [coc, setCoc] = useState();
     const [dataSource, setDataSource] = useState();
@@ -125,6 +131,47 @@ const Parametres = (props) => {
             });
         }
     };
+    const nouvelleDestination = () => {
+        ax.post("/DestinationAjout", { destination: destination }).then(
+            (rep) => {
+                console.log(rep);
+                if (rep.status === 201) {
+                    notification["success"]({
+                        message: "Nouvelle Destination ajoutée"
+                    });
+                }
+                if (rep.status === 200) {
+                    notification["error"]({
+                        message: "Erreur",
+                        description: rep.data.msg
+                    });
+                }
+            }
+        );
+    };
+
+    const suppressionDestination = () => {
+        if (selAuteur !== "") {
+            ax.post("/DestinationSuppression", {
+                destination: selDestination
+            })
+                .then((rep) => {
+                    console.log(rep);
+                    if (rep.status === 201) {
+                        notification["success"]({
+                            message: "Destination supprimée"
+                        });
+                    }
+                    if (rep.status === 200) {
+                        notification["error"]({
+                            message: "Erreur",
+                            description: rep.data.msg
+                        });
+                    }
+                })
+                .catch((err) => console.log(err));
+        }
+    };
 
     const popNotion = (
         <div>
@@ -167,6 +214,26 @@ const Parametres = (props) => {
             </Button>
         </div>
     );
+    const popDestination = (
+        <div>
+            <Input
+                placeholder="Destination en minuscule"
+                onChange={(e) =>
+                    setDestination(e.target.value.toLocaleUpperCase())
+                }
+            ></Input>
+
+            <Button
+                block
+                type="primary"
+                size="small"
+                style={{ marginTop: "10px" }}
+                onClick={() => nouvelleDestination()}
+            >
+                Créer
+            </Button>
+        </div>
+    );
 
     useEffect(() => {
         let tab = [];
@@ -189,6 +256,10 @@ const Parametres = (props) => {
         ax.get("/auteurs").then((rep) => {
             console.log(rep);
             setAuteurs(rep.data);
+        });
+        ax.get("/destinations").then((rep) => {
+            console.log(rep);
+            setDestinations(rep.data);
         });
     }, []);
 
@@ -267,7 +338,7 @@ const Parametres = (props) => {
                 </Popconfirm>
             </Card>
             <Card
-                style={{ width: "700px" }}
+                style={{ width: "700px", marginBottom: "10px" }}
                 title="Auteurs"
                 extra={
                     <Popover
@@ -309,6 +380,59 @@ const Parametres = (props) => {
                     title="Confirmer la suppression ?"
                     placement="rightTop"
                     onConfirm={() => suppressionAuteur()}
+                    icon={
+                        <Icon
+                            type="question-circle-o"
+                            style={{ color: "red" }}
+                        />
+                    }
+                >
+                    <Button icon="delete" type="danger" />
+                </Popconfirm>
+            </Card>
+            <Card
+                style={{ width: "700px", marginBottom: "50px" }}
+                title="Destinations"
+                extra={
+                    <Popover
+                        placement="rightTop"
+                        title="Ajouter une destination"
+                        content={popDestination}
+                        trigger="click"
+                    >
+                        <Button
+                            style={{ marginTop: "10px" }}
+                            type="primary"
+                            icon="plus"
+                        />
+                    </Popover>
+                }
+            >
+                <Select
+                    style={{
+                        width: 250,
+                        marginTop: "10px",
+                        marginRight: "10px"
+                    }}
+                    onChange={(e) => setSelDestination(e)}
+                    showSearch
+                    placeholder="Choisir une destination à supprimer"
+                >
+                    {destinations &&
+                        destinations.map((el, index) => {
+                            return (
+                                <Option key={index} value={el.Destination}>
+                                    {el.Destination}
+                                </Option>
+                            );
+                        })}
+                </Select>
+                <Popconfirm
+                    okText="Supprimer"
+                    cancelText="Annuler"
+                    title="Confirmer la suppression ?"
+                    placement="rightTop"
+                    onConfirm={() => suppressionDestination()}
                     icon={
                         <Icon
                             type="question-circle-o"

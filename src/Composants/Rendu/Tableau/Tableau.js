@@ -11,8 +11,8 @@ const Conteneur = styled.div`
 `;
 
 const Tableau = () => {
-    const [countSujets, setCountSujets] = useState();
-    const [countProb, setCountProb] = useState();
+    const [countSujets, setCountSujets] = useState(0);
+    const [countProb, setCountProb] = useState(0);
     const ax = axios.create({
         baseURL: "http://phidbac.fr:4000/",
         responseType: "json"
@@ -64,6 +64,7 @@ const Tableau = () => {
                     </div>
                     <span style={{ fontSize: "20px" }}>Sujets</span>
                 </div>
+
                 <div
                     style={{
                         display: "flex",
@@ -84,7 +85,7 @@ const Tableau = () => {
                     >
                         {countProb}
                     </div>
-                    <span style={{ fontSize: "20px" }}>Problèmes</span>
+                    <span style={{ fontSize: "20px" }}>Non vérifiés</span>
                 </div>
                 <div
                     style={{
@@ -104,9 +105,9 @@ const Tableau = () => {
                             width: "30%"
                         }}
                     >
-                        0
+                        {countSujets - countProb}
                     </div>
-                    <span style={{ fontSize: "20px" }}>Suggestions</span>
+                    <span style={{ fontSize: "20px" }}>Vérifiés</span>
                 </div>
             </Card>
         </Conteneur>

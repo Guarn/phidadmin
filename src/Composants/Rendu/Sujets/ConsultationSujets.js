@@ -208,6 +208,7 @@ const ConsultationSujets = () => {
             2016,
             2017,
             2018,
+            2019,
             9999
         ],
         destinations: [],
@@ -409,7 +410,7 @@ const ConsultationSujets = () => {
                 RefSeries.current.rcSelect.state.value = [];
                 RefDestinations.current.rcSelect.state.value = [];
                 RefSessions.current.state.value = "TOUTES";
-                RefAnnees.current.rcSlider.state.bounds = [1996, 2018];
+                RefAnnees.current.rcSlider.state.bounds = [1996, 2019];
 
                 setElementsCoches({
                     notions: [],
@@ -438,6 +439,7 @@ const ConsultationSujets = () => {
                         2016,
                         2017,
                         2018,
+                        2019,
                         9999
                     ],
                     destinations: [],
@@ -707,12 +709,12 @@ const ConsultationSujets = () => {
                 <Slider
                     ref={RefAnnees}
                     range
-                    marks={{ 1996: "1996", 2018: "2018" }}
-                    max={2018}
+                    marks={{ 1996: "1996", 2019: "2019" }}
+                    max={2019}
                     min={1996}
                     tooltipPlacement="bottom"
                     step={1}
-                    defaultValue={[1996, 2018]}
+                    defaultValue={[1996, 2019]}
                     onChange={(val) => changeFiltres(val, "annees")}
                 />
 
@@ -724,7 +726,7 @@ const ConsultationSujets = () => {
                         RefSeries.current.rcSelect.state.value = [];
                         RefDestinations.current.rcSelect.state.value = [];
                         RefSessions.current.state.value = "TOUTES";
-                        RefAnnees.current.rcSlider.state.bounds = [1996, 2018];
+                        RefAnnees.current.rcSlider.state.bounds = [1996, 2019];
                         setFiltres(false);
                         setIdSujet(1);
                         setSujets([]);
@@ -756,6 +758,7 @@ const ConsultationSujets = () => {
                                 2016,
                                 2017,
                                 2018,
+                                2019,
                                 9999
                             ],
                             destinations: [],
@@ -810,7 +813,7 @@ const ConsultationSujets = () => {
                             RefSessions.current.state.value = "TOUTES";
                             RefAnnees.current.rcSlider.state.bounds = [
                                 1996,
-                                2018
+                                2019
                             ];
                             setFiltres(false);
                             setSujets([]);
@@ -843,6 +846,7 @@ const ConsultationSujets = () => {
                                     2016,
                                     2017,
                                     2018,
+                                    2019,
                                     9999
                                 ],
                                 destinations: [],
@@ -881,7 +885,7 @@ const ConsultationSujets = () => {
                             if (RefAnnees.current)
                                 RefAnnees.current.rcSlider.state.bounds = [
                                     1996,
-                                    2018
+                                    2019
                                 ];
 
                             setElementsCoches({
@@ -911,6 +915,7 @@ const ConsultationSujets = () => {
                                     2016,
                                     2017,
                                     2018,
+                                    2019,
                                     9999
                                 ],
                                 destinations: [],
@@ -1476,7 +1481,7 @@ const ConsultationSujets = () => {
                                     <InputNumber
                                         key="RechercheID"
                                         min={1996}
-                                        max={2018}
+                                        max={2019}
                                         value={state.Sujet.Annee}
                                         onChange={(val) =>
                                             setState({

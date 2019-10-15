@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { withCookies } from "react-cookie";
 import styled from "styled-components";
 import {
     Divider,
@@ -8,7 +9,9 @@ import {
     Input,
     InputNumber,
     Radio,
-    Card
+    Card,
+    notification,
+    Icon
 } from "antd";
 import ReactQuill, { Quill } from "react-quill";
 import axios from "axios";
@@ -17,11 +20,6 @@ import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
 
 const { Option } = Select;
-
-const ax = axios.create({
-    baseURL: "http://phidbac.fr:4000/",
-    responseType: "json"
-});
 
 //NOTE QUILL Modules
 
@@ -45,6 +43,7 @@ const Conteneur = styled.div`
     height: 100%;
     width: 100%;
     padding: 20px;
+    overflow: auto;
 `;
 const InfosEntete = styled.div`
     display: flex;
@@ -86,8 +85,13 @@ const ConteneurTextes = styled.div`
     flex-direction: column;
 `;
 
-const Creation = () => {
-    const [state, setState] = useState({ Sujet: {} });
+const Creation = (props) => {
+    const ax = axios.create({
+        baseURL: "http://phidbac.fr:4000/",
+        headers: { Authorization: props.cookies.get("token") },
+        responseType: "json"
+    });
+    const [state, setState] = useState({ Sujet: { Annee: 2019 } });
     const [menu, setMenu] = useState();
     const [texte1, setTexte1] = useState("");
     const [texte2, setTexte2] = useState("");
@@ -123,9 +127,7 @@ const Creation = () => {
             });
         }
     };
-    const ConfirmModif = () => {
-        console.log(state.Sujet);
-        /*
+    const nouveauSujet = () => {
         setState({
             ...state,
             Sujet: { ...state.Sujet, Problemes: false }
@@ -139,31 +141,46 @@ const Creation = () => {
             icon: <Icon type="loading" style={{ color: "#108ee9" }} />
         });
 
-        ax.post(`/sujets/${state.Sujet.id}`, {
+        ax.post(`/SujetAjout`, {
             ...state.Sujet,
             Problemes: false
         })
             .then((rep) => {
-                notification.open({
-                    placement: "bottomRight",
-                    key,
-                    message: "Changement effectué !",
-                    icon: (
-                        <Icon
-                            type="check-circle"
-                            style={{ color: "#52c41a" }}
-                        />
-                    )
-                });
+                console.log(rep);
+                if (rep.status === 202) {
+                    notification.open({
+                        placement: "bottomRight",
+                        duration: 10,
+                        key,
+                        message: `Création impossible : \n${rep.data.msg}`,
+                        icon: (
+                            <Icon type="exclamation" style={{ color: "red" }} />
+                        )
+                    });
+                }
+                if (rep.status === 201) {
+                    notification.open({
+                        placement: "bottomRight",
+                        key,
+                        message: "Création effectuée !",
+                        icon: (
+                            <Icon
+                                type="check-circle"
+                                style={{ color: "#52c41a" }}
+                            />
+                        )
+                    });
+                }
             })
             .catch((err) => {
+                console.log(err);
                 notification.open({
                     placement: "bottomRight",
                     key,
                     message: "Echec de l'opération",
                     icon: <Icon type="stop" style={{ color: "red" }} />
                 });
-            });*/
+            });
     };
 
     useEffect(() => {
@@ -186,7 +203,7 @@ const Creation = () => {
     return (
         <Conteneur>
             {menu && (
-                <Card style={{ width: 800 }}>
+                <Card style={{ width: 800, marginBottom: "50px" }}>
                     <ConteneurTextes>
                         <Divider
                             orientation="left"
@@ -609,8 +626,9 @@ const Creation = () => {
                             </NomChamp>
                             <InputNumber
                                 key="RechercheID"
+                                defaultValue={2019}
                                 min={1996}
-                                max={2018}
+                                max={9999}
                                 onChange={(val) =>
                                     setState({
                                         ...state,
@@ -629,7 +647,7 @@ const Creation = () => {
                             size="large"
                             style={{ marginTop: "30px" }}
                             type="primary"
-                            onClick={() => ConfirmModif()}
+                            onClick={() => nouveauSujet()}
                             block
                         >
                             Confirmer les changements
@@ -641,4 +659,4 @@ const Creation = () => {
     );
 };
 
-export default Creation;
+export default withCookies(Creation);
