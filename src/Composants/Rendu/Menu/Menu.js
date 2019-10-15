@@ -1,13 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import {Divider,Icon} from "antd";
+import { Divider, Icon } from "antd";
 import { ReactComponent as Logo } from "../../Assets/Logo.svg";
+import { Redirect } from "react-router-dom";
 
 const ConteneurMenu = styled.div`
     display: flex;
     width: 250px;
     flex-direction: column;
-    position: fixed;
     z-index: 2;
     height: 100vh;
 `;
@@ -60,15 +60,112 @@ const ConteneurMenuLiens = styled.div`
 const ConteneurBoutons = styled.div``;
 
 const Menu = () => {
+    const [page, setPage] = useState("/");
+
+    let changementPage = (UrlPage) => {
+        setPage(UrlPage);
+    };
+
+    useEffect(() => {}, []);
+
     return (
         <ConteneurMenu>
+            <Redirect push to={page} />
             <ConteneurMenuHeader>
                 <Logo style={{ margin: "8px", height: "40px" }} />
                 <HeaderTexte>Administration</HeaderTexte>
             </ConteneurMenuHeader>
             <ConteneurMenuLiens>
+                <Lien
+                    style={{ marginTop: "10px" }}
+                    onClick={() => changementPage("/")}
+                >
+                    <Icon
+                        style={{
+                            fontSize: "25px",
+                            color: "grey",
+                            marginLeft: "15px"
+                        }}
+                        type="dashboard"
+                    />
+                    <TexteLien>Tableau de bord</TexteLien>
+                </Lien>
                 <Categorie>
-                    <Divider orientation="left">SUJETS</Divider>
+                    <Divider orientation="left">Sujets</Divider>
+                    <Lien onClick={() => changementPage("/Sujets/Creation")}>
+                        <Icon
+                            style={{
+                                fontSize: "25px",
+                                color: "grey",
+                                marginLeft: "15px"
+                            }}
+                            type="file-add"
+                        />
+                        <TexteLien>Création</TexteLien>
+                    </Lien>
+                    <Lien
+                        onClick={() => changementPage("/Sujets/Consultation")}
+                    >
+                        <Icon
+                            style={{
+                                fontSize: "25px",
+                                color: "grey",
+                                marginLeft: "15px"
+                            }}
+                            type="file-search"
+                        />
+                        <TexteLien>Consultation</TexteLien>
+                    </Lien>
+                    <Lien onClick={() => changementPage("/Sujets/Parametres")}>
+                        <Icon
+                            style={{
+                                fontSize: "25px",
+                                color: "grey",
+                                marginLeft: "15px"
+                            }}
+                            type="setting"
+                        />
+                        <TexteLien>Paramètres</TexteLien>
+                    </Lien>
+                </Categorie>
+                <Categorie>
+                    <Divider orientation="left">Utilisateurs</Divider>
+                    <Lien>
+                        <Icon
+                            style={{
+                                fontSize: "25px",
+                                color: "grey",
+                                marginLeft: "15px"
+                            }}
+                            type="file-add"
+                        />
+                        <TexteLien>Gestion</TexteLien>
+                    </Lien>
+                    <Lien>
+                        <Icon
+                            style={{
+                                fontSize: "25px",
+                                color: "grey",
+                                marginLeft: "15px"
+                            }}
+                            type="file-search"
+                        />
+                        <TexteLien>Groupes</TexteLien>
+                    </Lien>
+                    <Lien>
+                        <Icon
+                            style={{
+                                fontSize: "25px",
+                                color: "grey",
+                                marginLeft: "15px"
+                            }}
+                            type="setting"
+                        />
+                        <TexteLien>Paramètres</TexteLien>
+                    </Lien>
+                </Categorie>
+                <Categorie>
+                    <Divider orientation="left">Cours</Divider>
                     <Lien>
                         <Icon
                             style={{
@@ -89,7 +186,7 @@ const Menu = () => {
                             }}
                             type="file-search"
                         />
-                        <TexteLien>Consultation</TexteLien>
+                        <TexteLien>Modification</TexteLien>
                     </Lien>
                     <Lien>
                         <Icon

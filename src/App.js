@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import "./App.css";
-import Consultation from "./Composants/Rendu/Sujets/Consultation";
+import ConsultationSujets from "./Composants/Rendu/Sujets/ConsultationSujets";
+import ParametresSujets from "./Composants/Rendu/Sujets/Parametres";
+import CreationSujets from "./Composants/Rendu/Sujets/CreationSujets";
 import Menu from "./Composants/Rendu/Menu/Menu";
 import ConteneurHeader from "./Composants/Rendu/ConteneurHeader/ConteneurHeader";
 import { Card, Input } from "antd";
 import axios from "axios";
 import { withCookies } from "react-cookie";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Tableau from "./Composants/Rendu/Tableau/Tableau";
 
 const ConteneurGlobal = styled.div`
     width: 100%;
@@ -108,8 +111,19 @@ function App(props) {
                     <ConteneurGlobal>
                         <Menu />
                         <ConteneurContenu>
-                            <ConteneurHeader />
-                            <Consultation />
+                            <ConteneurHeader user={user} />
+                            <Route exact path="/">
+                                <Tableau />
+                            </Route>
+                            <Route path="/Sujets/Consultation">
+                                <ConsultationSujets />
+                            </Route>
+                            <Route path="/Sujets/Parametres">
+                                <ParametresSujets />
+                            </Route>
+                            <Route path="/Sujets/Creation">
+                                <CreationSujets />
+                            </Route>
                         </ConteneurContenu>
                     </ConteneurGlobal>
                 </RouteProtected>
