@@ -24,7 +24,7 @@ import "react-quill/dist/quill.bubble.css";
 
 const { Option } = Select;
 const ax = axios.create({
-    baseURL: "http://192.168.0.85:4000/",
+    baseURL: "http://phidbac.fr:4000/",
     responseType: "json"
 });
 
