@@ -64,7 +64,8 @@ function App(props) {
             ax.post("/login", { email: formIdent, password: formPass })
                 .then((rep) => {
                     props.cookies.set("token", "Bearer " + rep.data.token, {
-                        path: "/"
+                        path: "/",
+                        domain: "www.phidbac.fr"
                     });
                     setUser(rep);
                     formIdent = "";
