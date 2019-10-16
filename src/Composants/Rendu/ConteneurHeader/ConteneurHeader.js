@@ -41,7 +41,10 @@ const ConteneurHeader = (props) => {
         <Menu style={{ marginLeft: "-25px" }}>
             <Menu.Item
                 onClick={() => {
-                    props.cookies.remove("token");
+                    props.cookies.remove("token", {
+                        path: "/",
+                        domain: "www.phidbac.fr"
+                    });
                 }}
             >
                 Se déconnecter
@@ -54,7 +57,6 @@ const ConteneurHeader = (props) => {
             setUser(rep.data);
             setLoading(false);
         });
-
     }, []);
     return (
         <ContenuHeader>
