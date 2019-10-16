@@ -42,8 +42,7 @@ const ConteneurHeader = (props) => {
             <Menu.Item
                 onClick={() => {
                     props.cookies.remove("token", {
-                        path: "/",
-                        domain: "www.phidbac.fr"
+                        path: "/"
                     });
                 }}
             >
