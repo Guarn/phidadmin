@@ -297,7 +297,7 @@ const Gestion = (props) => {
             key: "id",
             width: "80px",
             sorter: (a, b) => a.id - b.id,
-            sortDirections: ["descend", "ascend"]
+            sortDirections: ["descend"]
         },
         {
             title: "Prenom",
