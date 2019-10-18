@@ -65,7 +65,6 @@ function App(props) {
                 .then((rep) => {
                     props.cookies.set("token", "Bearer " + rep.data.token, {
                         path: "/",
-                        domain: "phidbac.fr"
                     });
                     setUser(rep);
                     formIdent = "";
