@@ -375,6 +375,7 @@ const Gestion = (props) => {
     ];
 
     useEffect(() => {
+        document.title = "PhidAdmin - Utilisateurs / Gestion ";
         ax.get("/Listeusers")
             .then((rep) => {
                 console.log(rep);

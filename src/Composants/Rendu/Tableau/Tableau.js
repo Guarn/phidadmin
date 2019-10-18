@@ -23,6 +23,7 @@ const Tableau = (props) => {
     });
 
     useEffect(() => {
+        document.title = "PhidAdmin - Tableaau de bord ";
         ax.get("/Tableau").then((rep) => {
             setCountProb(rep.data.countProblemes);
             setCountSujets(rep.data.countSujets);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Divider, Icon } from "antd";
 import { ReactComponent as Logo } from "../../Assets/Logo.svg";
-import { Redirect } from "react-router-dom";
+import { Redirect, useLocation, useHistory } from "react-router-dom";
 
 const ConteneurMenu = styled.div`
     display: flex;
@@ -60,17 +60,15 @@ const ConteneurMenuLiens = styled.div`
 const ConteneurBoutons = styled.div``;
 
 const Menu = () => {
-    const [page, setPage] = useState("/");
-
+    let history = useHistory();
     let changementPage = (UrlPage) => {
-        setPage(UrlPage);
+        history.push(UrlPage);
     };
 
     useEffect(() => {}, []);
 
     return (
         <ConteneurMenu>
-            <Redirect push to={page} />
             <ConteneurMenuHeader>
                 <Logo style={{ margin: "8px", height: "40px" }} />
                 <HeaderTexte>Administration</HeaderTexte>

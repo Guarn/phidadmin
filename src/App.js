@@ -75,6 +75,7 @@ function App(props) {
     };
 
     useEffect(() => {
+        console.log(props.cookies.get("token"));
         if (props.cookies.get("token"))
             ax.get("/p")
                 .then((rep) => {
@@ -90,36 +91,34 @@ function App(props) {
                 );
     }, [user.Nom]);
     return (
-        <>
+        <Router>
             {props.cookies.get("token") && (
-                <Router>
-                    <ConteneurGlobal>
-                        <Menu />
-                        <ConteneurContenu>
-                            <ConteneurHeader />
-                            <Switch>
-                                <Suspense fallback={<div>Chargement...</div>}>
-                                    <Route exact path="/">
-                                        <Tableau />
-                                    </Route>
-                                    <Route
-                                        path="/Sujets/Consultation"
-                                        component={ConsultationSujets}
-                                    />
-                                    <Route path="/Sujets/Parametres">
-                                        <ParametresSujets />
-                                    </Route>
-                                    <Route path="/Sujets/Creation">
-                                        <CreationSujets />
-                                    </Route>
-                                    <Route path="/Utilisateurs/Gestion">
-                                        <GestionUtilisateurs />
-                                    </Route>
-                                </Suspense>
-                            </Switch>
-                        </ConteneurContenu>
-                    </ConteneurGlobal>
-                </Router>
+                <ConteneurGlobal>
+                    <Menu />
+                    <ConteneurContenu>
+                        <ConteneurHeader />
+                        <Switch>
+                            <Suspense fallback={<div>Chargement...</div>}>
+                                <Route exact path="/">
+                                    <Tableau />
+                                </Route>
+                                <Route
+                                    path="/Sujets/Consultation"
+                                    component={ConsultationSujets}
+                                />
+                                <Route path="/Sujets/Parametres">
+                                    <ParametresSujets />
+                                </Route>
+                                <Route path="/Sujets/Creation">
+                                    <CreationSujets />
+                                </Route>
+                                <Route path="/Utilisateurs/Gestion">
+                                    <GestionUtilisateurs />
+                                </Route>
+                            </Suspense>
+                        </Switch>
+                    </ConteneurContenu>
+                </ConteneurGlobal>
             )}
             {!props.cookies.get("token") && (
                 <Login1>
@@ -138,7 +137,7 @@ function App(props) {
                     </Card>
                 </Login1>
             )}
-        </>
+        </Router>
     );
 }
 

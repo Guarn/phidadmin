@@ -159,7 +159,7 @@ const Creation = (props) => {
     };
 
     useEffect(() => {
-        console.log('TEST');
+        document.title = "PhidAdmin - Sujets / Création ";
         ax.get("/menuAdmin").then((rep) => {
             let state1 = rep.data;
             state1.annees.sort((a, b) => a["Annee"] - b["Annee"]);

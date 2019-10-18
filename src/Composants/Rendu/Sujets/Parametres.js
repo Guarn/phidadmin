@@ -232,6 +232,7 @@ const Parametres = (props) => {
     );
 
     useEffect(() => {
+        document.title = "PhidAdmin - Sujets / Paramètres ";
         let tab = [];
         let prog = [];
         ax.get("/notionsAdmin").then((rep) => {
