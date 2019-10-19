@@ -1,7 +1,9 @@
-import React, { useEffect, useState, useRef, useReducer } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import styled from "styled-components";
-import { withCookies } from "react-cookie";
+import { useCookies } from "react-cookie";
 import "./Gestion.css";
+import { userPD } from "../../../App";
+import uuid from "uuid/v4";
 import { CSSTransition } from "react-transition-group";
 import {
     Table,
@@ -41,6 +43,12 @@ const formItemLayout = {
     }
 };
 const Formulaire = (props) => {
+    const [cookies, setCookie, removeCookie] = useCookies();
+    const ax = axios.create({
+        baseURL: "http://phidbac.fr:4000/",
+        headers: { Authorization: cookies["token"] },
+        responseType: "json"
+    });
     const [etape, setEtape] = useState("init");
     const valueButton = {
         init: "Créer l'utilisateur",
@@ -49,17 +57,14 @@ const Formulaire = (props) => {
         finPasOk: "Problème à la création."
     };
     const [attValid, setAttValid] = useState(false);
-    const ax = axios.create({
-        baseURL: "http://phidbac.fr:4000/",
-        headers: { Authorization: props.cookies.get("token") },
-        responseType: "json"
-    });
+
     const {
         getFieldDecorator,
         getFieldsError,
         getFieldError,
         isFieldTouched,
-        validateFields
+        validateFields,
+        setFieldsValue
     } = props.form;
 
     const usernameError =
@@ -85,7 +90,6 @@ const Formulaire = (props) => {
                     .then((rep) => {
                         setAttValid(false);
                         setEtape("finOk");
-                        console.log(props);
                         setTimeout(() => {
                             props.ouvert(false);
                         }, 2000);
@@ -95,7 +99,35 @@ const Formulaire = (props) => {
         });
     }
     useEffect(() => {
-        console.log(props);
+        if (props.user) {
+            let dateCreation = props.user.createdAt
+                .split("T")[0]
+                .split("-")
+                .reverse()
+                .join("/");
+            let heureCreation = props.user.createdAt
+                .split("T")[1]
+                .split(":", 2)
+                .join(":");
+            let dateMaj = props.user.updatedAt
+                .split("T")[0]
+                .split("-")
+                .reverse()
+                .join("/");
+            let heureMaj = props.user.updatedAt
+                .split("T")[1]
+                .split(":", 2)
+                .join(":");
+            setFieldsValue({
+                createdAt: dateCreation + " " + heureCreation,
+                updatedAt: dateMaj + " " + heureMaj,
+                prenom: props.user.prenom,
+                nom: props.user.nom,
+                ville: props.user.localisation,
+                grade: props.user.grade,
+                email: props.user.email
+            });
+        }
     }, []);
     return (
         <Form
@@ -103,6 +135,36 @@ const Formulaire = (props) => {
             title="Nouvel utilisateur"
             onSubmit={(e) => subForm(e)}
         >
+            {props.user && (
+                <Item label="Créé le :" hasFeedback>
+                    {getFieldDecorator("createdAt", {})(
+                        <Input
+                            disabled
+                            prefix={
+                                <Icon
+                                    type="calendar"
+                                    style={{ color: "rgba(0,0,0,.25)" }}
+                                />
+                            }
+                        />
+                    )}
+                </Item>
+            )}
+            {props.user && (
+                <Item label="Dernière MAJ :" hasFeedback>
+                    {getFieldDecorator("updatedAt", {})(
+                        <Input
+                            disabled
+                            prefix={
+                                <Icon
+                                    type="calendar"
+                                    style={{ color: "rgba(0,0,0,.25)" }}
+                                />
+                            }
+                        />
+                    )}
+                </Item>
+            )}
             <Item label="Prénom :" hasFeedback>
                 {getFieldDecorator("prenom", {
                     rules: [
@@ -200,36 +262,38 @@ const Formulaire = (props) => {
                     />
                 )}
             </Item>
-            <Item
-                label="Mot de passe :"
-                hasFeedback
-                help={passwordError || "6 caractères minimum"}
-            >
-                {getFieldDecorator("password", {
-                    rules: [
-                        {
-                            required: true,
-                            message: "Ce champ est requis."
-                        },
-                        {
-                            pattern: new RegExp("^.{6,}$"),
-                            message: "Moins de 6 caractères !"
-                        }
-                    ]
-                })(
-                    <Input.Password
-                        prefix={
-                            <Icon
-                                type="lock"
-                                style={{ color: "rgba(0,0,0,.25)" }}
-                            />
-                        }
-                        type="password"
-                        placeholder="Mot de passe"
-                    />
-                )}
-            </Item>
-            <Item wrapperCol={24} style={{ marginBottom: "0px" }}>
+            {!props.user && (
+                <Item
+                    label="Mot de passe :"
+                    hasFeedback
+                    help={passwordError || "6 caractères minimum"}
+                >
+                    {getFieldDecorator("password", {
+                        rules: [
+                            {
+                                required: true,
+                                message: "Ce champ est requis."
+                            },
+                            {
+                                pattern: new RegExp("^.{6,}$"),
+                                message: "Moins de 6 caractères !"
+                            }
+                        ]
+                    })(
+                        <Input.Password
+                            prefix={
+                                <Icon
+                                    type="lock"
+                                    style={{ color: "rgba(0,0,0,.25)" }}
+                                />
+                            }
+                            type="password"
+                            placeholder="Mot de passe"
+                        />
+                    )}
+                </Item>
+            )}
+            <Item style={{ marginBottom: "0px" }}>
                 <Button
                     loading={attValid}
                     icon={etape === "finOk" ? "check" : null}
@@ -255,21 +319,22 @@ const Formulaire = (props) => {
 };
 
 const Gestion = (props) => {
+    const [cookies, setCookie, removeCookie] = useCookies();
+    const ax = axios.create({
+        baseURL: "http://phidbac.fr:4000/",
+        headers: { Authorization: cookies["token"] },
+        responseType: "json"
+    });
+    const [user, userDP] = useContext(userPD);
     const [nouvelUtilisateur, setNouvelUtilisateur] = useState(false);
     const [modif, setModif] = useState(false);
     const [pass, setPass] = useState();
     const [idSel, setIdSel] = useState();
     const [showPass, setShowPass] = useState(false);
     const [data, setData] = useState();
-    const ax = axios.create({
-        baseURL: "http://phidbac.fr:4000/",
-        headers: { Authorization: props.cookies.get("token") },
-        responseType: "json"
-    });
 
     const suppressionUtilisateur = (id) => {
         ax.post("/DestroyUser", { id }).then((rep) => {
-            console.log(rep);
             setModif(!modif);
         });
     };
@@ -277,14 +342,12 @@ const Gestion = (props) => {
     const bloquerUtilisateur = (util) => {
         ax.post("/updateuser", { id: util.id, actif: !util.actif }).then(
             (rep) => {
-                console.log(rep);
                 setModif(!modif);
             }
         );
     };
     const changePass = () => {
         ax.post("/ChangePass", { id: idSel, password: pass }).then((rep) => {
-            console.log(rep);
             setShowPass(false);
             setModif(!modif);
         });
@@ -294,7 +357,7 @@ const Gestion = (props) => {
         {
             title: "ID",
             dataIndex: "id",
-            key: "id",
+            key: uuid(),
             width: "80px",
             sorter: (a, b) => a.id - b.id,
             sortDirections: ["descend"]
@@ -302,29 +365,29 @@ const Gestion = (props) => {
         {
             title: "Prenom",
             dataIndex: "prenom",
-            key: "prenom"
+            key: uuid()
         },
         {
             title: "Nom",
             dataIndex: "nom",
-            key: "nom"
+            key: uuid()
         },
 
         {
             title: "Email",
             dataIndex: "email",
-            key: "email"
+            key: uuid()
         },
         {
             title: "Grade",
             dataIndex: "grade",
-            key: "grade"
+            key: uuid()
         },
 
         {
             title: "Actif",
             dataIndex: "actif",
-            key: "actif",
+            key: uuid(),
             width: "80px",
             render: (actif) => (
                 <Tag color={actif ? "green" : "red"}>
@@ -335,14 +398,14 @@ const Gestion = (props) => {
 
         {
             title: "Action",
-            key: "action",
+            key: uuid(),
             width: "150px",
             dataIndex: "id",
             render: (id, util) => (
-                <>
+                <div key={uuid()}>
                     <Tooltip title="Modifier le mot de passe">
                         <Button
-                            icon="sync"
+                            icon="key"
                             style={{ marginRight: "8px" }}
                             onClick={() => {
                                 setIdSel(util.id);
@@ -369,7 +432,7 @@ const Gestion = (props) => {
                             <Button icon="delete" />
                         </Tooltip>
                     </Popconfirm>
-                </>
+                </div>
             )
         }
     ];
@@ -378,14 +441,16 @@ const Gestion = (props) => {
         document.title = "PhidAdmin - Utilisateurs / Gestion ";
         ax.get("/Listeusers")
             .then((rep) => {
-                console.log(rep);
                 let state = [];
                 rep.data.listeUsers.map((el, index) => {
                     state.push(el);
                 });
                 setData(state);
             })
-            .catch((err) => console.log(err));
+            .catch((err) => {
+                removeCookie("token");
+                userDP({ type: "CONNEXION" });
+            });
     }, [modif]);
     return (
         <Conteneur>
@@ -428,11 +493,23 @@ const Gestion = (props) => {
             </CSSTransition>
             <Card>
                 <Table
+                    rowKey={() => uuid()}
                     sortable
                     dataSource={data}
                     bordered
                     columns={columns}
-                    expandedRowRender={(record) => <div>{record.email}</div>}
+                    expandedRowRender={(record) => (
+                        <div style={{ width: 500 }}>
+                            <TestLogin
+                                cookies={props.cookies}
+                                user={record}
+                                ouvert={(val) => {
+                                    setNouvelUtilisateur(val);
+                                    setModif(!modif);
+                                }}
+                            />
+                        </div>
+                    )}
                 />
             </Card>
         </Conteneur>
@@ -441,4 +518,4 @@ const Gestion = (props) => {
 
 const TestLogin = Form.create({ name: "FormTest" })(Formulaire);
 
-export default withCookies(Gestion);
+export default Gestion;

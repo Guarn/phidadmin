@@ -18,6 +18,7 @@
         "react-scripts": "3.1.2",
         "react-transition-group": "^4.3.0",
         "styled-components": "^4.4.0",
+        "uuid": "^3.3.3",
         "webpack-bundle-analyzer": "^3.5.2"
     },
     "scripts": {

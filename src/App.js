@@ -1,12 +1,25 @@
-import React, { useEffect, useState, Suspense } from "react";
+import React, {
+    useEffect,
+    useState,
+    Suspense,
+    useReducer,
+    createContext
+} from "react";
 import styled from "styled-components";
 import "./App.css";
 import Menu from "./Composants/Rendu/Menu/Menu";
 import ConteneurHeader from "./Composants/Rendu/ConteneurHeader/ConteneurHeader";
 import { Card, Input } from "antd";
 import axios from "axios";
-import { withCookies } from "react-cookie";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { useCookies } from "react-cookie";
+import Chargement from "./Composants/Rendu/Chargement/Chargement";
+import { RDuser } from "./Composants/reducers";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Redirect
+} from "react-router-dom";
 
 const ConsultationSujets = React.lazy(() =>
     import("./Composants/Rendu/Sujets/ConsultationSujets")
@@ -43,18 +56,19 @@ const Login1 = styled.div`
     align-items: center;
 `;
 
+const initialUser = { connecte: false };
+export const userPD = createContext(null);
+
 function App(props) {
+    const [user, DPuser] = useReducer(RDuser, initialUser);
+    const [cookies, setCookie, removeCookie] = useCookies(["cookie-name"]);
+    const [affichage, setAffichage] = useState(false);
     const ax = axios.create({
         baseURL: "http://phidbac.fr:4000/",
-        headers: { Authorization: props.cookies.get("token") },
+        headers: { Authorization: cookies.token },
         responseType: "json"
     });
-    const [user, setUser] = useState({
-        Nom: "",
-        Prenom: "",
-        Mail: "",
-        Grade: ""
-    });
+
     let formIdent = "";
 
     let formPass = "";
@@ -62,83 +76,105 @@ function App(props) {
     const identification = () => {
         if (formIdent !== "" && formPass !== "") {
             ax.post("/login", { email: formIdent, password: formPass })
-                .then((rep) => {
-                    props.cookies.set("token", "Bearer " + rep.data.token, {
-                        path: "/",
+                .then(async (rep) => {
+                    await setCookie("token", "Bearer " + rep.data.token, {
+                        path: "/"
                     });
-                    setUser(rep);
+                    DPuser({
+                        type: "UPDATE",
+                        user: {
+                            nom: rep.data.nom,
+                            prenom: rep.data.prenom,
+                            email: rep.data.email,
+                            grade: rep.data.grade,
+                            connecte: true
+                        }
+                    });
                     formIdent = "";
                     formPass = "";
                 })
-                .catch((err) => console.log(err));
+                .catch((err) => console.log(err.response));
         }
     };
 
     useEffect(() => {
-        console.log(props.cookies.get("token"));
-        if (props.cookies.get("token"))
+        if (cookies.token && cookies.token !== "") {
             ax.get("/p")
                 .then((rep) => {
-                    setUser(rep.data);
+                    DPuser({
+                        type: "UPDATE",
+                        user: {
+                            nom: rep.data.nom,
+                            prenom: rep.data.prenom,
+                            email: rep.data.email,
+                            grade: rep.data.grade,
+                            connecte: true
+                        }
+                    });
                 })
-                .catch((err) =>
-                    setUser({
-                        Nom: "",
-                        Prenom: "",
-                        Mail: "",
-                        Grade: ""
-                    })
-                );
-    }, [user.Nom]);
+                .catch((err) => {
+                    removeCookie("token");
+                });
+        }
+    }, [affichage]);
     return (
-        <Router>
-            {props.cookies.get("token") && (
-                <ConteneurGlobal>
-                    <Menu />
-                    <ConteneurContenu>
-                        <ConteneurHeader />
-                        <Switch>
-                            <Suspense fallback={<div>Chargement...</div>}>
-                                <Route exact path="/">
-                                    <Tableau />
-                                </Route>
-                                <Route
-                                    path="/Sujets/Consultation"
-                                    component={ConsultationSujets}
+        <userPD.Provider value={[user, DPuser]}>
+            <Router>
+                {user.connecte && (
+                    <ConteneurGlobal>
+                        <Menu />
+                        <ConteneurContenu>
+                            <ConteneurHeader />
+                            <Switch>
+                                <Suspense fallback={<Chargement />}>
+                                    <Route exact path="/">
+                                        <Tableau />
+                                    </Route>
+                                    <Route
+                                        path="/Sujets/Consultation"
+                                        component={ConsultationSujets}
+                                    />
+                                    <Route path="/Sujets/Parametres">
+                                        <ParametresSujets />
+                                    </Route>
+                                    <Route path="/Sujets/Creation">
+                                        <CreationSujets />
+                                    </Route>
+                                    <Route path="/Utilisateurs/Gestion">
+                                        <GestionUtilisateurs />
+                                    </Route>
+                                </Suspense>
+                            </Switch>
+                        </ConteneurContenu>
+                    </ConteneurGlobal>
+                )}
+                {!user.connecte && (
+                    <>
+                        <Redirect to="/" />
+                        <Login1>
+                            <Card>
+                                <Input
+                                    key="1"
+                                    placeholder="Identifiant"
+                                    onChange={(e) =>
+                                        (formIdent = e.target.value)
+                                    }
                                 />
-                                <Route path="/Sujets/Parametres">
-                                    <ParametresSujets />
-                                </Route>
-                                <Route path="/Sujets/Creation">
-                                    <CreationSujets />
-                                </Route>
-                                <Route path="/Utilisateurs/Gestion">
-                                    <GestionUtilisateurs />
-                                </Route>
-                            </Suspense>
-                        </Switch>
-                    </ConteneurContenu>
-                </ConteneurGlobal>
-            )}
-            {!props.cookies.get("token") && (
-                <Login1>
-                    <Card>
-                        <Input
-                            key="1"
-                            placeholder="Identifiant"
-                            onChange={(e) => (formIdent = e.target.value)}
-                        />
-                        <Input.Password
-                            key="2"
-                            placeholder="Mot de passe"
-                            onChange={(e) => (formPass = e.target.value)}
-                            onPressEnter={() => identification()}
-                        />
-                    </Card>
-                </Login1>
-            )}
-        </Router>
+                                <Input.Password
+                                    key="2"
+                                    placeholder="Mot de passe"
+                                    onChange={(e) =>
+                                        (formPass = e.target.value)
+                                    }
+                                    onPressEnter={() => identification()}
+                                />
+                            </Card>
+                        </Login1>
+                    </>
+                )}
+            </Router>
+        </userPD.Provider>
     );
 }
 
-export default withCookies(App);
+export default App;
