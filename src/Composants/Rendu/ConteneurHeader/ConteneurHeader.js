@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import styled from "styled-components";
 import { withRouter } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { userPD } from "../../../App";
 import { Dropdown, Menu, Icon, Badge } from "antd";
-import axios from "axios";
 
 const ContenuHeader = styled.div`
     background-color: white;
@@ -30,7 +29,7 @@ const PartieD = styled.div`
 `;
 
 const ConteneurHeader = (props) => {
-    const [cookies, setCookie, removeCookie] = useCookies();
+    const [, , removeCookie] = useCookies();
     const [user, userDP] = useContext(userPD);
     const { location } = props;
 

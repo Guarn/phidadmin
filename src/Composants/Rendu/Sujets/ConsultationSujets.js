@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Editor from "../../Fonctionnels/Editor";
 import ReactQuill from "react-quill";
-import axios from "axios";
+import Axios from "../../Fonctionnels/Axios";
 import {
     Divider,
     Slider,
@@ -23,10 +23,6 @@ import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
 
 const { Option } = Select;
-const ax = axios.create({
-    baseURL: "http://phidbac.fr:4000/",
-    responseType: "json"
-});
 
 //SECTION Compo. STYLED
 
@@ -264,7 +260,7 @@ const ConsultationSujets = () => {
 
     const RechercheFiltres = () => {
         setMenuFiltres(false);
-        ax.post("/resultatsAdmin", { elementsCoches }).then((rep) => {
+        Axios.post("/resultatsAdmin", { elementsCoches }).then((rep) => {
             if (rep.data.count > 0) {
                 let state1 = rep.data.rows;
                 setSujets(state1);
@@ -298,7 +294,7 @@ const ConsultationSujets = () => {
             icon: <Icon type="loading" style={{ color: "#108ee9" }} />
         });
 
-        ax.post(`/sujets/${state.Sujet.id}`, {
+        Axios.post(`/sujets/${state.Sujet.id}`, {
             ...state.Sujet,
             Problemes: false
         })
@@ -399,7 +395,7 @@ const ConsultationSujets = () => {
 
     const PremierProbleme = () => {
         setLoading(true);
-        ax.get("/problemesAdmin").then((rep) => {
+        Axios.get("/problemesAdmin").then((rep) => {
             setState({ ...state, Sujet: rep.data.Sujet[0] });
             setNbResultats(rep.data.Count);
             setSujets(rep.data.Sujet);
@@ -471,7 +467,7 @@ const ConsultationSujets = () => {
         document.title = "PhidAdmin - Sujets / Consultation ";
         // ANCHOR Premier affichage ou filtres0
         if (sujets.length === 0) {
-            ax.get(`/sujets/${idSujet}`).then((rep) => {
+            Axios.get(`/sujets/${idSujet}`).then((rep) => {
                 if (
                     rep.data.Count > 0 &&
                     idSujet <= rep.data.Count &&
@@ -492,6 +488,7 @@ const ConsultationSujets = () => {
                     let regex8 = /û/g;
                     let regex9 = /â/g;
                     let regex10 = /È/g;
+                    // eslint-disable-next-line no-control-regex
                     let regex11 = /	/g;
                     let regex12 = /À/g;
                     let regex13 = /ê/g;
@@ -541,6 +538,7 @@ const ConsultationSujets = () => {
                 let regex8 = /û/g;
                 let regex9 = /â/g;
                 let regex10 = /È/g;
+                // eslint-disable-next-line no-control-regex
                 let regex11 = /	/g;
                 let regex12 = /À/g;
                 let regex13 = /ê/g;
@@ -586,7 +584,7 @@ const ConsultationSujets = () => {
             }
         }
         if (!menu.annees) {
-            ax.get("/menuAdmin").then((rep) => {
+            Axios.get("/menuAdmin").then((rep) => {
                 let state = rep.data;
                 state.annees.sort((a, b) => a["Annee"] - b["Annee"]);
                 state.auteurs.sort((a, b) =>
@@ -601,6 +599,7 @@ const ConsultationSujets = () => {
                 setMenu(state);
             });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [idSujet, filtres]);
     //!SECTION
 

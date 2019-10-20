@@ -14,7 +14,7 @@ import {
     Icon
 } from "antd";
 import ReactQuill from "react-quill";
-import axios from "axios";
+import Axios from "../../Fonctionnels/Axios";
 import Editor from "../../Fonctionnels/Editor";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
@@ -63,11 +63,6 @@ const ConteneurTextes = styled.div`
 `;
 
 const Creation = (props) => {
-    const ax = axios.create({
-        baseURL: "http://phidbac.fr:4000/",
-        headers: { Authorization: props.cookies.get("token") },
-        responseType: "json"
-    });
     const [state, setState] = useState({ Sujet: { Annee: 2019 } });
     const [menu, setMenu] = useState();
     const [texte1, setTexte1] = useState("");
@@ -118,7 +113,7 @@ const Creation = (props) => {
             icon: <Icon type="loading" style={{ color: "#108ee9" }} />
         });
 
-        ax.post(`/SujetAjout`, {
+        Axios.post(`/SujetAjout`, {
             ...state.Sujet,
             Problemes: false
         })
@@ -160,7 +155,7 @@ const Creation = (props) => {
 
     useEffect(() => {
         document.title = "PhidAdmin - Sujets / Création ";
-        ax.get("/menuAdmin").then((rep) => {
+        Axios.get("/menuAdmin").then((rep) => {
             let state1 = rep.data;
             state1.annees.sort((a, b) => a["Annee"] - b["Annee"]);
             state1.auteurs.sort((a, b) =>

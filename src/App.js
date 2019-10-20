@@ -1,16 +1,10 @@
-import React, {
-    useEffect,
-    useState,
-    Suspense,
-    useReducer,
-    createContext
-} from "react";
+import React, { useEffect, Suspense, useReducer, createContext } from "react";
 import styled from "styled-components";
 import "./App.css";
 import Menu from "./Composants/Rendu/Menu/Menu";
 import ConteneurHeader from "./Composants/Rendu/ConteneurHeader/ConteneurHeader";
 import { Card, Input } from "antd";
-import axios from "axios";
+import Axios from "./Composants/Fonctionnels/Axios";
 import { useCookies } from "react-cookie";
 import Chargement from "./Composants/Rendu/Chargement/Chargement";
 import { RDuser } from "./Composants/reducers";
@@ -62,12 +56,6 @@ export const userPD = createContext(null);
 function App(props) {
     const [user, DPuser] = useReducer(RDuser, initialUser);
     const [cookies, setCookie, removeCookie] = useCookies(["cookie-name"]);
-    const [affichage, setAffichage] = useState(false);
-    const ax = axios.create({
-        baseURL: "http://phidbac.fr:4000/",
-        headers: { Authorization: cookies.token },
-        responseType: "json"
-    });
 
     let formIdent = "";
 
@@ -75,10 +63,11 @@ function App(props) {
 
     const identification = () => {
         if (formIdent !== "" && formPass !== "") {
-            ax.post("/login", { email: formIdent, password: formPass })
-                .then(async (rep) => {
-                    await setCookie("token", "Bearer " + rep.data.token, {
-                        path: "/"
+            Axios.post("/login", { email: formIdent, password: formPass })
+                .then((rep) => {
+                    setCookie("token", "Bearer " + rep.data.token, {
+                        path: "/",
+                        domain: ".phidbac.fr"
                     });
                     DPuser({
                         type: "UPDATE",
@@ -99,7 +88,7 @@ function App(props) {
 
     useEffect(() => {
         if (cookies.token && cookies.token !== "") {
-            ax.get("/p")
+            Axios.get("/p")
                 .then((rep) => {
                     DPuser({
                         type: "UPDATE",
@@ -116,7 +105,8 @@ function App(props) {
                     removeCookie("token");
                 });
         }
-    }, [affichage]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     return (
         <userPD.Provider value={[user, DPuser]}>
             <Router>

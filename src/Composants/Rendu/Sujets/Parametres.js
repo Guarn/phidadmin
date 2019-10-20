@@ -13,7 +13,7 @@ import {
     Popconfirm,
     Icon
 } from "antd";
-import axios from "axios";
+import Axios from "../../Fonctionnels/Axios";
 import "./Parametres.css";
 
 const { Option } = Select;
@@ -27,11 +27,6 @@ const Conteneur = styled.div`
 `;
 
 const Parametres = (props) => {
-    const ax = axios.create({
-        baseURL: "http://phidbac.fr:4000/",
-        headers: { Authorization: props.cookies.get("token") },
-        responseType: "json"
-    });
     const [auteur, setAuteur] = useState();
     const [auteurs, setAuteurs] = useState();
     const [selAuteur, setSelAuteur] = useState();
@@ -49,7 +44,7 @@ const Parametres = (props) => {
     const [selNot, setSelNot] = useState();
 
     const change = (targetKeys, direction, moveKeys) => {
-        ax.post("/NotionProgramme", {
+        Axios.post("/NotionProgramme", {
             notion: moveKeys,
             prog: direction === "left" ? false : true
         })
@@ -60,7 +55,7 @@ const Parametres = (props) => {
     };
 
     const nouvelleNotion = () => {
-        ax.post("/NotionAjout", { notion: notion, prog: notCheck }).then(
+        Axios.post("/NotionAjout", { notion: notion, prog: notCheck }).then(
             (rep) => {
                 if (rep.status === 201) {
                     notification["success"]({
@@ -78,7 +73,7 @@ const Parametres = (props) => {
     };
     const suppressionNotion = () => {
         if (selNot !== "") {
-            ax.post("/NotionSuppression", {
+            Axios.post("/NotionSuppression", {
                 notion: selNot
             }).then((rep) => {
                 if (rep.status === 201) {
@@ -97,7 +92,7 @@ const Parametres = (props) => {
     };
 
     const nouvelAuteur = () => {
-        ax.post("/AuteurAjout", { auteur: auteur }).then((rep) => {
+        Axios.post("/AuteurAjout", { auteur: auteur }).then((rep) => {
             if (rep.status === 201) {
                 notification["success"]({
                     message: "Nouvel Auteur ajouté"
@@ -114,23 +109,25 @@ const Parametres = (props) => {
 
     const suppressionAuteur = () => {
         if (selAuteur !== "") {
-            ax.post("/AuteurSuppression", { auteur: selAuteur }).then((rep) => {
-                if (rep.status === 201) {
-                    notification["success"]({
-                        message: "Auteur supprimé"
-                    });
+            Axios.post("/AuteurSuppression", { auteur: selAuteur }).then(
+                (rep) => {
+                    if (rep.status === 201) {
+                        notification["success"]({
+                            message: "Auteur supprimé"
+                        });
+                    }
+                    if (rep.status === 200) {
+                        notification["error"]({
+                            message: "Erreur",
+                            description: rep.data.msg
+                        });
+                    }
                 }
-                if (rep.status === 200) {
-                    notification["error"]({
-                        message: "Erreur",
-                        description: rep.data.msg
-                    });
-                }
-            });
+            );
         }
     };
     const nouvelleDestination = () => {
-        ax.post("/DestinationAjout", { destination: destination }).then(
+        Axios.post("/DestinationAjout", { destination: destination }).then(
             (rep) => {
                 if (rep.status === 201) {
                     notification["success"]({
@@ -149,7 +146,7 @@ const Parametres = (props) => {
 
     const suppressionDestination = () => {
         if (selAuteur !== "") {
-            ax.post("/DestinationSuppression", {
+            Axios.post("/DestinationSuppression", {
                 destination: selDestination
             })
                 .then((rep) => {
@@ -235,7 +232,7 @@ const Parametres = (props) => {
         document.title = "PhidAdmin - Sujets / Paramètres ";
         let tab = [];
         let prog = [];
-        ax.get("/notionsAdmin").then((rep) => {
+        Axios.get("/notionsAdmin").then((rep) => {
             rep.data.map((el, id) => {
                 tab.push({
                     title: el.Notion,
@@ -250,10 +247,10 @@ const Parametres = (props) => {
             setDataSource(tab);
             setCoc(prog);
         });
-        ax.get("/auteurs").then((rep) => {
+        Axios.get("/auteurs").then((rep) => {
             setAuteurs(rep.data);
         });
-        ax.get("/destinations").then((rep) => {
+        Axios.get("/destinations").then((rep) => {
             setDestinations(rep.data);
         });
     }, []);

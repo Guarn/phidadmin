@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Card, Progress, Icon } from "antd";
-import axios from "axios";
+import Axios from "../../Fonctionnels/Axios";
 
 const Conteneur = styled.div`
     background-color: rgba(0, 0, 0, 0.03);
@@ -17,14 +17,9 @@ const Tableau = (props) => {
 
     const [t, tt] = useState(false);
 
-    const ax = axios.create({
-        baseURL: "http://phidbac.fr:4000/",
-        responseType: "json"
-    });
-
     useEffect(() => {
         document.title = "PhidAdmin - Tableaau de bord ";
-        ax.get("/Tableau").then((rep) => {
+        Axios.get("/Tableau").then((rep) => {
             setCountProb(rep.data.countProblemes);
             setCountSujets(rep.data.countSujets);
         });

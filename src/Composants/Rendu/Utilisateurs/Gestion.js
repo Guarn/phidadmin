@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import { useCookies } from "react-cookie";
 import "./Gestion.css";
@@ -18,7 +18,7 @@ import {
     Form,
     Select
 } from "antd";
-import axios from "axios";
+import Axios from "../../Fonctionnels/Axios";
 
 const Conteneur = styled.div`
     background-color: rgba(0, 0, 0, 0.03);
@@ -43,12 +43,6 @@ const formItemLayout = {
     }
 };
 const Formulaire = (props) => {
-    const [cookies, setCookie, removeCookie] = useCookies();
-    const ax = axios.create({
-        baseURL: "http://phidbac.fr:4000/",
-        headers: { Authorization: cookies["token"] },
-        responseType: "json"
-    });
     const [etape, setEtape] = useState("init");
     const valueButton = {
         init: "Créer l'utilisateur",
@@ -61,16 +55,9 @@ const Formulaire = (props) => {
     const {
         getFieldDecorator,
         getFieldsError,
-        getFieldError,
-        isFieldTouched,
         validateFields,
         setFieldsValue
     } = props.form;
-
-    const usernameError =
-        isFieldTouched("username") && getFieldError("username");
-    const passwordError =
-        isFieldTouched("password") && getFieldError("password");
 
     function subForm(e) {
         e.preventDefault();
@@ -78,7 +65,7 @@ const Formulaire = (props) => {
             if (!err) {
                 setAttValid(true);
                 setEtape("update");
-                ax.post("/UtilisateurAjout", {
+                Axios.post("/UtilisateurAjout", {
                     email: values.email,
                     nom: values.nom,
                     prenom: values.prenom,
@@ -128,7 +115,7 @@ const Formulaire = (props) => {
                 email: props.user.email
             });
         }
-    }, []);
+    });
     return (
         <Form
             {...formItemLayout}
@@ -263,11 +250,7 @@ const Formulaire = (props) => {
                 )}
             </Item>
             {!props.user && (
-                <Item
-                    label="Mot de passe :"
-                    hasFeedback
-                    help={passwordError || "6 caractères minimum"}
-                >
+                <Item label="Mot de passe :" hasFeedback>
                     {getFieldDecorator("password", {
                         rules: [
                             {
@@ -319,13 +302,8 @@ const Formulaire = (props) => {
 };
 
 const Gestion = (props) => {
-    const [cookies, setCookie, removeCookie] = useCookies();
-    const ax = axios.create({
-        baseURL: "http://phidbac.fr:4000/",
-        headers: { Authorization: cookies["token"] },
-        responseType: "json"
-    });
-    const [user, userDP] = useContext(userPD);
+    const [, , removeCookie] = useCookies();
+    const [, userDP] = useContext(userPD);
     const [nouvelUtilisateur, setNouvelUtilisateur] = useState(false);
     const [modif, setModif] = useState(false);
     const [pass, setPass] = useState();
@@ -334,20 +312,20 @@ const Gestion = (props) => {
     const [data, setData] = useState();
 
     const suppressionUtilisateur = (id) => {
-        ax.post("/DestroyUser", { id }).then((rep) => {
+        Axios.post("/DestroyUser", { id }).then((rep) => {
             setModif(!modif);
         });
     };
 
     const bloquerUtilisateur = (util) => {
-        ax.post("/updateuser", { id: util.id, actif: !util.actif }).then(
+        Axios.post("/updateuser", { id: util.id, actif: !util.actif }).then(
             (rep) => {
                 setModif(!modif);
             }
         );
     };
     const changePass = () => {
-        ax.post("/ChangePass", { id: idSel, password: pass }).then((rep) => {
+        Axios.post("/ChangePass", { id: idSel, password: pass }).then((rep) => {
             setShowPass(false);
             setModif(!modif);
         });
@@ -439,11 +417,12 @@ const Gestion = (props) => {
 
     useEffect(() => {
         document.title = "PhidAdmin - Utilisateurs / Gestion ";
-        ax.get("/Listeusers")
+        Axios.get("/Listeusers")
             .then((rep) => {
                 let state = [];
                 rep.data.listeUsers.map((el, index) => {
                     state.push(el);
+                    return null;
                 });
                 setData(state);
             })
@@ -451,6 +430,7 @@ const Gestion = (props) => {
                 removeCookie("token");
                 userDP({ type: "CONNEXION" });
             });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [modif]);
     return (
         <Conteneur>

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { Divider, Icon } from "antd";
 import { ReactComponent as Logo } from "../../Assets/Logo.svg";
-import { Redirect, useLocation, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const ConteneurMenu = styled.div`
     display: flex;
