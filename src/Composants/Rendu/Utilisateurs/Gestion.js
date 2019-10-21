@@ -86,28 +86,11 @@ const Formulaire = (props) => {
         });
     }
     useEffect(() => {
+        console.log("UE FORMULAIRE");
         if (props.user) {
-            let dateCreation = props.user.createdAt
-                .split("T")[0]
-                .split("-")
-                .reverse()
-                .join("/");
-            let heureCreation = props.user.createdAt
-                .split("T")[1]
-                .split(":", 2)
-                .join(":");
-            let dateMaj = props.user.updatedAt
-                .split("T")[0]
-                .split("-")
-                .reverse()
-                .join("/");
-            let heureMaj = props.user.updatedAt
-                .split("T")[1]
-                .split(":", 2)
-                .join(":");
             setFieldsValue({
-                createdAt: dateCreation + " " + heureCreation,
-                updatedAt: dateMaj + " " + heureMaj,
+                createdAt: props.user.createdAt,
+                updatedAt: props.user.updatedAt,
                 prenom: props.user.prenom,
                 nom: props.user.nom,
                 ville: props.user.localisation,
@@ -115,11 +98,11 @@ const Formulaire = (props) => {
                 email: props.user.email
             });
         }
-    });
+    }, []);
     return (
         <Form
             {...formItemLayout}
-            title="Nouvel utilisateur"
+            title="Editer l'utilisateur"
             onSubmit={(e) => subForm(e)}
         >
             {props.user && (
@@ -420,8 +403,31 @@ const Gestion = (props) => {
         Axios.get("/Listeusers")
             .then((rep) => {
                 let state = [];
-                rep.data.listeUsers.map((el, index) => {
-                    state.push(el);
+                rep.data.listeUsers.map((el) => {
+                    let dateCreation = el.createdAt
+                        .split("T")[0]
+                        .split("-")
+                        .reverse()
+                        .join("/");
+                    let heureCreation = el.createdAt
+                        .split("T")[1]
+                        .split(":", 2)
+                        .join(":");
+                    let dateMaj = el.updatedAt
+                        .split("T")[0]
+                        .split("-")
+                        .reverse()
+                        .join("/");
+                    let heureMaj = el.updatedAt
+                        .split("T")[1]
+                        .split(":", 2)
+                        .join(":");
+                    let tempEl = {
+                        ...el,
+                        createdAt: dateCreation + " " + heureCreation,
+                        updatedAt: dateMaj + " " + heureMaj
+                    };
+                    state.push(tempEl);
                     return null;
                 });
                 setData(state);
