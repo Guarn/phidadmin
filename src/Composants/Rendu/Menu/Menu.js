@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { Divider, Icon } from "antd";
 import { ReactComponent as Logo } from "../../Assets/Logo.svg";
-import { useHistory } from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 const ConteneurMenu = styled.div`
     display: flex;
@@ -59,13 +59,14 @@ const ConteneurMenuLiens = styled.div`
 
 const ConteneurBoutons = styled.div``;
 
-const Menu = () => {
-    let history = useHistory();
+const Menu = (props) => {
     let changementPage = (UrlPage) => {
-        history.push(UrlPage);
+        props.history.push(UrlPage);
     };
 
-    useEffect(() => {}, []);
+    useEffect(() => {
+        console.log("UE");
+    }, []);
 
     return (
         <ConteneurMenu>
@@ -206,4 +207,4 @@ const Menu = () => {
     );
 };
 
-export default Menu;
+export default withRouter(Menu);

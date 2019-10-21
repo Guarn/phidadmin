@@ -18,7 +18,7 @@ const Tableau = (props) => {
     const [t, tt] = useState(false);
 
     useEffect(() => {
-        document.title = "PhidAdmin - Tableaau de bord ";
+        document.title = "PhidAdmin - Tableau de bord ";
         Axios.get("/Tableau").then((rep) => {
             setCountProb(rep.data.countProblemes);
             setCountSujets(rep.data.countSujets);

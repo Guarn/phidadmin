@@ -123,6 +123,7 @@ function App(props) {
                                     <Route
                                         path="/Sujets/Consultation"
                                         component={ConsultationSujets}
+                                        title="Test"
                                     />
                                     <Route path="/Sujets/Parametres">
                                         <ParametresSujets />
