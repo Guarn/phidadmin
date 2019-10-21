@@ -55,7 +55,7 @@ export const userPD = createContext(null);
 
 function App(props) {
     const [user, DPuser] = useReducer(RDuser, initialUser);
-    const [cookies, setCookie, removeCookie] = useCookies(["cookie-name"]);
+    const [cookies, setCookie, removeCookie] = useCookies();
 
     let formIdent = "";
 
