@@ -464,7 +464,7 @@ const ConsultationSujets = () => {
     //SECTION  USEEFFECT
 
     useEffect(() => {
-        document.title = "PhidAdmin - Sujets / Consultation ";
+        window.title = "PhidAdmin - Sujets / Consultation ";
         // ANCHOR Premier affichage ou filtres0
         if (sujets.length === 0) {
             Axios.get(`/sujets/${idSujet}`).then((rep) => {
