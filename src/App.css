@@ -1,13 +1,14 @@
 @import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap");
 
 .ql-tooltip {
-    z-index: 2;
+  z-index: 2;
 }
 
 .ql-editor {
-    font-size: 1.2em;
+  font-size: 1.2em;
 }
-
+/*
 .ql-editor p {
     text-indent: 30px;
 }
+*/

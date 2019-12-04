@@ -1,0 +1,10 @@
+.ql-stroke {
+  stroke: white;
+  stroke-width: 1px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.github-picker {
+  background-color: #707070;
+}
