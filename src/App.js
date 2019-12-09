@@ -15,7 +15,6 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
-
 const ConsultationSujets = React.lazy(() =>
   import("./Composants/Rendu/Sujets/ConsultationSujets")
 );
@@ -40,9 +39,11 @@ const ConteneurGlobal = styled.div`
 const ConteneurContenu = styled.div`
   height: 100%;
   width: calc(100vw - 250px);
+  padding-top: 56px;
   .ant-select-selection__choice {
     visibility: ${props => (props.chargement ? "hidden" : "")};
   }
+  overflow: hidden;
 `;
 
 const Login1 = styled.div`

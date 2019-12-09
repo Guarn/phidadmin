@@ -1,59 +1,100 @@
-const titreType = [
+import { v4 as uuid } from "uuid";
+
+const titreType = uuid => [
   {
     type: "h1",
-    margin: 0,
+    id: uuid,
     align: "center",
-    children: [{ text: "Nouveau Titre", marks: [] }]
+    children: [{ text: "Nouveau Titre" }]
   }
 ];
 
-const sousChapitreType = [
+const sousChapitreType = uuid => [
   {
     type: "sousChapitre",
-    margin: 0,
+    id: uuid,
     align: "center",
-    children: [{ text: "Nouveau sous chapitre", marks: [] }]
+    children: [{ text: "Nouveau sous chapitre" }]
   }
 ];
 
-const chapitreType = [
+const chapitreType = uuid => [
   {
     type: "chapitre",
-    margin: 0,
+    id: uuid,
     align: "left",
-    children: [{ text: "Nouveau chapitre", marks: [] }]
+    children: [{ text: "Nouveau chapitre" }]
   }
 ];
 
-const paragrapheType = [
+const paragrapheType = uuid => [
   {
     type: "paragraph",
-    margin: 0,
+    id: uuid,
     align: "left",
-    children: [{ text: "Nouveau paragraphe", marks: [] }]
-  }
-];
-
-const citationType = [
-  {
-    type: "citation",
-    margin: 0,
-    align: "left",
-    children: [{ text: "Nouveau chapitre", marks: [] }]
+    children: [{ text: "Nouveau paragraphe" }]
   }
 ];
 
 export const reducerCreationCours = (state, action) => {
-  console.log(action);
   let newState = { ...state };
+  console.log(action);
 
   switch (action.type) {
+    case "TableMatiereVisible":
+      newState.Cours[action.index].TableMatiere = {
+        ...state.Cours[action.index].TableMatiere,
+        actif: action.value
+      };
+      localStorage.setItem(
+        "Cours",
+        JSON.stringify({ Cours: newState.Cours, ReadOnly: null })
+      );
+      return newState;
+    case "TableMatiere":
+      newState.Cours[action.index].TableMatiere = {
+        ...state.Cours[action.index].TableMatiere,
+        value: action.value
+      };
+      localStorage.setItem(
+        "Cours",
+        JSON.stringify({ Cours: newState.Cours, ReadOnly: null })
+      );
+      return newState;
+    case "TableMatiereType":
+      if (action.index !== 0) {
+        newState.Cours[action.index].TableMatiere = {
+          ...state.Cours[action.index].TableMatiere,
+          type: action.value
+        };
+        localStorage.setItem(
+          "Cours",
+          JSON.stringify({ Cours: newState.Cours, ReadOnly: null })
+        );
+      }
+      return newState;
     case "UpdateValue":
       newState.Cours[action.index] = {
         ...state.Cours[action.index],
         value: action.value
       };
+      localStorage.setItem(
+        "Cours",
+        JSON.stringify({ Cours: newState.Cours, ReadOnly: null })
+      );
       return newState;
+    case "Suppression":
+      let Cours = newState.Cours;
+
+      if (action.index !== 0) {
+        Cours.splice(action.index, 1);
+      }
+      localStorage.setItem(
+        "Cours",
+        JSON.stringify({ Cours: Cours, ReadOnly: null })
+      );
+
+      return { ...newState, Cours: Cours };
     case "ReadOnly":
       newState.ReadOnly = action.index;
       return newState;
@@ -61,16 +102,16 @@ export const reducerCreationCours = (state, action) => {
       let value;
       switch (action.value) {
         case "titre":
-          value = titreType;
+          value = titreType(uuid());
           break;
         case "chapitre":
-          value = chapitreType;
+          value = chapitreType(uuid());
           break;
         case "sousChapitre":
-          value = sousChapitreType;
+          value = sousChapitreType(uuid());
           break;
         case "paragraphe":
-          value = paragrapheType;
+          value = paragrapheType(uuid());
           break;
       }
       newState.Cours = [
@@ -78,12 +119,39 @@ export const reducerCreationCours = (state, action) => {
         {
           value,
           type: action.value,
-          options: { marginTop: 0, marginBottom: 0 }
+          TableMatiere: {
+            actif: false,
+            value: "",
+            titre: false,
+            position: 0
+          },
+          options: {
+            marginTop: 0,
+            marginBottom: 0,
+            marginLeft: 0,
+            marginRight: 0,
+            backgroundColor: "",
+            paddingTop: 0,
+            paddingLeft: 0,
+            paddingRight: 0,
+            paddingBottom: 0
+          }
         }
       ];
+      localStorage.setItem(
+        "Cours",
+        JSON.stringify({ Cours: newState.Cours, ReadOnly: null })
+      );
 
       return newState;
+    case "Parametres":
+      newState.Cours[state.ReadOnly].options[action.param] = action.value;
+      localStorage.setItem(
+        "Cours",
+        JSON.stringify({ Cours: newState.Cours, ReadOnly: null })
+      );
 
+      return newState;
     default:
       return state;
   }
@@ -92,19 +160,32 @@ export const reducerCreationCours = (state, action) => {
 export const initialValue = {
   Cours: [
     {
-      value: titreType,
-      type: "titre",
-      options: { marginTop: 0, marginBottom: 0 }
-    },
-    {
-      value: chapitreType,
-      type: "chapitre",
-      options: { marginTop: 0, marginBottom: 0 }
-    },
-    {
-      value: sousChapitreType,
-      type: "sc",
-      options: { marginTop: 0, marginBottom: 0 }
+      value: [
+        {
+          type: "h1",
+          id: 1,
+          align: "center",
+          children: [{ text: "LES  TEXTES REGLEMENTAIRES" }]
+        }
+      ],
+      type: "h1",
+      TableMatiere: {
+        actif: true,
+        value: "LES TEXTES REGLEMENTAIRES",
+        type: "titre",
+        position: 0
+      },
+      options: {
+        marginTop: 0,
+        marginBottom: 0,
+        marginLeft: 0,
+        marginRight: 0,
+        backgroundColor: "",
+        paddingTop: 0,
+        paddingLeft: 0,
+        paddingRight: 0,
+        paddingBottom: 0
+      }
     }
   ],
   ReadOnly: null
