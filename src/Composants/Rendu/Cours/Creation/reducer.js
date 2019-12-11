@@ -38,7 +38,6 @@ const paragrapheType = uuid => [
 
 export const reducerCreationCours = (state, action) => {
   let newState = { ...state };
-  console.log(action);
 
   switch (action.type) {
     case "TableMatiereVisible":
@@ -48,7 +47,7 @@ export const reducerCreationCours = (state, action) => {
       };
       localStorage.setItem(
         "Cours",
-        JSON.stringify({ Cours: newState.Cours, ReadOnly: null })
+        JSON.stringify({ ...newState, Cours: newState.Cours, ReadOnly: null })
       );
       return newState;
     case "TableMatiere":
@@ -58,7 +57,7 @@ export const reducerCreationCours = (state, action) => {
       };
       localStorage.setItem(
         "Cours",
-        JSON.stringify({ Cours: newState.Cours, ReadOnly: null })
+        JSON.stringify({ ...newState, Cours: newState.Cours, ReadOnly: null })
       );
       return newState;
     case "TableMatiereType":
@@ -69,7 +68,7 @@ export const reducerCreationCours = (state, action) => {
         };
         localStorage.setItem(
           "Cours",
-          JSON.stringify({ Cours: newState.Cours, ReadOnly: null })
+          JSON.stringify({ ...newState, Cours: newState.Cours, ReadOnly: null })
         );
       }
       return newState;
@@ -80,7 +79,7 @@ export const reducerCreationCours = (state, action) => {
       };
       localStorage.setItem(
         "Cours",
-        JSON.stringify({ Cours: newState.Cours, ReadOnly: null })
+        JSON.stringify({ ...newState, Cours: newState.Cours, ReadOnly: null })
       );
       return newState;
     case "Suppression":
@@ -91,7 +90,7 @@ export const reducerCreationCours = (state, action) => {
       }
       localStorage.setItem(
         "Cours",
-        JSON.stringify({ Cours: Cours, ReadOnly: null })
+        JSON.stringify({ ...newState, Cours: Cours, ReadOnly: null })
       );
 
       return { ...newState, Cours: Cours };
@@ -140,7 +139,7 @@ export const reducerCreationCours = (state, action) => {
       ];
       localStorage.setItem(
         "Cours",
-        JSON.stringify({ Cours: newState.Cours, ReadOnly: null })
+        JSON.stringify({ ...newState, Cours: newState.Cours, ReadOnly: null })
       );
 
       return newState;
@@ -148,7 +147,7 @@ export const reducerCreationCours = (state, action) => {
       newState.Cours[state.ReadOnly].options[action.param] = action.value;
       localStorage.setItem(
         "Cours",
-        JSON.stringify({ Cours: newState.Cours, ReadOnly: null })
+        JSON.stringify({ ...newState, Cours: newState.Cours, ReadOnly: null })
       );
 
       return newState;
@@ -165,13 +164,13 @@ export const initialValue = {
           type: "h1",
           id: 1,
           align: "center",
-          children: [{ text: "LES  TEXTES REGLEMENTAIRES" }]
+          children: [{ text: "TITRE" }]
         }
       ],
       type: "h1",
       TableMatiere: {
         actif: true,
-        value: "LES TEXTES REGLEMENTAIRES",
+        value: "TITRE",
         type: "titre",
         position: 0
       },
@@ -188,5 +187,8 @@ export const initialValue = {
       }
     }
   ],
-  ReadOnly: null
+  ReadOnly: null,
+  Titre: "Nouveau Cours",
+  Description: "Description manquante",
+  id: ""
 };

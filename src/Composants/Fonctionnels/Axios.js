@@ -4,16 +4,16 @@ let reg = /token=.*;*/g;
 let test;
 
 if (document.cookie !== "" && document.cookie.match(reg)[0]) {
-    test = document.cookie.match(reg)[0].substring(6);
-    if (test.charAt(test.length - 1) === ";")
-        test = test.slice(0, test.length - 1);
-    test = test.replace("Bearer%20", "Bearer ");
+  test = document.cookie.match(reg)[0].substring(6);
+  if (test.charAt(test.length - 1) === ";")
+    test = test.slice(0, test.length - 1);
+  test = test.replace("Bearer%20", "Bearer ");
 } else {
-    test = "";
+  test = "";
 }
 
 export default axios.create({
-    baseURL: "http://phidbac.fr:4000/",
-    headers: { Authorization: test },
-    responseType: "json"
+  baseURL: "http://phidbac.fr:4000/",
+  headers: { Authorization: test },
+  responseType: "json"
 });

@@ -9,6 +9,7 @@ import { useCookies } from "react-cookie";
 import Chargement from "./Composants/Rendu/Chargement/Chargement";
 import { RDuser } from "./Composants/reducers";
 import Creation from "./Composants/Rendu/Cours/Creation";
+import ModificationCours from "./Composants/Rendu/Cours/Modification/Modification";
 import {
   BrowserRouter as Router,
   Switch,
@@ -141,7 +142,7 @@ function App(props) {
                     <Creation />
                   </Route>
                   <Route path="/Cours/Modification">
-                    <Cours />
+                    <ModificationCours />
                   </Route>
                 </Suspense>
               </Switch>

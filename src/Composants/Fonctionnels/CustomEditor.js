@@ -266,7 +266,6 @@ class Editor extends React.Component {
       : this.props.droite
       ? this.props.state.listeCours[this.props.index].contenu[1]
       : this.props.state.listeCours[this.props.index];
-    console.log(this.cours);
   }
 
   setWrapperRef(node) {

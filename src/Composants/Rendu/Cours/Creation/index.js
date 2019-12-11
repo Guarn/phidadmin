@@ -2,6 +2,7 @@ import React, { useReducer, createContext, useState, useContext } from "react";
 import styled from "styled-components";
 import {
   Card,
+  Icon,
   Drawer,
   Radio,
   Divider,
@@ -22,6 +23,8 @@ import {
   scrollSpy,
   scroller
 } from "react-scroll";
+import Axios from "../../../Fonctionnels/Axios";
+import { useHistory } from "react-router-dom";
 
 const Conteneur = styled(Element)`
   width: 100%;
@@ -125,7 +128,7 @@ const CreactionCours = () => {
 
   return (
     <ListeContext.Provider value={[state, setState]}>
-      <Conteneur id="ScrollConteneur" className="element" className="element">
+      <Conteneur id="ScrollConteneur" className="element">
         <MenuParametres />
 
         <Card
@@ -214,8 +217,6 @@ const MenuParametres = () => {
                   <InputMarge
                     placeholder={state.Cours[state.ReadOnly].options.marginTop}
                     onChange={val => {
-                      console.log(val.target.value);
-
                       setState({
                         type: "Parametres",
                         param: "marginTop",
@@ -235,8 +236,6 @@ const MenuParametres = () => {
                   <InputMarge
                     placeholder={state.Cours[state.ReadOnly].options.marginLeft}
                     onChange={val => {
-                      console.log(val.target.value);
-
                       setState({
                         type: "Parametres",
                         param: "marginLeft",
@@ -250,8 +249,6 @@ const MenuParametres = () => {
                       state.Cours[state.ReadOnly].options.marginRight
                     }
                     onChange={val => {
-                      console.log(val.target.value);
-
                       setState({
                         type: "Parametres",
                         param: "marginRight",
@@ -266,8 +263,6 @@ const MenuParametres = () => {
                       state.Cours[state.ReadOnly].options.marginBottom
                     }
                     onChange={val => {
-                      console.log(val.target.value);
-
                       setState({
                         type: "Parametres",
                         param: "marginBottom",
@@ -282,8 +277,6 @@ const MenuParametres = () => {
                   <InputMarge
                     placeholder={state.Cours[state.ReadOnly].options.paddingTop}
                     onChange={val => {
-                      console.log(val.target.value);
-
                       setState({
                         type: "Parametres",
                         param: "paddingTop",
@@ -306,8 +299,6 @@ const MenuParametres = () => {
                         state.Cours[state.ReadOnly].options.paddingLeft
                       }
                       onChange={val => {
-                        console.log(val.target.value);
-
                         setState({
                           type: "Parametres",
                           param: "paddingLeft",
@@ -322,8 +313,6 @@ const MenuParametres = () => {
                         state.Cours[state.ReadOnly].options.paddingRight
                       }
                       onChange={val => {
-                        console.log(val.target.value);
-
                         setState({
                           type: "Parametres",
                           param: "paddingRight",
@@ -339,8 +328,6 @@ const MenuParametres = () => {
                       state.Cours[state.ReadOnly].options.paddingBottom
                     }
                     onChange={val => {
-                      console.log(val.target.value);
-
                       setState({
                         type: "Parametres",
                         param: "paddingBottom",
@@ -361,8 +348,6 @@ const MenuParametres = () => {
                   checkedChildren="Visible"
                   unCheckedChildren="Visible"
                   onChange={val => {
-                    console.log(val);
-
                     setState({
                       type: "TableMatiereVisible",
                       value: val,
@@ -459,29 +444,74 @@ const MenuParametres = () => {
 
 const ConteneurDescription = styled.div`
   display: flex;
-  width: 100%;
+  flex-direction: column;
+  width: 600px;
+  overflow: hidden;
 `;
 
 const DescriptionCours = () => {
+  const [state, setState] = useContext(ListeContext);
+  const history = useHistory();
+  function saveBDD() {
+    Axios.post(`/Cours${state.id}`, {
+      Titre: state.Titre,
+      Description: state.Description,
+      Contenu: JSON.stringify(state.Cours)
+    }).then(() => {
+      localStorage.removeItem("Cours");
+      history.push("/Cours/Modification");
+    });
+  }
+
   return (
-    <ConteneurDescription>
-      <div
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+
+        justifyContent: "space-between"
+      }}
+    >
+      <ConteneurDescription>
+        <div
+          style={{
+            display: "flex"
+          }}
+        >
+          <div style={{ fontWeight: "bold", marginRight: "10px" }}>
+            Titre :
+            <span style={{ fontWeight: "normal", marginLeft: "10px" }}>
+              {state.Titre}
+            </span>
+          </div>
+        </div>
+        <div
+          style={{
+            display: "flex"
+          }}
+        >
+          <div style={{ fontWeight: "bold", marginRight: "10px" }}>
+            Description :
+            <span style={{ fontWeight: "normal", marginLeft: "10px" }}>
+              {state.Description}
+            </span>
+          </div>
+        </div>
+      </ConteneurDescription>
+      <Button
         style={{
-          display: "flex",
-          flexDirection: "column",
-          flex: 1,
-          marginRight: "10px"
+          height: "80px",
+          width: "80px"
         }}
+        onMouseDown={saveBDD}
       >
-        <span style={{ fontSize: "16px", fontWeight: "bold" }}>Titre :</span>
-        <Input />
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", flex: 2 }}>
-        <span style={{ fontSize: "16px", fontWeight: "bold" }}>
-          Description :
-        </span>
-        <Input.TextArea />
-      </div>
-    </ConteneurDescription>
+        <Icon
+          type="save"
+          style={{
+            fontSize: "35px"
+          }}
+        />
+      </Button>
+    </div>
   );
 };

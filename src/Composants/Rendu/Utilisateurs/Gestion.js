@@ -86,7 +86,6 @@ const Formulaire = (props) => {
         });
     }
     useEffect(() => {
-        console.log("UE FORMULAIRE");
         if (props.user) {
             setFieldsValue({
                 createdAt: props.user.createdAt,

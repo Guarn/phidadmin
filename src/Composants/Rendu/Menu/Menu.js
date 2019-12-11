@@ -180,18 +180,7 @@ const Menu = props => {
               }}
               type="file-search"
             />
-            <TexteLien>Modification</TexteLien>
-          </Lien>
-          <Lien>
-            <Icon
-              style={{
-                fontSize: "25px",
-                color: "grey",
-                marginLeft: "15px"
-              }}
-              type="setting"
-            />
-            <TexteLien>Paramètres</TexteLien>
+            <TexteLien>Gestion</TexteLien>
           </Lien>
         </Categorie>
       </ConteneurMenuLiens>

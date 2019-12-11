@@ -139,7 +139,6 @@ const GenListe = props => {
   let largeur;
 
   return props.state.map((el, index) => {
-    console.log(el);
     switch (el.type) {
       case "chapitre":
         largeur = 700 - 33;
@@ -237,9 +236,7 @@ const AddQQ = styled.div`
 `;
 
 const Cours = () => {
-  useEffect(() => {
-    console.log("USE EFFECRTT !!!!!!!!!!!");
-  });
+  useEffect(() => {});
   const [t, tt] = useState({ width: 200, height: 200 });
   const [state, setState] = useState([
     { texte: "TEST 1", readOnly: true, type: "titre" },
@@ -269,10 +266,8 @@ const Cours = () => {
     let hauteurContainer = t.height * 0.9;
     let largeurContainer = 750 - t.width - (750 - t.width) * 0.1;
     if (largeurContainer >= hauteurContainer * 2) {
-      console.log("L>H*2");
       return { height: hauteurContainer, width: hauteurContainer * 2 };
     } else {
-      console.log("!L>H*2");
       return { height: largeurContainer / 2, width: largeurContainer };
     }
   }
