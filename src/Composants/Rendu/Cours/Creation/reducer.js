@@ -11,19 +11,33 @@ const titreType = uuid => [
 
 const sousChapitreType = uuid => [
   {
-    type: "sousChapitre",
+    type: "h3",
     id: uuid,
-    align: "center",
-    children: [{ text: "Nouveau sous chapitre" }]
+    align: "left",
+    children: [
+      {
+        text: "1.1",
+        couleurBackgroundActive: true,
+        couleurBackground: "#fef3bd"
+      },
+      { text: " SOUS CHAPITRE" }
+    ]
   }
 ];
 
 const chapitreType = uuid => [
   {
-    type: "chapitre",
+    type: "h2",
     id: uuid,
     align: "left",
-    children: [{ text: "Nouveau chapitre" }]
+    children: [
+      {
+        text: " 1 ",
+        couleurBackgroundActive: true,
+        couleurBackground: "#fef3bd"
+      },
+      { text: " CHAPITRE" }
+    ]
   }
 ];
 
@@ -113,30 +127,28 @@ export const reducerCreationCours = (state, action) => {
           value = paragrapheType(uuid());
           break;
       }
-      newState.Cours = [
-        ...state.Cours,
-        {
-          value,
-          type: action.value,
-          TableMatiere: {
-            actif: false,
-            value: "",
-            titre: false,
-            position: 0
-          },
-          options: {
-            marginTop: 0,
-            marginBottom: 0,
-            marginLeft: 0,
-            marginRight: 0,
-            backgroundColor: "",
-            paddingTop: 0,
-            paddingLeft: 0,
-            paddingRight: 0,
-            paddingBottom: 0
-          }
+      newState.Cours.splice(action.index, 0, {
+        value,
+        type: action.value,
+        TableMatiere: {
+          actif: false,
+          value: "",
+          titre: false,
+          position: 0
+        },
+        options: {
+          marginTop: 0,
+          marginBottom: 0,
+          marginLeft: 0,
+          marginRight: 0,
+          backgroundColor: action.value === "titre" ? "#FEF3BD" : "",
+          paddingTop: 0,
+          paddingLeft: 0,
+          paddingRight: 0,
+          paddingBottom: 0
         }
-      ];
+      });
+
       localStorage.setItem(
         "Cours",
         JSON.stringify({ ...newState, Cours: newState.Cours, ReadOnly: null })

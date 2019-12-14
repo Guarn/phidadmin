@@ -61,17 +61,11 @@ const ConteneurWidget = styled.div`
 `;
 
 const FondWidget = styled.div`
-  display: flex;
-  align-items: center;
-  border: 1px solid grey;
-  background-color: rgb(226, 224, 216);
+  background-color: rgb(254, 243, 189);
   user-select: none;
   cursor: pointer;
   transition: all 0.2s;
   margin-bottom: 10px;
-  &:hover {
-    border: 1px solid #1890ff;
-  }
 `;
 
 const Creation = props => {
@@ -80,21 +74,43 @@ const Creation = props => {
   const ref = React.createRef();
   const [menuWidgets, setMenuWidgets] = useState(false);
   const [menuParametres, setMenuParametres] = useState(false);
+  const [insertWidget, setInsertWidget] = useState(false);
+  const [positionNewWidget, setPositionNewWidget] = useState(0);
   function changeState(val, index) {
     setState({ type: "UpdateValue", value: val, index: index });
   }
   function clickOutside(event) {
     let drawer = document.getElementById("drawerParametres");
-
     if (
       state.ReadOnly !== null &&
       !refConteneur.current.contains(event.target) &&
       !menuParametres &&
       !drawer.contains(event.target)
     ) {
-      event.stopPropagation();
-
       setState({ type: "ReadOnly", index: null });
+      setInsertWidget(false);
+      return;
+    } else if (
+      !refConteneur.current.contains(event.target) &&
+      !menuParametres &&
+      !drawer.contains(event.target)
+    ) {
+      setInsertWidget(false);
+      return;
+    } else if (
+      refConteneur.current.contains(event.target) &&
+      event.target.nodeName === "svg"
+    ) {
+      setInsertWidget(false);
+      setPositionNewWidget(event.target.parentNode.id);
+      setMenuWidgets(true);
+    } else if (
+      refConteneur.current.contains(event.target) &&
+      event.target.nodeName === "path"
+    ) {
+      setInsertWidget(false);
+      setPositionNewWidget(event.target.parentNode.parentNode.id);
+      setMenuWidgets(true);
     }
   }
 
@@ -112,6 +128,17 @@ const Creation = props => {
       height={props.height}
       width={props.width}
     >
+      {insertWidget && (
+        <InsertLine
+          id="0"
+          onClick={e => {
+            console.log(e);
+
+            setPositionNewWidget(0);
+            setMenuWidgets(true);
+          }}
+        />
+      )}
       {state.Cours.map((element, index) => {
         return (
           <Element
@@ -146,6 +173,16 @@ const Creation = props => {
                 readOnly={state.ReadOnly !== index}
               />
             </ConteneurSlate>
+
+            {insertWidget && (
+              <InsertLine
+                id={index + 1}
+                onMouseDown={() => {
+                  setPositionNewWidget(index + 1);
+                  setMenuWidgets(true);
+                }}
+              />
+            )}
           </Element>
         );
       })}
@@ -153,7 +190,7 @@ const Creation = props => {
       <Button
         onMouseDown={() => {
           setMenuParametres(false);
-          setMenuWidgets(true);
+          setInsertWidget(true);
         }}
         type="round"
         style={{ position: "absolute", right: "10px", bottom: "-50px" }}
@@ -172,6 +209,7 @@ const Creation = props => {
             setState(val);
             setMenuWidgets(false);
           }}
+          position={positionNewWidget}
         />
       </Drawer>
     </ConteneurGlobal>
@@ -179,62 +217,114 @@ const Creation = props => {
 };
 export default Creation;
 
-const MenuWidgets = () => {
+const MenuWidgets = ({ position }) => {
   const [state, setState] = useContext(ListeContext);
   return (
     <ConteneurWidget>
       <FondWidget
-        onMouseDown={() => setState({ type: "Ajout", value: "titre" })}
+        onMouseDown={() =>
+          setState({ type: "Ajout", value: "titre", index: position })
+        }
       >
         <h1 style={{ margin: "10px", textAlign: "center" }}>Titre</h1>
       </FondWidget>
       <FondWidget
-        onMouseDown={() => setState({ type: "Ajout", value: "chapitre" })}
+        style={{ backgroundColor: "white" }}
+        onMouseDown={() =>
+          setState({ type: "Ajout", value: "chapitre", index: position })
+        }
       >
         <div
           style={{
-            height: "30px",
-            width: "30px",
             display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            fontSize: "22px",
-            marginRight: "10px",
-            marginLeft: "5px",
-            background: "white",
-            color: "#858585"
+            alignItems: "baseline",
+            background: "white"
           }}
         >
-          1
+          <div
+            style={{
+              height: "30px",
+              width: "30px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "22px",
+              marginRight: "10px",
+              marginLeft: "5px",
+              backgroundColor: "rgb(254, 243, 189)"
+            }}
+          >
+            1
+          </div>
+          <h2 style={{ margin: "10px" }}>Chapitre</h2>
         </div>
-        <h2 style={{ margin: "10px" }}>Chapitre</h2>
       </FondWidget>
       <FondWidget
-        onMouseDown={() => setState({ type: "Ajout", value: "sousChapitre" })}
+        style={{ backgroundColor: "white" }}
+        onMouseDown={() =>
+          setState({ type: "Ajout", value: "sousChapitre", index: position })
+        }
       >
         <div
           style={{
-            height: "24px",
-            width: "24px",
             display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            fontSize: "18px",
-            marginRight: "10px",
-            marginLeft: "20px",
-            background: "white",
-            color: "#858585"
+            alignItems: "baseline",
+            background: "white"
           }}
         >
-          1.1
+          <div
+            style={{
+              height: "24px",
+              width: "24px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              fontSize: "18px",
+              marginRight: "10px",
+              marginLeft: "5px",
+              backgroundColor: "rgb(254, 243, 189)"
+            }}
+          >
+            1.1
+          </div>
+          <h3 style={{ margin: "10px" }}> Sous Chapitre</h3>
         </div>
-        <h3 style={{ margin: "10px" }}>Sous chapitre</h3>
       </FondWidget>
       <FondWidget
-        onMouseDown={() => setState({ type: "Ajout", value: "paragraphe" })}
+        style={{ backgroundColor: "white", border: "1px dashed lightgrey" }}
+        onMouseDown={() =>
+          setState({ type: "Ajout", value: "paragraphe", index: position })
+        }
       >
         <p style={{ margin: "10px" }}>Paragraphe</p>
       </FondWidget>
     </ConteneurWidget>
+  );
+};
+
+const InsertLine = ({ id }) => {
+  return (
+    <div
+      style={{
+        borderTop: "1px dashed lightblue",
+        position: "relative",
+        height: "1px",
+        cursor: "pointer"
+      }}
+    >
+      <Icon
+        id={id}
+        style={{
+          position: "absolute",
+          right: "-30px",
+          top: "-15px",
+          fontSize: "24px",
+          backgroundColor: "lightblue",
+          padding: "3px",
+          borderRadius: "50%"
+        }}
+        type="plus"
+      />
+    </div>
   );
 };
