@@ -64,9 +64,7 @@ const Menu = props => {
     props.history.push(UrlPage);
   };
 
-  useEffect(() => {
-    console.log("UE");
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <ConteneurMenu>

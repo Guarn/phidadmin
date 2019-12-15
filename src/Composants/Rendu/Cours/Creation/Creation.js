@@ -298,6 +298,25 @@ const MenuWidgets = ({ position }) => {
       >
         <p style={{ margin: "10px" }}>Paragraphe</p>
       </FondWidget>
+      <FondWidget
+        style={{
+          display: "flex",
+          backgroundColor: "white",
+          border: "1px dashed lightgrey"
+        }}
+        onMouseDown={() =>
+          setState({ type: "Ajout", value: "citation", index: position })
+        }
+      >
+        <div
+          style={{
+            backgroundColor: "rgba(0,0,0,0.2)",
+            width: "6px",
+            marginRight: "30px"
+          }}
+        />
+        <p style={{ margin: "10px" }}>Citation</p>
+      </FondWidget>
     </ConteneurWidget>
   );
 };

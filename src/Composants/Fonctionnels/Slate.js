@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import isHotkey from "is-hotkey";
 import { Editable, withReact, useSlate, Slate } from "slate-react";
-import { Editor, createEditor } from "slate";
+import { Editor, createEditor, Range } from "slate";
 import { withHistory } from "slate-history";
 import styled from "styled-components";
 import { isEqual } from "lodash";
@@ -28,10 +28,12 @@ import {
   FormatCouleurTexte,
   FormatCouleurBackground,
   FormatNumberedList,
-  FormatOrderedList
+  FormatOrderedList,
+  FormatLink
 } from "./Components";
 import "./Slate.css";
 import { ListeContext } from "../Rendu/Cours/Creation/index";
+import isUrl from "is-url";
 
 import { Button, Icon } from "antd";
 
@@ -59,13 +61,11 @@ const SlateJs = props => {
   const renderElement = useCallback(props => <Element {...props} />, []);
   const renderLeaf = useCallback(props => <Leaf {...props} />, []);
   const editor = useMemo(
-    () => withRichText(withHistory(withReact(createEditor()))),
+    () => withLinks(withRichText(withHistory(withReact(createEditor())))),
     []
   );
   useEffect(() => {
     if (props.readOnly) {
-      console.log("ha");
-      
       setSelection(null);
     }
   }, [state]);
@@ -131,6 +131,8 @@ const SlateJs = props => {
             <FormatOrderedList
               selected={isFormatActive(editor, "bulleted-list")}
             />
+            <Separateur />
+            <FormatLink selected={isLinkActive(editor)} />
           </BarreOutils>
         </div>
       )}
@@ -150,7 +152,81 @@ const SlateJs = props => {
     </Slate>
   );
 };
+const withLinks = editor => {
+  const { exec, isInline } = editor;
 
+  editor.isInline = element => {
+    return element.type === "link" ? true : isInline(element);
+  };
+
+  editor.exec = command => {
+    if (command.type === "insert_link") {
+      const { url } = command;
+
+      if (editor.selection) {
+        wrapLink(editor, url);
+      }
+
+      return;
+    }
+    if (command.type === "remove_link") {
+      const [link] = Editor.nodes(editor, { match: { type: "link" } });
+
+      if (editor.selection) {
+        Editor.unwrapNodes(editor, { match: link[0] });
+      }
+
+      return;
+    }
+
+    let text;
+
+    if (command.type === "insert_data") {
+      text = command.data.getData("text/plain");
+    } else if (command.type === "insert_text") {
+      text = command.text;
+    }
+
+    if (text && isUrl(text)) {
+      wrapLink(editor, text);
+    } else {
+      exec(command);
+    }
+  };
+
+  return editor;
+};
+const isLinkActive = editor => {
+  const [link] = Editor.nodes(editor, { match: { type: "link" } });
+  return !!link;
+};
+
+const unwrapLink = editor => {
+  console.log("UNWRAP");
+
+  Editor.unwrapNodes(editor);
+};
+
+const wrapLink = (editor, url) => {
+  if (isLinkActive(editor)) {
+    unwrapLink(editor);
+  }
+
+  const { selection } = editor;
+  const isCollapsed = selection && Range.isCollapsed(selection);
+  const link = {
+    type: "link",
+    url,
+    children: isCollapsed ? [{ text: url }] : []
+  };
+
+  if (isCollapsed) {
+    Editor.insertNodes(editor, link);
+  } else {
+    Editor.wrapNodes(editor, link, { split: true });
+    Editor.collapse(editor, { edge: "end" });
+  }
+};
 const withRichText = editor => {
   const { exec } = editor;
 
@@ -362,19 +438,27 @@ const isFormatActive = (editor, format) => {
 
 const Element = ({ attributes, children, element }) => {
   switch (element.type) {
-    case "block-quote":
+    case "citation":
       return (
-        <blockquote
+        <div
           style={{
             textAlign: element.align,
             marginLeft: element.marginLeft,
             marginTop: "0px",
-            marginBottom: "0px"
+            marginBottom: "0px",
+            display: "flex"
           }}
           {...attributes}
         >
+          <div
+            style={{
+              backgroundColor: "rgba(0,0,0,0.2)",
+              width: "6px",
+              marginRight: "30px"
+            }}
+          />
           {children}
-        </blockquote>
+        </div>
       );
     case "bulleted-list":
       return <ul {...attributes}>{children}</ul>;
@@ -424,6 +508,12 @@ const Element = ({ attributes, children, element }) => {
       return <li {...attributes}>{children}</li>;
     case "numbered-list":
       return <ol {...attributes}>{children}</ol>;
+    case "link":
+      return (
+        <a {...attributes} href={"http://" + element.url}>
+          {children}
+        </a>
+      );
     default:
       return (
         <p

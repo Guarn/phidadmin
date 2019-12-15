@@ -9,7 +9,7 @@ import { Icon } from "antd";
 const BarreOutilsConteneur = styled.div`
   position: absolute;
   top: -50px;
-  left: 20px;
+  left: -2px;
   background-color: #707070;
   height: 46px;
   border-radius: 5px;
@@ -214,7 +214,7 @@ export const FormatCouleurBackground = ({ selected, couleurBackground }) => {
             borderRadius: "5px",
             paddingLeft: "2px",
             paddingRight: "2px",
-            paddingTop: "-5px",
+            paddingTop: "-5px"
           }}
         >
           A
@@ -458,6 +458,28 @@ export const FormatOrderedList = ({ selected }) => {
         type="unordered-list"
         style={{ fontSize: "24px", height: "24px" }}
       />
+      <RectSelect selected={selected} />
+    </Outils>
+  );
+};
+
+export const FormatLink = ({ selected }) => {
+  const editor = useSlate();
+
+  return (
+    <Outils
+      onMouseDown={event => {
+        event.preventDefault();
+        if (!selected) {
+          const url = window.prompt("URL du  lien :");
+          if (!url) return;
+          editor.exec({ type: "insert_link", url });
+        } else {
+          editor.exec({ type: "remove_link" });
+        }
+      }}
+    >
+      <Icon type="link" style={{ fontSize: "24px", height: "24px" }} />
       <RectSelect selected={selected} />
     </Outils>
   );

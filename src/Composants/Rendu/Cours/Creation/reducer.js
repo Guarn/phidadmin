@@ -40,6 +40,14 @@ const chapitreType = uuid => [
     ]
   }
 ];
+const citationType = uuid => [
+  {
+    type: "citation",
+    id: uuid,
+    align: "left",
+    children: [{ text: "Nouvelle citation" }]
+  }
+];
 
 const paragrapheType = uuid => [
   {
@@ -122,6 +130,9 @@ export const reducerCreationCours = (state, action) => {
           break;
         case "sousChapitre":
           value = sousChapitreType(uuid());
+          break;
+        case "citation":
+          value = citationType(uuid());
           break;
         case "paragraphe":
           value = paragrapheType(uuid());
