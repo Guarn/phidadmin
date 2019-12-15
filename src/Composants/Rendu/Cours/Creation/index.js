@@ -432,7 +432,9 @@ const MenuParametres = () => {
               onMouseDown={e => {
                 let index = state.ReadOnly;
                 setState({ type: "ReadOnly", value: null });
-                setState({ type: "Suppression", index: index });
+                setTimeout(() => {
+                  setState({ type: "Suppression", index: index });
+                }, 100);
               }}
             />
           </div>

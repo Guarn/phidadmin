@@ -99,14 +99,16 @@ const Creation = props => {
       return;
     } else if (
       refConteneur.current.contains(event.target) &&
-      event.target.nodeName === "svg"
+      event.target.nodeName === "svg" &&
+      state.ReadOnly === null
     ) {
       setInsertWidget(false);
       setPositionNewWidget(event.target.parentNode.id);
       setMenuWidgets(true);
     } else if (
       refConteneur.current.contains(event.target) &&
-      event.target.nodeName === "path"
+      event.target.nodeName === "path" &&
+      state.ReadOnly === null
     ) {
       setInsertWidget(false);
       setPositionNewWidget(event.target.parentNode.parentNode.id);
@@ -128,12 +130,10 @@ const Creation = props => {
       height={props.height}
       width={props.width}
     >
-      {insertWidget && (
+      {insertWidget && !props.readonly && (
         <InsertLine
           id="0"
           onClick={e => {
-            console.log(e);
-
             setPositionNewWidget(0);
             setMenuWidgets(true);
           }}
@@ -189,6 +189,7 @@ const Creation = props => {
 
       <Button
         onMouseDown={() => {
+          setState({ type: "ReadOnly", index: null });
           setMenuParametres(false);
           setInsertWidget(true);
         }}
