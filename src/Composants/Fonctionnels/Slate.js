@@ -64,6 +64,8 @@ const SlateJs = props => {
   );
   useEffect(() => {
     if (props.readOnly) {
+      console.log("ha");
+      
       setSelection(null);
     }
   }, [state]);

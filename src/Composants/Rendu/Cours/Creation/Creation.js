@@ -14,8 +14,7 @@ import { Button, Icon, Drawer, Radio, Divider } from "antd";
 import { GithubPicker } from "react-color";
 
 import Slate from "../../../Fonctionnels/Slate";
-const whyDidYouRender = require("@welldone-software/why-did-you-render");
-whyDidYouRender(React);
+
 const ConteneurGlobal = styled.div`
   height: ${props => props.height + "px"};
   width: ${props => props.width + "px"};
