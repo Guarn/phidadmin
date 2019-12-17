@@ -9,7 +9,10 @@ import {
   Button,
   InputNumber,
   Input,
-  Switch
+  Switch,
+  Modal,
+  Checkbox,
+  Select
 } from "antd";
 import Creation from "./Creation";
 import { initialValue, reducerCreationCours } from "./reducer";
@@ -121,6 +124,8 @@ const Rectangle = styled.div`
 export const ListeContext = createContext(null);
 
 const CreactionCours = () => {
+  const [menuImage, setMenuImage] = useState(false);
+
   let init = JSON.parse(localStorage.getItem("Cours"))
     ? JSON.parse(localStorage.getItem("Cours"))
     : initialValue;
@@ -129,7 +134,10 @@ const CreactionCours = () => {
   return (
     <ListeContext.Provider value={[state, setState]}>
       <Conteneur id="ScrollConteneur" className="element">
-        <MenuParametres />
+        <MenuParametres
+          menuImage={menuImage}
+          setMenuImage={val => setMenuImage(val)}
+        />
 
         <Card
           style={{
@@ -139,7 +147,7 @@ const CreactionCours = () => {
             width: "781px"
           }}
         >
-          <Creation />
+          <Creation modal={menuImage} />
         </Card>
         <Card
           style={{
@@ -158,7 +166,7 @@ const CreactionCours = () => {
 };
 export default CreactionCours;
 
-const MenuParametres = () => {
+const MenuParametres = ({ menuImage, setMenuImage }) => {
   const [menuCouleur, setMenuCouleur] = useState(false);
   const [state, setState] = useContext(ListeContext);
 
@@ -171,6 +179,50 @@ const MenuParametres = () => {
       });
     }
   }
+
+  function getMeta(url) {
+    var img = new Image();
+    img.src = url;
+    img.onload = async function() {
+      await setState({
+        type: "ImageOptions",
+        option: "width",
+        value: 100,
+        index: state.ReadOnly
+      });
+      await setState({
+        type: "ImageOptions",
+        option: "height",
+        value: 100 / (this.width / this.height),
+        index: state.ReadOnly
+      });
+      await setState({
+        type: "ImageOptions",
+        option: "ratio",
+        value: this.width / this.height,
+        index: state.ReadOnly
+      });
+      await setState({
+        type: "ImageOptions",
+        option: "src",
+        value: url,
+        index: state.ReadOnly
+      });
+    };
+  }
+  const selectBefore = (
+    <Select
+      defaultValue={
+        state.Cours[state.ReadOnly]
+          ? state.Cours[state.ReadOnly].imageOptions.lienType
+          : "PDF"
+      }
+    >
+      <Select.Option value="PDF">PDF</Select.Option>
+      <Select.Option value="WEB">WEB</Select.Option>
+      <Select.Option value="IMG">IMG</Select.Option>
+    </Select>
+  );
 
   return (
     <ConteneurParametres id="drawerParametres">
@@ -203,11 +255,31 @@ const MenuParametres = () => {
                 }}
               >
                 <GithubPicker
+                  colors={[
+                    "white",
+                    "#B80000",
+                    "#DB3E00",
+                    "#FCCB00",
+                    "#008B02",
+                    "#006B76",
+                    "#1273DE",
+                    "#004DCF",
+                    "#5300EB",
+                    "transparent",
+                    "#EB9694",
+                    "#FAD0C3",
+                    "#FEF3BD",
+                    "#C1E1C5",
+                    "#BEDADC",
+                    "#C4DEF6",
+                    "#BED3F3",
+                    "#D4C4FB"
+                  ]}
                   onChangeComplete={val => {
                     majParametres(val.hex);
                     setMenuCouleur(false);
                   }}
-                  width={212}
+                  width={240}
                 />
               </div>
             )}
@@ -338,6 +410,147 @@ const MenuParametres = () => {
                 </div>
               </MargesInt>
             </Marges>
+            <div
+              style={{
+                height: "80px",
+                border: state.Cours[state.ReadOnly].image
+                  ? "1px solid lightblue"
+                  : "1px  solid rgba(0, 0, 0, 0.1)",
+                padding: "5px",
+                marginLeft: "10px",
+                display: "flex",
+                transition: "all  0.2s",
+                overflow: "hidden",
+                cursor: "pointer",
+                userSelect: "none"
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  color: state.Cours[state.ReadOnly].image
+                    ? "lightblue"
+                    : "rgba(0, 0, 0, 0.2)"
+                }}
+                onMouseDown={e => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setState({ type: "ImageVisible", index: state.ReadOnly });
+                }}
+              >
+                <Icon
+                  type="picture"
+                  style={{
+                    fontSize: "25px",
+                    color: state.Cours[state.ReadOnly].image
+                      ? "lightblue"
+                      : "rgba(0, 0, 0, 0.1)"
+                  }}
+                />
+                Illustration
+              </div>
+              {state.Cours[state.ReadOnly].image && (
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    marginLeft: "10px",
+                    color: state.Cours[state.ReadOnly].image
+                      ? "lightblue"
+                      : "rgba(0, 0, 0, 0.2)"
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      marginLeft: "10px"
+                    }}
+                  >
+                    <Checkbox
+                      checked={
+                        state.Cours[state.ReadOnly].imageOptions.ratioActif
+                      }
+                      value="ratio"
+                      onChange={e => {
+                        setState({
+                          type: "ImageOptions",
+                          option: "height",
+                          value:
+                            state.Cours[state.ReadOnly].imageOptions.width /
+                            state.Cours[state.ReadOnly].imageOptions.ratio,
+                          index: state.ReadOnly
+                        });
+                        setState({
+                          type: "ImageOptions",
+                          option: "ratioActif",
+                          value: e.target.checked,
+                          index: state.ReadOnly
+                        });
+                      }}
+                    >
+                      Conserver le ratio
+                    </Checkbox>
+                    <Input
+                      placeholder={
+                        state.Cours[state.ReadOnly].imageOptions.src ===
+                        "https://www.mydiscprofile.com/fr-fr/_images/homepage-free-personality-test.png"
+                          ? "Url de l'image"
+                          : state.Cours[state.ReadOnly].imageOptions.src
+                      }
+                      onChange={e => {
+                        e.preventDefault();
+                        getMeta(e.target.value);
+                      }}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      marginLeft: "10px"
+                    }}
+                  >
+                    <Checkbox
+                      checked={
+                        state.Cours[state.ReadOnly].imageOptions.lienActif
+                      }
+                      value="ratio"
+                      onChange={e => {
+                        setState({
+                          type: "ImageOptions",
+                          option: "lienActif",
+                          value: e.target.checked,
+                          index: state.ReadOnly
+                        });
+                      }}
+                    >
+                      Lien actif
+                    </Checkbox>
+                    <Input
+                      addonBefore={selectBefore}
+                      placeholder={
+                        state.Cours[state.ReadOnly].imageOptions.lien === ""
+                          ? "Url du lien"
+                          : state.Cours[state.ReadOnly].imageOptions.lien
+                      }
+                      onChange={e =>
+                        setState({
+                          type: "ImageOptions",
+                          option: "lien",
+                          value: e.target.value,
+                          index: state.ReadOnly
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
           <div style={{ display: "flex" }}>
             <ConteneurMatieres>

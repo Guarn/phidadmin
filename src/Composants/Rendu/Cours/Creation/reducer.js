@@ -72,6 +72,47 @@ export const reducerCreationCours = (state, action) => {
         JSON.stringify({ ...newState, Cours: newState.Cours, ReadOnly: null })
       );
       return newState;
+    case "ImageVisible":
+      newState.Cours[action.index] = {
+        ...state.Cours[action.index],
+        image: !newState.Cours[action.index].image
+      };
+      if (
+        !newState.Cours[action.index].imageOptions &&
+        !newState.Cours[action.index].imageOptions.lienType
+      ) {
+        newState.Cours[action.index].imageOptions = {
+          align: "left",
+          height: "40px",
+          width: "40px",
+          legende: "Description",
+          ratioActif: false,
+          ratio: 1,
+          lienActif: false,
+          lienType: "WEB",
+          lien: "",
+          src:
+            "https://www.mydiscprofile.com/fr-fr/_images/homepage-free-personality-test.png"
+        };
+      }
+      localStorage.setItem(
+        "Cours",
+        JSON.stringify({ ...newState, Cours: newState.Cours, ReadOnly: null })
+      );
+      return newState;
+    case "ImageOptions":
+      newState.Cours[action.index] = {
+        ...state.Cours[action.index],
+        imageOptions: {
+          ...newState.Cours[action.index].imageOptions,
+          [action.option]: action.value
+        }
+      };
+      localStorage.setItem(
+        "Cours",
+        JSON.stringify({ ...newState, Cours: newState.Cours, ReadOnly: null })
+      );
+      return newState;
     case "TableMatiere":
       newState.Cours[action.index].TableMatiere = {
         ...state.Cours[action.index].TableMatiere,
@@ -118,7 +159,9 @@ export const reducerCreationCours = (state, action) => {
       return { ...newState, Cours: Cours };
     case "ReadOnly":
       newState.ReadOnly = action.index;
+
       return newState;
+
     case "Ajout":
       let value;
       switch (action.value) {
@@ -157,6 +200,20 @@ export const reducerCreationCours = (state, action) => {
           paddingLeft: 0,
           paddingRight: 0,
           paddingBottom: 0
+        },
+        image: false,
+        imageOptions: {
+          align: "left",
+          height: "40px",
+          width: "40px",
+          legende: "Description",
+          ratioActif: false,
+          ratio: 1,
+          lienType: "WEB",
+          lienActif: false,
+          lien: "",
+          src:
+            "https://www.mydiscprofile.com/fr-fr/_images/homepage-free-personality-test.png"
         }
       });
 

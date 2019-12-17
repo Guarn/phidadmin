@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styled from "styled-components";
 import { useSlate } from "slate-react";
 import { GithubPicker } from "react-color";
@@ -154,7 +154,16 @@ export const FormatCouleurTexte = ({ selected, couleurTexte }) => {
         onMouseEnter={() => setMenuVisible(true)}
         onMouseLeave={() => setMenuVisible(false)}
       >
-        <span style={{ color: couleurTexte }}>A</span>
+        <span
+          style={{
+            color:
+              couleurTexte === "" || couleurTexte === "transparent"
+                ? "#EB9694"
+                : couleurTexte
+          }}
+        >
+          A
+        </span>
         {menuVisible && (
           <div
             style={{
@@ -166,6 +175,26 @@ export const FormatCouleurTexte = ({ selected, couleurTexte }) => {
             ref={refCouleur}
           >
             <GithubPicker
+              colors={[
+                "white",
+                "#B80000",
+                "#DB3E00",
+                "#FCCB00",
+                "#008B02",
+                "#006B76",
+                "#1273DE",
+                "#004DCF",
+                "#5300EB",
+                "transparent",
+                "#EB9694",
+                "#FAD0C3",
+                "#FEF3BD",
+                "#C1E1C5",
+                "#BEDADC",
+                "#C4DEF6",
+                "#BED3F3",
+                "#D4C4FB"
+              ]}
               onChange={val => {
                 setCouleur(val.hex);
 
@@ -175,7 +204,7 @@ export const FormatCouleurTexte = ({ selected, couleurTexte }) => {
                   couleurTexte: val.hex
                 });
               }}
-              width={212}
+              width={240}
             />
           </div>
         )}
@@ -210,11 +239,14 @@ export const FormatCouleurBackground = ({ selected, couleurBackground }) => {
       >
         <span
           style={{
-            backgroundColor: couleurBackground,
+            backgroundColor:
+              couleurBackground === "" || couleurBackground === "transparent"
+                ? "#EB9694"
+                : couleurBackground,
             borderRadius: "5px",
             paddingLeft: "2px",
             paddingRight: "2px",
-            paddingTop: "-5px"
+            lineHeight: "30px"
           }}
         >
           A
@@ -230,6 +262,26 @@ export const FormatCouleurBackground = ({ selected, couleurBackground }) => {
             ref={refCouleur}
           >
             <GithubPicker
+              colors={[
+                "white",
+                "#B80000",
+                "#DB3E00",
+                "#FCCB00",
+                "#008B02",
+                "#006B76",
+                "#1273DE",
+                "#004DCF",
+                "#5300EB",
+                "transparent",
+                "#EB9694",
+                "#FAD0C3",
+                "#FEF3BD",
+                "#C1E1C5",
+                "#BEDADC",
+                "#C4DEF6",
+                "#BED3F3",
+                "#D4C4FB"
+              ]}
               onChange={val => {
                 setCouleur(val.hex);
 
@@ -239,7 +291,7 @@ export const FormatCouleurBackground = ({ selected, couleurBackground }) => {
                   couleurBackground: val.hex
                 });
               }}
-              width={212}
+              width={240}
             />
           </div>
         )}

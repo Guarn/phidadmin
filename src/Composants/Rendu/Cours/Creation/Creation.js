@@ -10,10 +10,11 @@ import React, {
 import { Element } from "react-scroll";
 import styled from "styled-components";
 import { ListeContext } from "./index";
-import { Button, Icon, Drawer, Radio, Divider } from "antd";
-import { GithubPicker } from "react-color";
-
+import { Button, Icon, Drawer, Radio, Divider, Popover, Select } from "antd";
 import Slate from "../../../Fonctionnels/Slate";
+import { Resizable, ResizableBox } from "react-resizable";
+import "./Creation.css";
+import TextArea from "antd/lib/input/TextArea";
 
 const ConteneurGlobal = styled.div`
   height: ${props => props.height + "px"};
@@ -80,7 +81,26 @@ const Creation = props => {
   }
   function clickOutside(event) {
     let drawer = document.getElementById("drawerParametres");
+
     if (
+      props.modal ||
+      event.target.className === "ant-radio-button-wrapper" ||
+      event.target.className === "ant-radio-button-input"
+    ) {
+      console.log(event);
+      return;
+    } else if (
+      event.target.innerText === "PDF" ||
+      event.target.innerText === "IMG" ||
+      event.target.innerText === "WEB"
+    ) {
+      setState({
+        type: "ImageOptions",
+        option: "lienType",
+        value: event.target.innerText,
+        index: state.ReadOnly
+      });
+    } else if (
       state.ReadOnly !== null &&
       !refConteneur.current.contains(event.target) &&
       !menuParametres &&
@@ -104,6 +124,7 @@ const Creation = props => {
       setInsertWidget(false);
       setPositionNewWidget(event.target.parentNode.id);
       setMenuWidgets(true);
+      return;
     } else if (
       refConteneur.current.contains(event.target) &&
       event.target.nodeName === "path" &&
@@ -112,7 +133,9 @@ const Creation = props => {
       setInsertWidget(false);
       setPositionNewWidget(event.target.parentNode.parentNode.id);
       setMenuWidgets(true);
+      return;
     }
+    return;
   }
 
   useEffect(() => {
@@ -159,13 +182,140 @@ const Creation = props => {
                 paddingTop: element.options.paddingTop + "px",
                 paddingBottom: element.options.paddingBottom + "px",
                 fontFamily: "Century Gothic",
-                fontSize: "16px"
+                fontSize: "16px",
+                minHeight: element.image
+                  ? element.imageOptions.height + "px"
+                  : ""
               }}
               onMouseDown={() => {
                 if (state.ReadOnly !== index)
                   setState({ type: "ReadOnly", index: index });
               }}
             >
+              {element.image && (
+                <Popover
+                  placement="bottom"
+                  content={
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center"
+                      }}
+                    >
+                      <Radio.Group
+                        size="large"
+                        defaultValue={element.imageOptions.align}
+                        onChange={e => {
+                          e.preventDefault();
+                          e.stopPropagation();
+
+                          setState({ type: "ReadOnly", index: index });
+                          setState({
+                            type: "ImageOptions",
+                            option: "align",
+                            value: e.target.value,
+                            index: index
+                          });
+                        }}
+                      >
+                        <Radio.Button value="left">
+                          <Icon type="pic-left" />
+                        </Radio.Button>
+                        <Radio.Button value="center">
+                          <Icon type="pic-center" />
+                        </Radio.Button>
+                        <Radio.Button value="right">
+                          <Icon type="pic-right" />
+                        </Radio.Button>
+                      </Radio.Group>
+                      <TextArea
+                        defaultValue={element.imageOptions.legende}
+                        onChange={e =>
+                          setState({
+                            type: "ImageOptions",
+                            option: "legende",
+                            value: e.target.value,
+                            index: index
+                          })
+                        }
+                        style={{ marginTop: "10px" }}
+                      />
+                    </div>
+                  }
+                >
+                  <div
+                    style={{
+                      float:
+                        element.imageOptions.align === "center"
+                          ? "none"
+                          : element.imageOptions.align,
+                      display: "flex",
+                      justifyContent: "center",
+                      zIndex: -1,
+                      margin:
+                        element.imageOptions.align === "center" ? "auto" : null,
+
+                      marginLeft: element.imageOptions.marginLeft,
+                      marginRight: element.imageOptions.marginRight,
+                      marginBottom: element.imageOptions.marginBottom
+                    }}
+                  >
+                    <ResizableBox
+                      height={parseInt(element.imageOptions.height)}
+                      width={parseInt(element.imageOptions.width)}
+                      lockAspectRatio={element.imageOptions.ratioActif}
+                      onResizeStop={(e, a) => {
+                        setState({
+                          type: "ImageOptions",
+                          option: "height",
+                          value: a.size.height,
+                          index: index
+                        });
+                        setState({
+                          type: "ImageOptions",
+                          option: "width",
+                          value: a.size.width,
+                          index: index
+                        });
+                      }}
+                      minConstraints={[20, 20]}
+                      maxConstraints={[731, 731]}
+                      resizeHandles={
+                        element.imageOptions.align !== "right" ? ["se"] : ["sw"]
+                      }
+                      handle={
+                        <span
+                          className={
+                            element.imageOptions.align !== "right"
+                              ? "custom-handle custom-handle-se"
+                              : "custom-handle custom-handle-sw"
+                          }
+                        />
+                      }
+                      handleSize={[20, 20]}
+                    >
+                      <img
+                        style={{
+                          height: "inherit",
+                          width: "inherit",
+                          paddingBottom: "10px",
+                          paddingLeft:
+                            element.imageOptions.align === "right"
+                              ? "10px"
+                              : "0px",
+                          paddingRight:
+                            element.imageOptions.align === "left"
+                              ? "10px"
+                              : "0px"
+                        }}
+                        src={element.imageOptions.src}
+                        alt={element.imageOptions.legende}
+                      />
+                    </ResizableBox>
+                  </div>
+                </Popover>
+              )}
               <Slate
                 index={index}
                 value={element.value}
