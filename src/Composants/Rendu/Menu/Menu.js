@@ -158,16 +158,32 @@ const Menu = props => {
         </Categorie>
         <Categorie>
           <Divider orientation="left">Cours</Divider>
-          <Lien onClick={() => changementPage("/Cours/Creation")}>
+          <Lien
+            onClick={() => {
+              if (JSON.parse(localStorage.getItem("Cours"))) {
+                changementPage("/Cours/Creation");
+              }
+            }}
+          >
             <Icon
               style={{
                 fontSize: "25px",
-                color: "grey",
+                color: JSON.parse(localStorage.getItem("Cours"))
+                  ? "grey"
+                  : "rgba(0,0,0,0.2)",
                 marginLeft: "15px"
               }}
               type="file-add"
             />
-            <TexteLien>Création</TexteLien>
+            <TexteLien
+              style={{
+                color: JSON.parse(localStorage.getItem("Cours"))
+                  ? "grey"
+                  : "rgba(0,0,0,0.2)"
+              }}
+            >
+              Création
+            </TexteLien>
           </Lien>
           <Lien onClick={() => changementPage("/Cours/Modification")}>
             <Icon
@@ -177,6 +193,42 @@ const Menu = props => {
                 marginLeft: "15px"
               }}
               type="file-search"
+            />
+            <TexteLien>Pages uniques</TexteLien>
+          </Lien>
+          <Lien onClick={() => changementPage("/Cours/ListeCours")}>
+            <Icon
+              style={{
+                fontSize: "25px",
+                color: "grey",
+                marginLeft: "15px"
+              }}
+              type="file-search"
+            />
+            <TexteLien>Cours</TexteLien>
+          </Lien>
+          <Lien onClick={() => changementPage("/Cours/ListeExercices")}>
+            <Icon
+              style={{
+                fontSize: "25px",
+                color: "grey",
+                marginLeft: "15px"
+              }}
+              type="file-search"
+            />
+            <TexteLien>Exercices</TexteLien>
+          </Lien>
+        </Categorie>
+        <Categorie>
+          <Divider orientation="left">Index</Divider>
+          <Lien onClick={() => changementPage("/Index/Gestion")}>
+            <Icon
+              style={{
+                fontSize: "25px",
+                color: "grey",
+                marginLeft: "15px"
+              }}
+              type="file-add"
             />
             <TexteLien>Gestion</TexteLien>
           </Lien>

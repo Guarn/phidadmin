@@ -87,7 +87,6 @@ const Creation = props => {
       event.target.className === "ant-radio-button-wrapper" ||
       event.target.className === "ant-radio-button-input"
     ) {
-      console.log(event);
       return;
     } else if (
       event.target.innerText === "PDF" ||
@@ -162,6 +161,7 @@ const Creation = props => {
         />
       )}
       {state.Cours.map((element, index) => {
+
         return (
           <Element
             id={`element-${index}`}

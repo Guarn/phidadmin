@@ -6,10 +6,9 @@ import React, {
   useContext
 } from "react";
 import isHotkey from "is-hotkey";
-import { Editable, withReact, useSlate, Slate } from "slate-react";
+import { Editable, withReact, Slate } from "slate-react";
 import { Editor, createEditor, Range } from "slate";
 import { withHistory } from "slate-history";
-import styled from "styled-components";
 import { isEqual } from "lodash";
 import {
   BarreOutils,
@@ -34,8 +33,6 @@ import {
 import "./Slate.css";
 import { ListeContext } from "../Rendu/Cours/Creation/index";
 import isUrl from "is-url";
-
-import { Button, Icon } from "antd";
 
 const HOTKEYS = {
   "mod+b": "bold",
@@ -68,7 +65,7 @@ const SlateJs = props => {
     if (props.readOnly) {
       setSelection(null);
     }
-  }, [state]);
+  }, [state, props.readOnly]);
 
   return (
     <Slate
@@ -202,7 +199,6 @@ const isLinkActive = editor => {
 };
 
 const unwrapLink = editor => {
-  console.log("UNWRAP");
 
   Editor.unwrapNodes(editor);
 };

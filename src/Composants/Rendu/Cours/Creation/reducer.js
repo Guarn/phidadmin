@@ -77,9 +77,10 @@ export const reducerCreationCours = (state, action) => {
         ...state.Cours[action.index],
         image: !newState.Cours[action.index].image
       };
+
       if (
-        !newState.Cours[action.index].imageOptions &&
-        !newState.Cours[action.index].imageOptions.lienType
+        newState.Cours[action.index].imageOptions === undefined ||
+        newState.Cours[action.index].imageOptions.lienType === undefined
       ) {
         newState.Cours[action.index].imageOptions = {
           align: "left",
@@ -236,7 +237,7 @@ export const reducerCreationCours = (state, action) => {
   }
 };
 
-export const initialValue = {
+export const initialValueCours = {
   Cours: [
     {
       value: [
@@ -264,11 +265,129 @@ export const initialValue = {
         paddingLeft: 0,
         paddingRight: 0,
         paddingBottom: 0
+      },
+      image: false,
+      imageOptions: {
+        align: "left",
+        height: "40px",
+        width: "40px",
+        legende: "Description",
+        ratioActif: false,
+        ratio: 1,
+        lienType: "WEB",
+        lienActif: false,
+        lien: "",
+        src:
+          "https://www.mydiscprofile.com/fr-fr/_images/homepage-free-personality-test.png"
       }
     }
   ],
   ReadOnly: null,
   Titre: "Nouveau Cours",
   Description: "Description manquante",
-  id: ""
+  id: "",
+  type: "Cours"
+};
+
+export const initialValueExercice = {
+  Cours: [
+    {
+      value: [
+        {
+          type: "h1",
+          id: 1,
+          align: "center",
+          children: [{ text: "TITRE" }]
+        }
+      ],
+      type: "h1",
+      TableMatiere: {
+        actif: true,
+        value: "TITRE",
+        type: "titre",
+        position: 0
+      },
+      options: {
+        marginTop: 0,
+        marginBottom: 0,
+        marginLeft: 0,
+        marginRight: 0,
+        backgroundColor: "",
+        paddingTop: 0,
+        paddingLeft: 0,
+        paddingRight: 0,
+        paddingBottom: 0
+      },
+      image: false,
+      imageOptions: {
+        align: "left",
+        height: "40px",
+        width: "40px",
+        legende: "Description",
+        ratioActif: false,
+        ratio: 1,
+        lienType: "WEB",
+        lienActif: false,
+        lien: "",
+        src:
+          "https://www.mydiscprofile.com/fr-fr/_images/homepage-free-personality-test.png"
+      }
+    }
+  ],
+  ReadOnly: null,
+  Titre: "Nouvel Exercice",
+  Description: "Description manquante",
+  id: "",
+  type: "Exercice"
+};
+
+export const initialValueIndexes = {
+  Cours: [
+    {
+      value: [
+        {
+          type: "h1",
+          id: 1,
+          align: "center",
+          children: [{ text: "Index" }]
+        }
+      ],
+      type: "h1",
+      TableMatiere: {
+        actif: false,
+        value: "TITRE",
+        type: "titre",
+        position: 0
+      },
+      options: {
+        marginTop: 0,
+        marginBottom: 0,
+        marginLeft: 0,
+        marginRight: 0,
+        backgroundColor: "",
+        paddingTop: 0,
+        paddingLeft: 0,
+        paddingRight: 0,
+        paddingBottom: 0
+      },
+      image: false,
+      imageOptions: {
+        align: "left",
+        height: "40px",
+        width: "40px",
+        legende: "Description",
+        ratioActif: false,
+        ratio: 1,
+        lienType: "WEB",
+        lienActif: false,
+        lien: "",
+        src:
+          "https://www.mydiscprofile.com/fr-fr/_images/homepage-free-personality-test.png"
+      }
+    }
+  ],
+  ReadOnly: null,
+  Titre: "Nouvel Exercice",
+  Description: "Description manquante",
+  type: "indexes"
 };

@@ -15,7 +15,12 @@ import {
   Select
 } from "antd";
 import Creation from "./Creation";
-import { initialValue, reducerCreationCours } from "./reducer";
+import {
+  initialValueCours,
+  initialValueExercice,
+  initialValueIndexes,
+  reducerCreationCours
+} from "./reducer";
 import { GithubPicker } from "react-color";
 import TableMatiere from "./TableMatiere";
 import {
@@ -123,13 +128,27 @@ const Rectangle = styled.div`
 
 export const ListeContext = createContext(null);
 
-const CreactionCours = () => {
+const CreactionCours = props => {
   const [menuImage, setMenuImage] = useState(false);
 
-  let init = JSON.parse(localStorage.getItem("Cours"))
-    ? JSON.parse(localStorage.getItem("Cours"))
-    : initialValue;
-  const [state, setState] = useReducer(reducerCreationCours, init);
+  function init() {
+    if (
+      JSON.parse(localStorage.getItem("Cours")) &&
+      JSON.parse(localStorage.getItem("Cours")).type !== "indexes"
+    ) {
+      return JSON.parse(localStorage.getItem("Cours"));
+    } else if (props.type === "Cours") {
+      return initialValueCours;
+    } else if (props.type === "Exercice") {
+      return initialValueExercice;
+    } else if (
+      JSON.parse(localStorage.getItem("Cours")) &&
+      JSON.parse(localStorage.getItem("Cours")).type === "indexes"
+    ) {
+      return JSON.parse(localStorage.getItem("Cours"));
+    }
+  }
+  const [state, setState] = useReducer(reducerCreationCours, init());
 
   return (
     <ListeContext.Provider value={[state, setState]}>
@@ -211,13 +230,7 @@ const MenuParametres = ({ menuImage, setMenuImage }) => {
     };
   }
   const selectBefore = (
-    <Select
-      defaultValue={
-        state.Cours[state.ReadOnly]
-          ? state.Cours[state.ReadOnly].imageOptions.lienType
-          : "PDF"
-      }
-    >
+    <Select>
       <Select.Option value="PDF">PDF</Select.Option>
       <Select.Option value="WEB">WEB</Select.Option>
       <Select.Option value="IMG">IMG</Select.Option>
@@ -668,14 +681,26 @@ const DescriptionCours = () => {
   const [state, setState] = useContext(ListeContext);
   const history = useHistory();
   function saveBDD() {
-    Axios.post(`/Cours${state.id}`, {
-      Titre: state.Titre,
-      Description: state.Description,
-      Contenu: JSON.stringify(state.Cours)
-    }).then(() => {
-      localStorage.removeItem("Cours");
-      history.push("/Cours/Modification");
-    });
+    if (state.type === "indexes") {
+      Axios.post("/IndexesUpdate", {
+        id: state.id,
+        description: state.Cours
+      }).then(() => {
+        localStorage.removeItem("Cours");
+        history.push("/Index/Gestion");
+      });
+    } else {
+      Axios.post(`/Cours${state.id}`, {
+        Titre: state.Titre,
+        Description: state.Description,
+        Contenu: JSON.stringify(state.Cours)
+      }).then(() => {
+        localStorage.removeItem("Cours");
+        if (state.type === "PageUnique") history.push("/Cours/Modification");
+        if (state.type === "Cours") history.push("/Cours/ListeCours");
+        if (state.type === "Exercice") history.push("/Cours/ListeExercices");
+      });
+    }
   }
 
   return (

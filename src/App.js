@@ -16,6 +16,7 @@ import {
   Route,
   Redirect
 } from "react-router-dom";
+import ListeCours from "./Composants/Rendu/Cours/ListeCours/ListeCours";
 const ConsultationSujets = React.lazy(() =>
   import("./Composants/Rendu/Sujets/ConsultationSujets")
 );
@@ -29,6 +30,7 @@ const ParametresSujets = React.lazy(() =>
 const GestionUtilisateurs = React.lazy(() =>
   import("./Composants/Rendu/Utilisateurs/Gestion")
 );
+const Index = React.lazy(() => import("./Composants/Rendu/Index/Index"));
 
 const Cours = React.lazy(() => import("./Composants/Rendu/Cours/Cours"));
 const ConteneurGlobal = styled.div`
@@ -71,7 +73,8 @@ function App(props) {
       Axios.post("/login", { email: formIdent, password: formPass })
         .then(rep => {
           setCookie("token", "Bearer " + rep.data.token, {
-            path: "/"
+            path: "/",
+            domain: ".phidbac.fr"
           });
           DPuser({
             type: "UPDATE",
@@ -143,6 +146,15 @@ function App(props) {
                   </Route>
                   <Route path="/Cours/Modification">
                     <ModificationCours />
+                  </Route>
+                  <Route path="/Cours/ListeCours">
+                    <ListeCours type="Cours" />
+                  </Route>
+                  <Route path="/Cours/ListeExercices">
+                    <ListeCours type="Exercices" />
+                  </Route>
+                  <Route path="/Index/Gestion">
+                    <Index />
                   </Route>
                 </Suspense>
               </Switch>
