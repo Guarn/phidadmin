@@ -57,6 +57,7 @@ const SlateJs = props => {
   const [selection, setSelection] = useState(null);
   const renderElement = useCallback(props => <Element {...props} />, []);
   const renderLeaf = useCallback(props => <Leaf {...props} />, []);
+  const [lastChar, setLastChar] = useState("");
   const editor = useMemo(
     () => withLinks(withRichText(withHistory(withReact(createEditor())))),
     []
@@ -138,6 +139,39 @@ const SlateJs = props => {
         renderElement={renderElement}
         renderLeaf={renderLeaf}
         onKeyDown={event => {
+          if (lastChar + event.key === "<<") {
+            event.preventDefault();
+            Editor.delete(editor, {
+              at: {
+                path: editor.selection.anchor.path,
+                offset: editor.selection.anchor.offset - 1
+              }
+            });
+
+            Editor.insertText(editor, "\u00ab\u00a0");
+          }
+          if (lastChar + event.key === ">>") {
+            event.preventDefault();
+            Editor.delete(editor, {
+              at: {
+                path: editor.selection.anchor.path,
+                offset: editor.selection.anchor.offset - 1
+              }
+            });
+            Editor.insertText(editor, "\u00a0\u00bb");
+          }
+
+          if (event.ctrlKey && !event.shiftKey && event.key === " ") {
+            event.preventDefault();
+            console.log("CTRL  ESPACE");
+            Editor.insertText(editor, "\u00a0");
+          }
+          if (event.ctrlKey && event.shiftKey && event.key === " ") {
+            event.preventDefault();
+            console.log("CTRL SHIFT ESPACE");
+            Editor.insertText(editor, "\u202F");
+          }
+          setLastChar(event.key);
           for (const hotkey in HOTKEYS) {
             if (isHotkey(hotkey, event)) {
               event.preventDefault();
@@ -199,7 +233,6 @@ const isLinkActive = editor => {
 };
 
 const unwrapLink = editor => {
-
   Editor.unwrapNodes(editor);
 };
 

@@ -73,8 +73,7 @@ function App(props) {
       Axios.post("/login", { email: formIdent, password: formPass })
         .then(rep => {
           setCookie("token", "Bearer " + rep.data.token, {
-            path: "/",
-            domain: ".phidbac.fr"
+            path: "/"
           });
           DPuser({
             type: "UPDATE",
