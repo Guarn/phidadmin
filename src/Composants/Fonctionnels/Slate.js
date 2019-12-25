@@ -163,12 +163,10 @@ const SlateJs = props => {
 
           if (event.ctrlKey && !event.shiftKey && event.key === " ") {
             event.preventDefault();
-            console.log("CTRL  ESPACE");
             Editor.insertText(editor, "\u00a0");
           }
           if (event.ctrlKey && event.shiftKey && event.key === " ") {
             event.preventDefault();
-            console.log("CTRL SHIFT ESPACE");
             Editor.insertText(editor, "\u202F");
           }
           setLastChar(event.key);
