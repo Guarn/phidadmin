@@ -135,28 +135,6 @@ const Menu = props => {
             />
             <TexteLien>Gestion</TexteLien>
           </Lien>
-          <Lien>
-            <Icon
-              style={{
-                fontSize: "25px",
-                color: "grey",
-                marginLeft: "15px"
-              }}
-              type="file-search"
-            />
-            <TexteLien>Groupes</TexteLien>
-          </Lien>
-          <Lien>
-            <Icon
-              style={{
-                fontSize: "25px",
-                color: "grey",
-                marginLeft: "15px"
-              }}
-              type="setting"
-            />
-            <TexteLien>Paramètres</TexteLien>
-          </Lien>
         </Categorie>
         <Categorie>
           <Divider orientation="left">Cours</Divider>
