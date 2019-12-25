@@ -55,6 +55,8 @@ const ConteneurMenuLiens = styled.div`
   box-shadow: 1px 0 1px 1px hsla(0, 0%, 78%, 0.2);
   background-color: white;
   height: 100%;
+  overflow: auto;
+  padding-bottom: 20px;
 `;
 
 const ConteneurBoutons = styled.div``;
