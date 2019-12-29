@@ -14,6 +14,7 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
+  useLocation,
   Redirect
 } from "react-router-dom";
 import ListeCours from "./Composants/Rendu/Cours/ListeCours/ListeCours";
@@ -60,7 +61,9 @@ const Login1 = styled.div`
 const initialUser = { connecte: false };
 export const userPD = createContext(null);
 
-function App(props) {
+function App() {
+  
+
   const [user, DPuser] = useReducer(RDuser, initialUser);
   const [cookies, setCookie, removeCookie] = useCookies();
 
@@ -74,7 +77,7 @@ function App(props) {
         .then(rep => {
           setCookie("token", "Bearer " + rep.data.token, {
             path: "/",
-            domain:".phidbac.fr"
+            domain: ".phidbac.fr"
           });
           DPuser({
             type: "UPDATE",
@@ -130,7 +133,6 @@ function App(props) {
                   <Route
                     path="/Sujets/Consultation"
                     component={ConsultationSujets}
-                    title="Test"
                   />
                   <Route path="/Sujets/Parametres">
                     <ParametresSujets />
@@ -163,7 +165,6 @@ function App(props) {
         )}
         {!user.connecte && (
           <>
-            <Redirect to="/" />
             <Login1>
               <Card>
                 <Input

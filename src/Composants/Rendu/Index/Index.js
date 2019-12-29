@@ -13,7 +13,7 @@ import {
 } from "antd";
 import Axios from "../../Fonctionnels/Axios";
 import { useRef } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { initialValueIndexes } from "../Cours/Creation/reducer";
 
 const Conteneur = styled.div`
@@ -48,7 +48,26 @@ const Nom = styled.div`
   }
 `;
 
-const Index = () => {
+const Index = props => {
+  let location = useLocation();
+
+  if (location.hash !== "" && location.hash.charAt(0) === "#") {
+    let iD = location.hash.substring(1);
+    Axios.get("/Indexes/" + iD).then(rep => {
+      localStorage.setItem(
+        "Cours",
+        JSON.stringify({
+          Cours:
+            rep.data.description === null
+              ? initialValueIndexes.Cours
+              : rep.data.description,
+          id: rep.data.id,
+          type: "indexes"
+        })
+      );
+      history.push("/Cours/Creation");
+    });
+  }
   const [state, setState] = useState({
     notions: [],
     termes: [],
