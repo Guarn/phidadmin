@@ -10,13 +10,7 @@ import Chargement from "./Composants/Rendu/Chargement/Chargement";
 import { RDuser } from "./Composants/reducers";
 import Creation from "./Composants/Rendu/Cours/Creation";
 import ModificationCours from "./Composants/Rendu/Cours/Modification/Modification";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  useLocation,
-  Redirect
-} from "react-router-dom";
+import { Switch, Route, useLocation, Redirect } from "react-router-dom";
 import ListeCours from "./Composants/Rendu/Cours/ListeCours/ListeCours";
 const ConsultationSujets = React.lazy(() =>
   import("./Composants/Rendu/Sujets/ConsultationSujets")
@@ -62,8 +56,6 @@ const initialUser = { connecte: false };
 export const userPD = createContext(null);
 
 function App() {
-  
-
   const [user, DPuser] = useReducer(RDuser, initialUser);
   const [cookies, setCookie, removeCookie] = useCookies();
 
@@ -119,70 +111,68 @@ function App() {
   }, []);
   return (
     <userPD.Provider value={[user, DPuser]}>
-      <Router>
-        {user.connecte && (
-          <ConteneurGlobal>
-            <Menu />
-            <ConteneurContenu>
-              <ConteneurHeader />
-              <Switch>
-                <Suspense fallback={<Chargement />}>
-                  <Route exact path="/">
-                    <Tableau />
-                  </Route>
-                  <Route
-                    path="/Sujets/Consultation"
-                    component={ConsultationSujets}
-                  />
-                  <Route path="/Sujets/Parametres">
-                    <ParametresSujets />
-                  </Route>
-                  <Route path="/Sujets/Creation">
-                    <CreationSujets />
-                  </Route>
-                  <Route path="/Utilisateurs/Gestion">
-                    <GestionUtilisateurs />
-                  </Route>
-                  <Route path="/Cours/Creation">
-                    <Creation />
-                  </Route>
-                  <Route path="/Cours/Modification">
-                    <ModificationCours />
-                  </Route>
-                  <Route path="/Cours/ListeCours">
-                    <ListeCours type="Cours" />
-                  </Route>
-                  <Route path="/Cours/ListeExercices">
-                    <ListeCours type="Exercices" />
-                  </Route>
-                  <Route path="/Index/Gestion">
-                    <Index />
-                  </Route>
-                </Suspense>
-              </Switch>
-            </ConteneurContenu>
-          </ConteneurGlobal>
-        )}
-        {!user.connecte && (
-          <>
-            <Login1>
-              <Card>
-                <Input
-                  key="1"
-                  placeholder="Identifiant"
-                  onChange={e => (formIdent = e.target.value)}
+      {user.connecte && (
+        <ConteneurGlobal>
+          <Menu />
+          <ConteneurContenu>
+            <ConteneurHeader />
+            <Switch>
+              <Suspense fallback={<Chargement />}>
+                <Route exact path="/">
+                  <Tableau />
+                </Route>
+                <Route
+                  path="/Sujets/Consultation"
+                  component={ConsultationSujets}
                 />
-                <Input.Password
-                  key="2"
-                  placeholder="Mot de passe"
-                  onChange={e => (formPass = e.target.value)}
-                  onPressEnter={() => identification()}
-                />
-              </Card>
-            </Login1>
-          </>
-        )}
-      </Router>
+                <Route path="/Sujets/Parametres">
+                  <ParametresSujets />
+                </Route>
+                <Route path="/Sujets/Creation">
+                  <CreationSujets />
+                </Route>
+                <Route path="/Utilisateurs/Gestion">
+                  <GestionUtilisateurs />
+                </Route>
+                <Route path="/Cours/Creation">
+                  <Creation />
+                </Route>
+                <Route path="/Cours/Modification">
+                  <ModificationCours />
+                </Route>
+                <Route path="/Cours/ListeCours">
+                  <ListeCours type="Cours" />
+                </Route>
+                <Route path="/Cours/ListeExercices">
+                  <ListeCours type="Exercices" />
+                </Route>
+                <Route path="/Index/Gestion">
+                  <Index />
+                </Route>
+              </Suspense>
+            </Switch>
+          </ConteneurContenu>
+        </ConteneurGlobal>
+      )}
+      {!user.connecte && (
+        <>
+          <Login1>
+            <Card>
+              <Input
+                key="1"
+                placeholder="Identifiant"
+                onChange={e => (formIdent = e.target.value)}
+              />
+              <Input.Password
+                key="2"
+                placeholder="Mot de passe"
+                onChange={e => (formPass = e.target.value)}
+                onPressEnter={() => identification()}
+              />
+            </Card>
+          </Login1>
+        </>
+      )}
     </userPD.Provider>
   );
 }
