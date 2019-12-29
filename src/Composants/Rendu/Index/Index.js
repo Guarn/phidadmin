@@ -51,6 +51,7 @@ const Nom = styled.div`
 const Index = props => {
   let location = useLocation();
   console.log(location);
+  console.log(props);
 
   if (location.hash !== "" && location.hash.charAt(0) === "#") {
     let iD = location.hash.substring(1);
