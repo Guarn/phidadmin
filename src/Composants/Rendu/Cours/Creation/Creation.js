@@ -181,13 +181,15 @@ const Creation = props => {
                 paddingTop: element.options.paddingTop + "px",
                 paddingBottom: element.options.paddingBottom + "px",
                 fontFamily: "Century Gothic",
-                display: element.type === "citation" ? "flex" : null,
+                display: element.type === "citation" ? "flex" : "t",
                 fontSize: "16px",
                 minHeight: element.image
                   ? element.imageOptions.height + "px"
                   : ""
               }}
               onMouseDown={() => {
+                console.log(element);
+
                 if (state.ReadOnly !== index)
                   setState({ type: "ReadOnly", index: index });
               }}
@@ -319,18 +321,31 @@ const Creation = props => {
               {element.type === "citation" && (
                 <div
                   style={{
-                    backgroundColor: "rgba(0,0,0,0.2)",
-                    minWidth: "6px",
-                    marginRight: "30px",
-                    float: "left"
+                    width: "100%",
+                    display: "flex"
                   }}
+                >
+                  <div
+                    style={{
+                      backgroundColor: "rgba(0,0,0,0.2)",
+                      minWidth: "6px",
+                      marginRight: "30px"
+                    }}
+                  />
+                  <Slate
+                    index={index}
+                    value={element.value}
+                    readOnly={state.ReadOnly !== index}
+                  />
+                </div>
+              )}
+              {element.type !== "citation" && (
+                <Slate
+                  index={index}
+                  value={element.value}
+                  readOnly={state.ReadOnly !== index}
                 />
               )}
-              <Slate
-                index={index}
-                value={element.value}
-                readOnly={state.ReadOnly !== index}
-              />
             </ConteneurSlate>
 
             {insertWidget && (

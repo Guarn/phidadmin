@@ -67,9 +67,13 @@ function App() {
     if (formIdent !== "" && formPass !== "") {
       Axios.post("/login", { email: formIdent, password: formPass })
         .then(rep => {
+          let dateExp = new Date(Date.now());
+          dateExp.setDate(365);
+
           setCookie("token", "Bearer " + rep.data.token, {
             path: "/",
-            domain: ".phidbac.fr"
+            domain: ".phidbac.fr",
+            expires: dateExp
           });
           DPuser({
             type: "UPDATE",

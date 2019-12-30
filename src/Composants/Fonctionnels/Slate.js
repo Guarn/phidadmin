@@ -138,6 +138,7 @@ const SlateJs = props => {
       <Editable
         renderElement={renderElement}
         renderLeaf={renderLeaf}
+        style={{ width: "100%" }}
         onKeyDown={event => {
           if (lastChar + event.key === "<<") {
             event.preventDefault();
@@ -469,10 +470,10 @@ const Element = ({ attributes, children, element }) => {
       return (
         <div
           style={{
-            marginTop: "0px",
-            marginBottom: "0px",
             textAlign: element.align,
-            marginLeft: element.marginLeft
+            marginLeft: element.marginLeft,
+            marginTop: "0px",
+            marginBottom: "0px"
           }}
           {...attributes}
         >
