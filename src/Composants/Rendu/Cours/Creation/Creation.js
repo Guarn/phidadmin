@@ -161,7 +161,6 @@ const Creation = props => {
         />
       )}
       {state.Cours.map((element, index) => {
-
         return (
           <Element
             id={`element-${index}`}
@@ -182,6 +181,7 @@ const Creation = props => {
                 paddingTop: element.options.paddingTop + "px",
                 paddingBottom: element.options.paddingBottom + "px",
                 fontFamily: "Century Gothic",
+                display: element.type === "citation" ? "flex" : null,
                 fontSize: "16px",
                 minHeight: element.image
                   ? element.imageOptions.height + "px"
@@ -315,6 +315,16 @@ const Creation = props => {
                     </ResizableBox>
                   </div>
                 </Popover>
+              )}
+              {element.type === "citation" && (
+                <div
+                  style={{
+                    backgroundColor: "rgba(0,0,0,0.2)",
+                    minWidth: "6px",
+                    marginRight: "30px",
+                    float: "left"
+                  }}
+                />
               )}
               <Slate
                 index={index}

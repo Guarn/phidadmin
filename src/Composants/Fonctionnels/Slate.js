@@ -469,21 +469,13 @@ const Element = ({ attributes, children, element }) => {
       return (
         <div
           style={{
-            textAlign: element.align,
-            marginLeft: element.marginLeft,
             marginTop: "0px",
             marginBottom: "0px",
-            display: "flex"
+            textAlign: element.align,
+            marginLeft: element.marginLeft
           }}
           {...attributes}
         >
-          <div
-            style={{
-              backgroundColor: "rgba(0,0,0,0.2)",
-              width: "6px",
-              marginRight: "30px"
-            }}
-          />
           {children}
         </div>
       );
