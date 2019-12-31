@@ -278,6 +278,7 @@ const MenuParametres = ({ menuImage, setMenuImage }) => {
                     "#1273DE",
                     "#004DCF",
                     "#5300EB",
+                    "black",
                     "transparent",
                     "#EB9694",
                     "#FAD0C3",
@@ -286,13 +287,14 @@ const MenuParametres = ({ menuImage, setMenuImage }) => {
                     "#BEDADC",
                     "#C4DEF6",
                     "#BED3F3",
-                    "#D4C4FB"
+                    "#D4C4FB",
+                    "lightgrey"
                   ]}
                   onChangeComplete={val => {
                     majParametres(val.hex);
                     setMenuCouleur(false);
                   }}
-                  width={240}
+                  width={265}
                 />
               </div>
             )}

@@ -185,6 +185,7 @@ export const FormatCouleurTexte = ({ selected, couleurTexte }) => {
                 "#1273DE",
                 "#004DCF",
                 "#5300EB",
+                "black",
                 "transparent",
                 "#EB9694",
                 "#FAD0C3",
@@ -193,7 +194,8 @@ export const FormatCouleurTexte = ({ selected, couleurTexte }) => {
                 "#BEDADC",
                 "#C4DEF6",
                 "#BED3F3",
-                "#D4C4FB"
+                "#D4C4FB",
+                "lightgrey"
               ]}
               onChange={val => {
                 setCouleur(val.hex);
@@ -204,7 +206,7 @@ export const FormatCouleurTexte = ({ selected, couleurTexte }) => {
                   couleurTexte: val.hex
                 });
               }}
-              width={240}
+              width={265}
             />
           </div>
         )}
@@ -272,6 +274,7 @@ export const FormatCouleurBackground = ({ selected, couleurBackground }) => {
                 "#1273DE",
                 "#004DCF",
                 "#5300EB",
+                "black",
                 "transparent",
                 "#EB9694",
                 "#FAD0C3",
@@ -280,7 +283,8 @@ export const FormatCouleurBackground = ({ selected, couleurBackground }) => {
                 "#BEDADC",
                 "#C4DEF6",
                 "#BED3F3",
-                "#D4C4FB"
+                "#D4C4FB",
+                "lightgrey"
               ]}
               onChange={val => {
                 setCouleur(val.hex);
@@ -291,7 +295,7 @@ export const FormatCouleurBackground = ({ selected, couleurBackground }) => {
                   couleurBackground: val.hex
                 });
               }}
-              width={240}
+              width={265}
             />
           </div>
         )}
