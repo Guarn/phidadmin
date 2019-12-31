@@ -188,7 +188,6 @@ const Creation = props => {
                   : ""
               }}
               onMouseDown={() => {
-                console.log(element);
 
                 if (state.ReadOnly !== index)
                   setState({ type: "ReadOnly", index: index });
