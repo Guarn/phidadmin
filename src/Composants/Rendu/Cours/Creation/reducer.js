@@ -53,7 +53,7 @@ const paragrapheType = uuid => [
   {
     type: "paragraph",
     id: uuid,
-    align: "left",
+    align: "justify",
     children: [{ text: "Nouveau paragraphe" }]
   }
 ];
@@ -192,7 +192,7 @@ export const reducerCreationCours = (state, action) => {
           position: 0
         },
         options: {
-          marginTop: 0,
+          marginTop: 20,
           marginBottom: 0,
           marginLeft: 0,
           marginRight: 0,
