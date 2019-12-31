@@ -188,7 +188,6 @@ const Creation = props => {
                   : ""
               }}
               onMouseDown={() => {
-
                 if (state.ReadOnly !== index)
                   setState({ type: "ReadOnly", index: index });
               }}
@@ -367,7 +366,7 @@ const Creation = props => {
           setInsertWidget(true);
         }}
         type="round"
-        style={{ position: "absolute", right: "10px", bottom: "-50px" }}
+        style={{ position: "fixed", left: "1060px", bottom: "50px" }}
       >
         Ajouter un widget
       </Button>
