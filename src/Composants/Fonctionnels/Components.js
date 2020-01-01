@@ -178,7 +178,7 @@ export const FormatCouleurTexte = ({ selected, couleurTexte }) => {
               colors={[
                 "white",
                 "#B80000",
-                "#DB3E00",
+                "#BE5454",
                 "#FCCB00",
                 "#008B02",
                 "#006B76",
@@ -267,7 +267,7 @@ export const FormatCouleurBackground = ({ selected, couleurBackground }) => {
               colors={[
                 "white",
                 "#B80000",
-                "#DB3E00",
+                "#BE5454",
                 "#FCCB00",
                 "#008B02",
                 "#006B76",
