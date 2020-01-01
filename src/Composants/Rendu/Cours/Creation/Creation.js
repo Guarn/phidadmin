@@ -61,7 +61,7 @@ const ConteneurWidget = styled.div`
 `;
 
 const FondWidget = styled.div`
-  background-color: rgb(254, 243, 189);
+  background-color: #BE5454;
   user-select: none;
   cursor: pointer;
   transition: all 0.2s;
@@ -424,7 +424,7 @@ const MenuWidgets = ({ position }) => {
               fontSize: "22px",
               marginRight: "10px",
               marginLeft: "5px",
-              backgroundColor: "rgb(254, 243, 189)"
+              backgroundColor: "#BE5454"
             }}
           >
             1
@@ -455,7 +455,7 @@ const MenuWidgets = ({ position }) => {
               fontSize: "18px",
               marginRight: "10px",
               marginLeft: "5px",
-              backgroundColor: "rgb(254, 243, 189)"
+              backgroundColor: "#BE5454"
             }}
           >
             1.1

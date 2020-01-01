@@ -18,7 +18,7 @@ const sousChapitreType = uuid => [
       {
         text: "1.1",
         couleurBackgroundActive: true,
-        couleurBackground: "#fef3bd"
+        couleurBackground: "#BE5454"
       },
       { text: " SOUS CHAPITRE" }
     ]
@@ -34,7 +34,7 @@ const chapitreType = uuid => [
       {
         text: " 1 ",
         couleurBackgroundActive: true,
-        couleurBackground: "#fef3bd"
+        couleurBackground: "#BE5454"
       },
       { text: " CHAPITRE" }
     ]
@@ -196,7 +196,7 @@ export const reducerCreationCours = (state, action) => {
           marginBottom: 0,
           marginLeft: 0,
           marginRight: 0,
-          backgroundColor: action.value === "titre" ? "#FEF3BD" : "",
+          backgroundColor: action.value === "titre" ? "#BE5454" : "",
           paddingTop: 0,
           paddingLeft: 0,
           paddingRight: 0,
@@ -245,7 +245,7 @@ export const initialValueCours = {
           type: "h1",
           id: 1,
           align: "center",
-          children: [{ text: "TITRE" }]
+          children: [{ text: "COURS" }]
         }
       ],
       type: "h1",
@@ -297,7 +297,7 @@ export const initialValueExercice = {
           type: "h1",
           id: 1,
           align: "center",
-          children: [{ text: "TITRE" }]
+          children: [{ text: "EXERCICE" }]
         }
       ],
       type: "h1",
