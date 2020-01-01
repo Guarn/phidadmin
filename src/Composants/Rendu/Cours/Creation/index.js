@@ -288,7 +288,7 @@ const MenuParametres = ({ menuImage, setMenuImage }) => {
                     "#C4DEF6",
                     "#BED3F3",
                     "#D4C4FB",
-                    "lightgrey"
+                    "#DBD9D1"
                   ]}
                   onChangeComplete={val => {
                     majParametres(val.hex);

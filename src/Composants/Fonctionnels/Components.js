@@ -195,7 +195,7 @@ export const FormatCouleurTexte = ({ selected, couleurTexte }) => {
                 "#C4DEF6",
                 "#BED3F3",
                 "#D4C4FB",
-                "lightgrey"
+                "#DBD9D1"
               ]}
               onChange={val => {
                 setCouleur(val.hex);
@@ -284,7 +284,7 @@ export const FormatCouleurBackground = ({ selected, couleurBackground }) => {
                 "#C4DEF6",
                 "#BED3F3",
                 "#D4C4FB",
-                "lightgrey"
+                "#DBD9D1"
               ]}
               onChange={val => {
                 setCouleur(val.hex);
