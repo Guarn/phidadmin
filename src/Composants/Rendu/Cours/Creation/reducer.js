@@ -15,6 +15,19 @@ const titreType = uuid => [
   }
 ];
 
+const encartType = uuid => [
+  {
+    type: "paragraph",
+    id: uuid,
+    align: "justify",
+    children: [
+      {
+        text: "Nouvel encart"
+      }
+    ]
+  }
+];
+
 const sousChapitreType = uuid => [
   {
     type: "h3",
@@ -185,6 +198,9 @@ export const reducerCreationCours = (state, action) => {
         case "paragraphe":
           value = paragrapheType(uuid());
           break;
+        case "encart":
+          value = encartType(uuid());
+          break;
       }
       newState.Cours.splice(action.index, 0, {
         value,
@@ -205,31 +221,41 @@ export const reducerCreationCours = (state, action) => {
             action.value === "chapitre" ||
             action.value === "sousChapitre"
               ? "#BE5454"
+              : action.value === "encart"
+              ? "#DBD9D1"
               : "",
           paddingTop:
             action.value === "titre" ||
             action.value === "chapitre" ||
             action.value === "sousChapitre"
               ? 7
-              : 0,
+              : action.value === "encart"
+              ? 10
+              : "",
           paddingLeft:
             action.value === "titre" ||
             action.value === "chapitre" ||
             action.value === "sousChapitre"
               ? 7
-              : 0,
+              : action.value === "encart"
+              ? 20
+              : "",
           paddingRight:
             action.value === "titre" ||
             action.value === "chapitre" ||
             action.value === "sousChapitre"
               ? 7
-              : 0,
+              : action.value === "encart"
+              ? 20
+              : "",
           paddingBottom:
             action.value === "titre" ||
             action.value === "chapitre" ||
             action.value === "sousChapitre"
               ? 7
-              : 0
+              : action.value === "encart"
+              ? 10
+              : ""
         },
         image: false,
         imageOptions: {

@@ -462,6 +462,16 @@ const MenuWidgets = ({ position }) => {
         />
         <p style={{ margin: "10px" }}>Citation</p>
       </FondWidget>
+      <FondWidget
+        style={{
+          backgroundColor: "#DBD9D1"
+        }}
+        onMouseDown={() =>
+          setState({ type: "Ajout", value: "encart", index: position })
+        }
+      >
+        <p style={{ margin: "10px" }}>Encadré</p>
+      </FondWidget>
     </ConteneurWidget>
   );
 };
