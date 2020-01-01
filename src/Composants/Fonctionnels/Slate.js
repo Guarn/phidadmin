@@ -504,7 +504,8 @@ const Element = ({ attributes, children, element }) => {
             textAlign: element.align,
             marginLeft: element.marginLeft,
             marginTop: "0px",
-            marginBottom: "0px"
+            marginBottom: "0px",
+            fontSize: "20px"
           }}
           {...attributes}
         >
@@ -518,7 +519,8 @@ const Element = ({ attributes, children, element }) => {
             textAlign: element.align,
             marginLeft: element.marginLeft,
             marginTop: "0px",
-            marginBottom: "0px"
+            marginBottom: "0px",
+            fontSize: "16px"
           }}
           {...attributes}
         >
