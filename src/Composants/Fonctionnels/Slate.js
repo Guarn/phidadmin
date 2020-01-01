@@ -38,7 +38,7 @@ const HOTKEYS = {
   "mod+b": "bold",
   "mod+i": "italic",
   "mod+u": "underlined",
-  "mod+`": "code"
+  "mod+'": "times"
 };
 
 const TEXT_FORMATS = [
@@ -47,7 +47,8 @@ const TEXT_FORMATS = [
   "underlined",
   "code",
   "couleurTexteActive",
-  "couleurBackgroundActive"
+  "couleurBackgroundActive",
+  "times"
 ];
 const LIST_FORMATS = ["numbered-list", "bulleted-list"];
 const BLOCK_FORMATS = [...LIST_FORMATS, "h1", "h2", "h3", "block-quote"];
@@ -566,6 +567,13 @@ const Leaf = ({ attributes, children, leaf }) => {
 
   if (leaf.underlined) {
     children = <u>{children}</u>;
+  }
+  if (leaf.times) {
+    children = (
+      <span style={{ fontFamily: "Times New Roman", fontSize: "115%" }}>
+        {children}
+      </span>
+    );
   }
 
   return (
