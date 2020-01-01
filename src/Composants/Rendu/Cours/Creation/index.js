@@ -127,6 +127,7 @@ const Rectangle = styled.div`
 `;
 
 export const ListeContext = createContext(null);
+export const ModalContext = createContext(null);
 
 const CreactionCours = props => {
   const [menuImage, setMenuImage] = useState(false);
@@ -151,36 +152,38 @@ const CreactionCours = props => {
   const [state, setState] = useReducer(reducerCreationCours, init());
 
   return (
-    <ListeContext.Provider value={[state, setState]}>
-      <Conteneur id="ScrollConteneur" className="element">
-        <MenuParametres
-          menuImage={menuImage}
-          setMenuImage={val => setMenuImage(val)}
-        />
+    <ModalContext.Provider value={[menuImage, setMenuImage]}>
+      <ListeContext.Provider value={[state, setState]}>
+        <Conteneur id="ScrollConteneur" className="element">
+          <MenuParametres
+            menuImage={menuImage}
+            setMenuImage={val => setMenuImage(val)}
+          />
 
-        <Card
-          style={{
-            marginTop: "140px",
-            marginBottom: "100px",
-            marginLeft: "20px",
-            width: "781px"
-          }}
-        >
-          <Creation modal={menuImage} />
-        </Card>
-        <Card
-          style={{
-            position: "fixed",
-            top: "196px",
-            width: "250px",
-            left: "1071px",
-            zIndex: "1"
-          }}
-        >
-          <TableMatiere />
-        </Card>
-      </Conteneur>
-    </ListeContext.Provider>
+          <Card
+            style={{
+              marginTop: "140px",
+              marginBottom: "100px",
+              marginLeft: "20px",
+              width: "781px"
+            }}
+          >
+            <Creation modal={menuImage} />
+          </Card>
+          <Card
+            style={{
+              position: "fixed",
+              top: "196px",
+              width: "250px",
+              left: "1071px",
+              zIndex: "1"
+            }}
+          >
+            <TableMatiere />
+          </Card>
+        </Conteneur>
+      </ListeContext.Provider>
+    </ModalContext.Provider>
   );
 };
 export default CreactionCours;

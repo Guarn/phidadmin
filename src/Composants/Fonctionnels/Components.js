@@ -519,6 +519,12 @@ export const FormatOrderedList = ({ selected }) => {
   );
 };
 
+const EncartLien = styled.div`
+  position: absolute;
+  bottom: -40px;
+  background-color: #707070;
+`;
+
 export const FormatLink = ({ selected }) => {
   const editor = useSlate();
 

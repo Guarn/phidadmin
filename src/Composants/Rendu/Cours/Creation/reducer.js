@@ -5,7 +5,13 @@ const titreType = uuid => [
     type: "h1",
     id: uuid,
     align: "center",
-    children: [{ text: "Nouveau Titre" }]
+    children: [
+      {
+        text: "Nouveau Titre",
+        couleurTexte: "#FFFFFF",
+        couleurTexteActive: true
+      }
+    ]
   }
 ];
 
@@ -16,11 +22,10 @@ const sousChapitreType = uuid => [
     align: "left",
     children: [
       {
-        text: "1.1",
-        couleurBackgroundActive: true,
-        couleurBackground: "#BE5454"
-      },
-      { text: " SOUS CHAPITRE" }
+        text: "1.1 SOUS CHAPITRE",
+        couleurTexte: "#FFFFFF",
+        couleurTexteActive: true
+      }
     ]
   }
 ];
@@ -32,11 +37,10 @@ const chapitreType = uuid => [
     align: "left",
     children: [
       {
-        text: " 1 ",
-        couleurBackgroundActive: true,
-        couleurBackground: "#BE5454"
-      },
-      { text: " CHAPITRE" }
+        text: "1. CHAPITRE",
+        couleurTexte: "#FFFFFF",
+        couleurTexteActive: true
+      }
     ]
   }
 ];
@@ -196,11 +200,36 @@ export const reducerCreationCours = (state, action) => {
           marginBottom: 0,
           marginLeft: 0,
           marginRight: 0,
-          backgroundColor: action.value === "titre" ? "#BE5454" : "",
-          paddingTop: 0,
-          paddingLeft: 0,
-          paddingRight: 0,
-          paddingBottom: 0
+          backgroundColor:
+            action.value === "titre" ||
+            action.value === "chapitre" ||
+            action.value === "sousChapitre"
+              ? "#BE5454"
+              : "",
+          paddingTop:
+            action.value === "titre" ||
+            action.value === "chapitre" ||
+            action.value === "sousChapitre"
+              ? 7
+              : 0,
+          paddingLeft:
+            action.value === "titre" ||
+            action.value === "chapitre" ||
+            action.value === "sousChapitre"
+              ? 7
+              : 0,
+          paddingRight:
+            action.value === "titre" ||
+            action.value === "chapitre" ||
+            action.value === "sousChapitre"
+              ? 7
+              : 0,
+          paddingBottom:
+            action.value === "titre" ||
+            action.value === "chapitre" ||
+            action.value === "sousChapitre"
+              ? 7
+              : 0
         },
         image: false,
         imageOptions: {

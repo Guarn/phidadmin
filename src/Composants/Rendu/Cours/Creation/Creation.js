@@ -61,7 +61,7 @@ const ConteneurWidget = styled.div`
 `;
 
 const FondWidget = styled.div`
-  background-color: #BE5454;
+  background-color: #be5454;
   user-select: none;
   cursor: pointer;
   transition: all 0.2s;
@@ -80,6 +80,8 @@ const Creation = props => {
     setState({ type: "UpdateValue", value: val, index: index });
   }
   function clickOutside(event) {
+    console.log(event);
+
     let drawer = document.getElementById("drawerParametres");
 
     if (
@@ -138,10 +140,10 @@ const Creation = props => {
   }
 
   useEffect(() => {
-    document.addEventListener("click", clickOutside);
+    document.addEventListener("mousedown", clickOutside);
 
     return () => {
-      document.removeEventListener("click", clickOutside);
+      document.removeEventListener("mousedown", clickOutside);
     };
   });
 
@@ -399,69 +401,39 @@ const MenuWidgets = ({ position }) => {
           setState({ type: "Ajout", value: "titre", index: position })
         }
       >
-        <h1 style={{ margin: "10px", textAlign: "center" }}>Titre</h1>
+        <h1 style={{ margin: "10px", textAlign: "center", color: "white" }}>
+          Titre
+        </h1>
       </FondWidget>
       <FondWidget
-        style={{ backgroundColor: "white" }}
         onMouseDown={() =>
           setState({ type: "Ajout", value: "chapitre", index: position })
         }
       >
-        <div
+        <h2
           style={{
-            display: "flex",
-            alignItems: "baseline",
-            background: "white"
+            margin: "10px",
+            color: "white",
+            fontSize: "20px"
           }}
         >
-          <div
-            style={{
-              height: "30px",
-              width: "30px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontSize: "22px",
-              marginRight: "10px",
-              marginLeft: "5px",
-              backgroundColor: "#BE5454"
-            }}
-          >
-            1
-          </div>
-          <h2 style={{ margin: "10px" }}>Chapitre</h2>
-        </div>
+          1. Chapitre
+        </h2>
       </FondWidget>
       <FondWidget
-        style={{ backgroundColor: "white" }}
         onMouseDown={() =>
           setState({ type: "Ajout", value: "sousChapitre", index: position })
         }
       >
-        <div
+        <h2
           style={{
-            display: "flex",
-            alignItems: "baseline",
-            background: "white"
+            margin: "10px",
+            color: "white",
+            fontSize: "16px"
           }}
         >
-          <div
-            style={{
-              height: "24px",
-              width: "24px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              fontSize: "18px",
-              marginRight: "10px",
-              marginLeft: "5px",
-              backgroundColor: "#BE5454"
-            }}
-          >
-            1.1
-          </div>
-          <h3 style={{ margin: "10px" }}> Sous Chapitre</h3>
-        </div>
+          1.1 Sous Chapitre
+        </h2>
       </FondWidget>
       <FondWidget
         style={{ backgroundColor: "white", border: "1px dashed lightgrey" }}

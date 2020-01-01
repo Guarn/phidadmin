@@ -33,18 +33,19 @@ import {
 import "./Slate.css";
 import { ListeContext } from "../Rendu/Cours/Creation/index";
 import isUrl from "is-url";
+import { Tooltip } from "antd";
 
 const HOTKEYS = {
   "mod+b": "bold",
   "mod+i": "italic",
-  "mod+u": "underlined",
+  "mod+u": "sup",
   "mod+'": "times"
 };
 
 const TEXT_FORMATS = [
   "bold",
   "italic",
-  "underlined",
+  "sup",
   "code",
   "couleurTexteActive",
   "couleurBackgroundActive",
@@ -532,10 +533,15 @@ const Element = ({ attributes, children, element }) => {
     case "numbered-list":
       return <ol {...attributes}>{children}</ol>;
     case "link":
+      console.log(element);
+      console.log(attributes);
+
       return (
-        <a {...attributes} href={"http://" + element.url}>
-          {children}
-        </a>
+        <Tooltip title={element.url}>
+          <a {...attributes} href={"http://" + element.url}>
+            {children}
+          </a>
+        </Tooltip>
       );
     default:
       return (
@@ -567,8 +573,8 @@ const Leaf = ({ attributes, children, leaf }) => {
     children = <em>{children}</em>;
   }
 
-  if (leaf.underlined) {
-    children = <u>{children}</u>;
+  if (leaf.sup) {
+    children = <sup>{children}</sup>;
   }
   if (leaf.times) {
     children = (
