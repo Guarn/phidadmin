@@ -15,6 +15,7 @@ import Slate from "../../../Fonctionnels/Slate";
 import { Resizable, ResizableBox } from "react-resizable";
 import "./Creation.css";
 import TextArea from "antd/lib/input/TextArea";
+import { clickHandlerContext } from "./index";
 
 const ConteneurGlobal = styled.div`
   height: ${props => props.height + "px"};
@@ -76,16 +77,17 @@ const Creation = props => {
   const [menuParametres, setMenuParametres] = useState(false);
   const [insertWidget, setInsertWidget] = useState(false);
   const [positionNewWidget, setPositionNewWidget] = useState(0);
+  const [clickHandler, setClickHandler] = useContext(clickHandlerContext);
+
   function changeState(val, index) {
     setState({ type: "UpdateValue", value: val, index: index });
   }
   function clickOutside(event) {
-    console.log(event);
-
     let drawer = document.getElementById("drawerParametres");
 
     if (
       props.modal ||
+      clickHandler ||
       event.target.className === "ant-radio-button-wrapper" ||
       event.target.className === "ant-radio-button-input"
     ) {

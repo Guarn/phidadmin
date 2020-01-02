@@ -6,7 +6,7 @@ import React, {
   useContext
 } from "react";
 import isHotkey from "is-hotkey";
-import { Editable, withReact, Slate } from "slate-react";
+import { Editable, withReact, Slate, useSlate } from "slate-react";
 import { Editor, createEditor, Range } from "slate";
 import { withHistory } from "slate-history";
 import { isEqual } from "lodash";
@@ -31,9 +31,12 @@ import {
   FormatLink
 } from "./Components";
 import "./Slate.css";
-import { ListeContext } from "../Rendu/Cours/Creation/index";
+import {
+  ListeContext,
+  clickHandlerContext
+} from "../Rendu/Cours/Creation/index";
 import isUrl from "is-url";
-import { Tooltip } from "antd";
+import { Tooltip, Popover, Input } from "antd";
 
 const HOTKEYS = {
   "mod+b": "bold",
@@ -193,10 +196,39 @@ const withLinks = editor => {
 
   editor.exec = command => {
     if (command.type === "insert_link") {
-      const { url } = command;
+      const { select, state, paragraphe } = command;
 
       if (editor.selection) {
-        wrapLink(editor, url);
+        const [link] = Editor.nodes(editor, {
+          match: { type: "link" },
+          split: true
+        });
+        if (link && link.length > 0) {
+          Editor.setNodes(
+            editor,
+            {
+              type: "link",
+              select,
+              value: state,
+              paragraphe,
+              children: link[0].children
+            },
+            { match: link[0] }
+          );
+        } else {
+          Editor.wrapNodes(
+            editor,
+            { type: "link", select: "web", value: "http://", children: [] },
+            { split: true }
+          );
+          Editor.collapse(editor, { edge: "end" });
+        }
+        /*  Editor.setNodes(editor, {
+          type: "link",
+          url: "test",
+          children: link[0].children
+        });*/
+        //  wrapLink(editor, url);
       }
 
       return;
@@ -467,6 +499,9 @@ const isFormatActive = (editor, format) => {
 };
 
 const Element = ({ attributes, children, element }) => {
+  const [clickHandler, setClickHandler] = useContext(clickHandlerContext);
+  const editor = useSlate();
+
   switch (element.type) {
     case "citation":
       return (
@@ -533,15 +568,10 @@ const Element = ({ attributes, children, element }) => {
     case "numbered-list":
       return <ol {...attributes}>{children}</ol>;
     case "link":
-      console.log(element);
-      console.log(attributes);
-
       return (
-        <Tooltip title={element.url}>
-          <a {...attributes} href={"http://" + element.url}>
-            {children}
-          </a>
-        </Tooltip>
+        <a {...attributes} href={"http://" + element.url}>
+          {children}
+        </a>
       );
     default:
       return (

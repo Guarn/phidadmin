@@ -1,4 +1,10 @@
-import React, { useReducer, createContext, useState, useContext } from "react";
+import React, {
+  useReducer,
+  createContext,
+  useState,
+  useContext,
+  useEffect
+} from "react";
 import styled from "styled-components";
 import {
   Card,
@@ -127,10 +133,21 @@ const Rectangle = styled.div`
 `;
 
 export const ListeContext = createContext(null);
-export const ModalContext = createContext(null);
+export const clickHandlerContext = createContext(null);
+export const listeCoursContext = createContext(null);
+export const listeIndexContext = createContext(null);
 
 const CreactionCours = props => {
   const [menuImage, setMenuImage] = useState(false);
+  const [clickHandler, setClickHandler] = useState(false);
+  const [ListeCours, setListeCours] = useState([]);
+  const [ListeIndex, setListeIndex] = useState([]);
+  useEffect(() => {
+    if (ListeCours.length === 0) {
+      Axios.get("/cours").then(rep => setListeCours(rep.data));
+      Axios.get("/indexes").then(rep => setListeIndex(rep.data));
+    }
+  });
 
   function init() {
     if (
@@ -152,38 +169,42 @@ const CreactionCours = props => {
   const [state, setState] = useReducer(reducerCreationCours, init());
 
   return (
-    <ModalContext.Provider value={[menuImage, setMenuImage]}>
-      <ListeContext.Provider value={[state, setState]}>
-        <Conteneur id="ScrollConteneur" className="element">
-          <MenuParametres
-            menuImage={menuImage}
-            setMenuImage={val => setMenuImage(val)}
-          />
+    <listeCoursContext.Provider value={[ListeCours, setListeCours]}>
+      <listeIndexContext.Provider value={[ListeIndex, setListeIndex]}>
+        <clickHandlerContext.Provider value={[clickHandler, setClickHandler]}>
+          <ListeContext.Provider value={[state, setState]}>
+            <Conteneur id="ScrollConteneur" className="element">
+              <MenuParametres
+                menuImage={menuImage}
+                setMenuImage={val => setMenuImage(val)}
+              />
 
-          <Card
-            style={{
-              marginTop: "140px",
-              marginBottom: "100px",
-              marginLeft: "20px",
-              width: "781px"
-            }}
-          >
-            <Creation modal={menuImage} />
-          </Card>
-          <Card
-            style={{
-              position: "fixed",
-              top: "196px",
-              width: "250px",
-              left: "1071px",
-              zIndex: "1"
-            }}
-          >
-            <TableMatiere />
-          </Card>
-        </Conteneur>
-      </ListeContext.Provider>
-    </ModalContext.Provider>
+              <Card
+                style={{
+                  marginTop: "140px",
+                  marginBottom: "100px",
+                  marginLeft: "20px",
+                  width: "781px"
+                }}
+              >
+                <Creation modal={menuImage} />
+              </Card>
+              <Card
+                style={{
+                  position: "fixed",
+                  top: "196px",
+                  width: "250px",
+                  left: "1071px",
+                  zIndex: "1"
+                }}
+              >
+                <TableMatiere />
+              </Card>
+            </Conteneur>
+          </ListeContext.Provider>
+        </clickHandlerContext.Provider>
+      </listeIndexContext.Provider>
+    </listeCoursContext.Provider>
   );
 };
 export default CreactionCours;

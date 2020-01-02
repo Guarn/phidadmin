@@ -1,8 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import styled from "styled-components";
 import { useSlate } from "slate-react";
 import { GithubPicker } from "react-color";
-import { Icon } from "antd";
+import { Icon, Select, Input, Popover, Radio } from "antd";
+import { Editor } from "slate";
+import {
+  clickHandlerContext,
+  listeCoursContext,
+  listeIndexContext
+} from "../Rendu/Cours/Creation/index";
 
 //SECTION STYLED COMPONENTS
 
@@ -519,30 +525,141 @@ export const FormatOrderedList = ({ selected }) => {
   );
 };
 
-const EncartLien = styled.div`
-  position: absolute;
-  bottom: -40px;
-  background-color: #707070;
-`;
-
 export const FormatLink = ({ selected }) => {
   const editor = useSlate();
-
+  const [clickHandler, setClickHandler] = useContext(clickHandlerContext);
+  const [link] = Editor.nodes(editor, {
+    match: { type: "link" },
+    split: true
+  });
+  const [listeIndex, setListeIndex] = useContext(listeIndexContext);
+  const [listeCours, setListeCours] = useContext(listeCoursContext);
+  useEffect(() => {
+    if (selected) {
+      setClickHandler(true);
+    } else {
+      setClickHandler(false);
+    }
+  });
   return (
-    <Outils
-      onMouseDown={event => {
-        event.preventDefault();
-        if (!selected) {
-          const url = window.prompt("URL du  lien :");
-          if (!url) return;
-          editor.exec({ type: "insert_link", url });
-        } else {
-          editor.exec({ type: "remove_link" });
-        }
-      }}
+    <Popover
+      visible={selected}
+      placement="bottomRight"
+      content={
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          <Radio.Group
+            onChange={val => {
+              editor.exec({
+                type: "insert_link",
+                select: val.target.value,
+                state: ""
+              });
+            }}
+            value={selected ? link[0].select : ""}
+            buttonStyle="solid"
+          >
+            <Radio.Button value="web">WEB</Radio.Button>
+            <Radio.Button value="cours">COURS</Radio.Button>
+            <Radio.Button value="index">INDEX</Radio.Button>
+          </Radio.Group>
+          {selected && link[0].select === "web" && (
+            <Input
+              defaultValue={link[0].value}
+              style={{ marginTop: "10px" }}
+              onBlur={e => {
+                editor.exec({
+                  type: "insert_link",
+                  state: e.target.value,
+                  select: link[0].select
+                });
+              }}
+            />
+          )}
+          {selected && link[0].select === "cours" && (
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <Select
+                defaultValue={link[0].value}
+                onChange={val => {
+                  editor.exec({
+                    type: "insert_link",
+                    select: link[0].select,
+                    state: val,
+                    paragraph: ""
+                  });
+                }}
+                style={{ marginTop: "10px" }}
+              >
+                {listeCours.map((el, index) => {
+                  return (
+                    <Select.Option value={el.id} key={`cours-${index}`}>
+                      {el.Titre}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+              {link[0].value && (
+                <Select
+                  defaultValue={link[0].paragraphe}
+                  onChange={val => {
+                    editor.exec({
+                      type: "insert_link",
+                      select: link[0].select,
+                      state: link[0].value,
+                      paragraphe: val
+                    });
+                  }}
+                  style={{ marginTop: "10px" }}
+                >
+                  {JSON.parse(
+                    listeCours.filter(el => el.id === link[0].value)[0].Contenu
+                  ).map((el, index) => {
+                    return (
+                      <Select.Option value={index} key={`paragraph-${index}`}>
+                        {`Bloc ${index}`}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+              )}
+            </div>
+          )}
+          {selected && link[0].select === "index" && (
+            <Select
+              onChange={val => {
+                editor.exec({
+                  type: "insert_link",
+                  select: link[0].select,
+                  state: val
+                });
+              }}
+              defaultValue={link[0].value}
+              style={{ marginTop: "10px" }}
+            >
+              {listeIndex.map((el, index) => {
+                return (
+                  <Select.Option value={el.id} key={`index-${index}`}>
+                    {el.nom}
+                  </Select.Option>
+                );
+              })}
+            </Select>
+          )}
+        </div>
+      }
     >
-      <Icon type="link" style={{ fontSize: "24px", height: "24px" }} />
-      <RectSelect selected={selected} />
-    </Outils>
+      <Outils
+        onMouseDown={event => {
+          event.stopPropagation();
+          if (!selected) {
+            editor.exec({ type: "insert_link", url: "url défaut" });
+          } else {
+            editor.exec({ type: "remove_link" });
+          }
+        }}
+      >
+        <Icon type="link" style={{ fontSize: "24px", height: "24px" }} />
+        <RectSelect selected={selected} />
+      </Outils>
+    </Popover>
   );
 };
