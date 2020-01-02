@@ -552,7 +552,9 @@ export const FormatLink = ({ selected }) => {
               editor.exec({
                 type: "insert_link",
                 select: val.target.value,
-                state: ""
+                state: "",
+                paragraphe: "",
+                nom: ""
               });
             }}
             value={selected ? link[0].select : ""}
@@ -570,7 +572,9 @@ export const FormatLink = ({ selected }) => {
                 editor.exec({
                   type: "insert_link",
                   state: e.target.value,
-                  select: link[0].select
+                  select: link[0].select,
+                  paragraphe: "",
+                  nom: ""
                 });
               }}
             />
@@ -579,12 +583,13 @@ export const FormatLink = ({ selected }) => {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <Select
                 defaultValue={link[0].value}
-                onChange={val => {
+                onChange={(val, a) => {
                   editor.exec({
                     type: "insert_link",
                     select: link[0].select,
                     state: val,
-                    paragraph: ""
+                    paragraph: "",
+                    nom: a.props.children
                   });
                 }}
                 style={{ marginTop: "10px" }}
@@ -605,7 +610,8 @@ export const FormatLink = ({ selected }) => {
                       type: "insert_link",
                       select: link[0].select,
                       state: link[0].value,
-                      paragraphe: val
+                      paragraphe: val,
+                      nom: link[0].nom
                     });
                   }}
                   style={{ marginTop: "10px" }}
@@ -625,11 +631,12 @@ export const FormatLink = ({ selected }) => {
           )}
           {selected && link[0].select === "index" && (
             <Select
-              onChange={val => {
+              onChange={(val, a) => {
                 editor.exec({
                   type: "insert_link",
                   select: link[0].select,
-                  state: val
+                  state: val,
+                  nom: a.props.children
                 });
               }}
               defaultValue={link[0].value}

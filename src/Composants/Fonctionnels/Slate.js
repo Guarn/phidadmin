@@ -196,7 +196,7 @@ const withLinks = editor => {
 
   editor.exec = command => {
     if (command.type === "insert_link") {
-      const { select, state, paragraphe } = command;
+      const { select, state, paragraphe, nom } = command;
 
       if (editor.selection) {
         const [link] = Editor.nodes(editor, {
@@ -211,6 +211,7 @@ const withLinks = editor => {
               select,
               value: state,
               paragraphe,
+              nom,
               children: link[0].children
             },
             { match: link[0] }
@@ -568,11 +569,7 @@ const Element = ({ attributes, children, element }) => {
     case "numbered-list":
       return <ol {...attributes}>{children}</ol>;
     case "link":
-      return (
-        <a {...attributes} href={"http://" + element.url}>
-          {children}
-        </a>
-      );
+      return <a {...attributes}>{children}</a>;
     default:
       return (
         <p
