@@ -13,7 +13,7 @@ if (document.cookie !== "" && document.cookie.match(reg)[0]) {
 }
 
 export default axios.create({
-  baseURL: "http://phidbac.fr:4000/",
+  baseURL: "https://phidbac.fr:4000/",
   headers: { Authorization: test },
   responseType: "json"
 });
