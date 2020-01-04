@@ -447,6 +447,27 @@ const MenuWidgets = ({ position }) => {
         </h2>
       </FondWidget>
       <FondWidget
+        onMouseDown={() =>
+          setState({
+            type: "Ajout",
+            value: "sousSousChapitre",
+            index: position
+          })
+        }
+      >
+        <h2
+          style={{
+            margin: "7px",
+            marginTop: "3px",
+            marginBottom: "3px",
+            color: "white",
+            fontSize: "16px"
+          }}
+        >
+          1.1.1 Sous Chapitre
+        </h2>
+      </FondWidget>
+      <FondWidget
         style={{ backgroundColor: "white", border: "1px dashed lightgrey" }}
         onMouseDown={() =>
           setState({ type: "Ajout", value: "paragraphe", index: position })

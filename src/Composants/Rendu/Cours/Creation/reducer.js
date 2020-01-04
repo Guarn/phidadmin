@@ -43,6 +43,21 @@ const sousChapitreType = uuid => [
   }
 ];
 
+const sousSousChapitreType = uuid => [
+  {
+    type: "h3",
+    id: uuid,
+    align: "left",
+    children: [
+      {
+        text: "1.1.1 SOUS SOUS CHAPITRE",
+        couleurTexte: "#FFFFFF",
+        couleurTexteActive: true
+      }
+    ]
+  }
+];
+
 const chapitreType = uuid => [
   {
     type: "h2",
@@ -192,6 +207,9 @@ export const reducerCreationCours = (state, action) => {
         case "sousChapitre":
           value = sousChapitreType(uuid());
           break;
+        case "sousSousChapitre":
+          value = sousSousChapitreType(uuid());
+          break;
         case "citation":
           value = citationType(uuid());
           break;
@@ -219,7 +237,8 @@ export const reducerCreationCours = (state, action) => {
           backgroundColor:
             action.value === "titre" ||
             action.value === "chapitre" ||
-            action.value === "sousChapitre"
+            action.value === "sousChapitre" ||
+            action.value === "sousSousChapitre"
               ? "#BE5454"
               : action.value === "encart"
               ? "#DBD9D1"
@@ -231,11 +250,14 @@ export const reducerCreationCours = (state, action) => {
               ? 7
               : action.value === "encart"
               ? 10
+              : action.value === "sousChapitre"
+              ? 3
               : "",
           paddingLeft:
             action.value === "titre" ||
             action.value === "chapitre" ||
-            action.value === "sousChapitre"
+            action.value === "sousChapitre" ||
+            action.value === "sousSousChapitre"
               ? 7
               : action.value === "encart"
               ? 20
@@ -243,7 +265,8 @@ export const reducerCreationCours = (state, action) => {
           paddingRight:
             action.value === "titre" ||
             action.value === "chapitre" ||
-            action.value === "sousChapitre"
+            action.value === "sousChapitre" ||
+            action.value === "sousSousChapitre"
               ? 7
               : action.value === "encart"
               ? 20
@@ -255,6 +278,8 @@ export const reducerCreationCours = (state, action) => {
               ? 7
               : action.value === "encart"
               ? 10
+              : action.value === "sousChapitre"
+              ? 3
               : ""
         },
         image: false,
