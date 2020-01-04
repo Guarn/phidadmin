@@ -16,7 +16,7 @@ import {
   InputNumber,
   Input,
   Switch,
-  Modal,
+  Tooltip,
   Checkbox,
   Select
 } from "antd";
@@ -662,6 +662,18 @@ const MenuParametres = ({ menuImage, setMenuImage }) => {
                       })
                     }
                   />
+                  <Rectangle
+                    selected={
+                      state.Cours[state.ReadOnly].TableMatiere.type === "4"
+                    }
+                    onMouseDown={() =>
+                      setState({
+                        type: "TableMatiereType",
+                        value: "4",
+                        index: state.ReadOnly
+                      })
+                    }
+                  />
                 </div>
               </div>
               <Input
@@ -704,16 +716,20 @@ const ConteneurDescription = styled.div`
 `;
 
 const DescriptionCours = () => {
+  const reftableMatiere = document.getElementById("TableMatiere");
+
   const [state, setState] = useContext(ListeContext);
   const history = useHistory();
-  function saveBDD() {
+  function saveBDD(refresh) {
     if (state.type === "indexes") {
       Axios.post("/IndexesUpdate", {
         id: state.id,
         description: state.Cours
       }).then(() => {
-        localStorage.removeItem("Cours");
-        history.push("/Index/Gestion");
+        if (refresh) {
+          localStorage.removeItem("Cours");
+          history.push("/Index/Gestion");
+        }
       });
     } else {
       Axios.post(`/Cours${state.id}`, {
@@ -721,10 +737,12 @@ const DescriptionCours = () => {
         Description: state.Description,
         Contenu: JSON.stringify(state.Cours)
       }).then(() => {
-        localStorage.removeItem("Cours");
-        if (state.type === "PageUnique") history.push("/Cours/Modification");
-        if (state.type === "Cours") history.push("/Cours/ListeCours");
-        if (state.type === "Exercice") history.push("/Cours/ListeExercices");
+        if (refresh) {
+          localStorage.removeItem("Cours");
+          if (state.type === "PageUnique") history.push("/Cours/Modification");
+          if (state.type === "Cours") history.push("/Cours/ListeCours");
+          if (state.type === "Exercice") history.push("/Cours/ListeExercices");
+        }
       });
     }
   }
@@ -738,6 +756,23 @@ const DescriptionCours = () => {
         justifyContent: "space-between"
       }}
     >
+      <Tooltip placement="top" title="Sauvegarder le sujet">
+        <Button
+          onMouseDown={() => {
+            saveBDD(false);
+          }}
+          icon="save"
+          type="primary"
+          style={{
+            position: "fixed",
+            left: "1072px",
+            opacity: reftableMatiere ? "1" : "0",
+            top: reftableMatiere
+              ? reftableMatiere.getBoundingClientRect().bottom + 80 + "px"
+              : "200px"
+          }}
+        />
+      </Tooltip>
       <ConteneurDescription>
         <div
           style={{
@@ -769,7 +804,7 @@ const DescriptionCours = () => {
           height: "80px",
           width: "80px"
         }}
-        onMouseDown={saveBDD}
+        onMouseDown={() => saveBDD(true)}
       >
         <Icon
           type="save"

@@ -27,15 +27,30 @@ const El0 = styled.div`
 `;
 
 const El1 = styled.div`
-  margin-left: 8px;
+  margin-left: 15px;
+  &:hover {
+    font-weight: bold;
+  }
 `;
 
 const El2 = styled.div`
-  margin-left: 16px;
+  margin-left: 30px;
+  &:hover {
+    font-weight: bold;
+  }
 `;
 
 const El3 = styled.div`
-  margin-left: 24px;
+  margin-left: 45px;
+  &:hover {
+    font-weight: bold;
+  }
+`;
+const El4 = styled.div`
+  margin-left: 60px;
+  &:hover {
+    font-weight: bold;
+  }
 `;
 
 const TableMatiere = props => {
@@ -53,7 +68,7 @@ const TableMatiere = props => {
     };
   });
   return (
-    <Conteneur>
+    <Conteneur id="TableMatiere">
       {state.Cours.map((element, index) => {
         if (element.TableMatiere.actif) {
           switch (element.TableMatiere.type) {
@@ -115,6 +130,22 @@ const TableMatiere = props => {
                   <El3 key={`TABMAT-${index}`}>
                     {element.TableMatiere.value}
                   </El3>
+                </Link>
+              );
+            case "4":
+              return (
+                <Link
+                  key={`TABMAT-${index}`}
+                  activeClass="active"
+                  to={`element-${index}`}
+                  spy={true}
+                  smooth={true}
+                  duration={250}
+                  containerId="ScrollConteneur"
+                >
+                  <El4 key={`TABMAT-${index}`}>
+                    {element.TableMatiere.value}
+                  </El4>
                 </Link>
               );
 

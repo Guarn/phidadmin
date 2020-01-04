@@ -10,7 +10,7 @@ import React, {
 import { Element } from "react-scroll";
 import styled from "styled-components";
 import { ListeContext } from "./index";
-import { Button, Icon, Drawer, Radio, Divider, Popover, Select } from "antd";
+import { Button, Icon, Drawer, Radio, Divider, Popover, Tooltip } from "antd";
 import Slate from "../../../Fonctionnels/Slate";
 import { Resizable, ResizableBox } from "react-resizable";
 import "./Creation.css";
@@ -78,6 +78,7 @@ const Creation = props => {
   const [insertWidget, setInsertWidget] = useState(false);
   const [positionNewWidget, setPositionNewWidget] = useState(0);
   const [clickHandler, setClickHandler] = useContext(clickHandlerContext);
+  const reftableMatiere = document.getElementById("TableMatiere");
 
   function changeState(val, index) {
     setState({ type: "UpdateValue", value: val, index: index });
@@ -363,17 +364,25 @@ const Creation = props => {
         );
       })}
 
-      <Button
-        onMouseDown={() => {
-          setState({ type: "ReadOnly", index: null });
-          setMenuParametres(false);
-          setInsertWidget(true);
-        }}
-        type="round"
-        style={{ position: "fixed", left: "1060px", bottom: "50px" }}
-      >
-        Ajouter un widget
-      </Button>
+      <Tooltip placement="top" title="Ajouter un widget">
+        <Button
+          onMouseDown={() => {
+            setState({ type: "ReadOnly", index: null });
+            setMenuParametres(false);
+            setInsertWidget(true);
+          }}
+          icon="plus"
+          type="primary"
+          style={{
+            position: "fixed",
+            left: "1072px",
+            opacity: reftableMatiere ? "1" : "0",
+            top: reftableMatiere
+              ? reftableMatiere.getBoundingClientRect().bottom + 40 + "px"
+              : "200px"
+          }}
+        />
+      </Tooltip>
       <Drawer
         onClose={() => {
           setMenuWidgets(false);
