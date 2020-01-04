@@ -111,53 +111,53 @@ function App() {
           removeCookie("token");
         });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <userPD.Provider value={[user, DPuser]}>
-      {user.connecte && (
-        <ConteneurGlobal>
-          <Menu />
-          <ConteneurContenu>
-            <ConteneurHeader />
-            <Switch>
-              <Suspense fallback={<Chargement />}>
-                <Route exact path="/">
-                  <Tableau />
-                </Route>
-                <Route
-                  path="/Sujets/Consultation"
-                  component={ConsultationSujets}
-                />
-                <Route path="/Sujets/Parametres">
-                  <ParametresSujets />
-                </Route>
-                <Route path="/Sujets/Creation">
-                  <CreationSujets />
-                </Route>
-                <Route path="/Utilisateurs/Gestion">
-                  <GestionUtilisateurs />
-                </Route>
-                <Route path="/Cours/Creation">
-                  <Creation />
-                </Route>
-                <Route path="/Cours/Modification">
-                  <ModificationCours />
-                </Route>
-                <Route path="/Cours/ListeCours">
-                  <ListeCours type="Cours" />
-                </Route>
-                <Route path="/Cours/ListeExercices">
-                  <ListeCours type="Exercices" />
-                </Route>
-                <Route path="/Index/Gestion">
-                  <Index />
-                </Route>
-              </Suspense>
-            </Switch>
-          </ConteneurContenu>
-        </ConteneurGlobal>
-      )}
+      {user.connecte &&
+        (user.grade === "Administrateur" || user.grade === "Visiteur") && (
+          <ConteneurGlobal>
+            <Menu />
+            <ConteneurContenu>
+              <ConteneurHeader />
+              <Switch>
+                <Suspense fallback={<Chargement />}>
+                  <Route exact path="/">
+                    <Tableau />
+                  </Route>
+                  <Route
+                    path="/Sujets/Consultation"
+                    component={ConsultationSujets}
+                  />
+                  <Route path="/Sujets/Parametres">
+                    <ParametresSujets />
+                  </Route>
+                  <Route path="/Sujets/Creation">
+                    <CreationSujets />
+                  </Route>
+                  <Route path="/Utilisateurs/Gestion">
+                    <GestionUtilisateurs />
+                  </Route>
+                  <Route path="/Cours/Creation">
+                    <Creation />
+                  </Route>
+                  <Route path="/Cours/Modification">
+                    <ModificationCours />
+                  </Route>
+                  <Route path="/Cours/ListeCours">
+                    <ListeCours type="Cours" />
+                  </Route>
+                  <Route path="/Cours/ListeExercices">
+                    <ListeCours type="Exercices" />
+                  </Route>
+                  <Route path="/Index/Gestion">
+                    <Index />
+                  </Route>
+                </Suspense>
+              </Switch>
+            </ConteneurContenu>
+          </ConteneurGlobal>
+        )}
       {!user.connecte && (
         <>
           <Login1>
@@ -176,6 +176,11 @@ function App() {
             </Card>
           </Login1>
         </>
+      )}
+      {user.connecte && user.grade === "Eleve" && (
+        <div style={{ textAlign: "center", marginTop: "100px" }}>
+          vous n'avez pas la permission de voir cette page
+        </div>
       )}
     </userPD.Provider>
   );
