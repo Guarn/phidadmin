@@ -679,7 +679,7 @@ const MenuParametres = ({ menuImage, setMenuImage }) => {
               <Input
                 style={{ marginTop: "0px", marginBottom: "0px" }}
                 placeholder="Titre du lien"
-                placeholder={state.Cours[state.ReadOnly].TableMatiere.value}
+                defaultValue={state.Cours[state.ReadOnly].TableMatiere.value}
                 onChange={val => {
                   setState({
                     type: "TableMatiere",
