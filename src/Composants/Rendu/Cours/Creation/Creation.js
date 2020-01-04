@@ -364,7 +364,7 @@ const Creation = props => {
         );
       })}
 
-      <Tooltip placement="top" title="Ajouter un widget">
+      <Tooltip placement="right" title="Ajouter un widget">
         <Button
           onMouseDown={() => {
             setState({ type: "ReadOnly", index: null });

@@ -756,7 +756,7 @@ const DescriptionCours = () => {
         justifyContent: "space-between"
       }}
     >
-      <Tooltip placement="top" title="Sauvegarder le sujet">
+      <Tooltip placement="right" title="Enregistrer le cours">
         <Button
           onMouseDown={() => {
             saveBDD(false);
