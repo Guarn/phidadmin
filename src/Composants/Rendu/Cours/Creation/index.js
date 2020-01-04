@@ -263,7 +263,7 @@ const MenuParametres = ({ menuImage, setMenuImage }) => {
 
   return (
     <ConteneurParametres id="drawerParametres">
-      {state.ReadOnly === null && <DescriptionCours />}
+      {!state.ReadOnly && <DescriptionCours />}
       {state.ReadOnly >= 0 && state.ReadOnly !== null && (
         <SousConteneurParametres>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
