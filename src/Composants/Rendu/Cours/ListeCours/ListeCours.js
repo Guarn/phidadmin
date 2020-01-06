@@ -82,7 +82,6 @@ const ListeCours = props => {
   const history = useHistory();
   const refTitre = useRef(null);
   const refDescription = useRef(null);
-  const [refresh, setrefresh] = useState(1);
 
   function onDragEnd(result) {
     if (!result.destination) {
@@ -107,7 +106,6 @@ const ListeCours = props => {
       type: "Cours",
       position: state.length + 1
     }).then(() => {
-      setrefresh(refresh + 1);
       localStorage.removeItem("Cours");
     });
   }
@@ -120,15 +118,16 @@ const ListeCours = props => {
       type: "Exercice",
       position: state.length + 1
     }).then(() => {
-      setrefresh(refresh + 1);
       localStorage.removeItem("Cours");
     });
   }
   useEffect(() => {
-    Axios.get(`/${props.type}`).then(rep => {
-      setState(rep.data);
-    });
-  }, [refresh]);
+    if (state.length === 0) {
+      Axios.get(`/${props.type}`).then(rep => {
+        setState(rep.data);
+      });
+    }
+  });
   return (
     <Conteneur>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -248,8 +247,6 @@ const ListeCours = props => {
                                       ) {
                                         localStorage.removeItem("Cours");
                                       }
-
-                                      setrefresh(refresh + 1);
                                     });
                                   }
                                 }}
@@ -275,56 +272,59 @@ const ListeCours = props => {
         </Droppable>
       </DragDropContext>
 
-      <Drawer
-        width="400"
-        visible={showModif}
-        onClose={() => setShowModif(false)}
-        title="Informations"
-      >
-        {state.length > 0 && (
-          <ConteneurInformations>
-            <div style={{ fontSize: "16px", fontWeight: "bold" }}>ID:</div>
-            <div style={{ marginBottom: "10px" }}>{state[id].id}</div>
-            <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-              Date de création:
-            </div>
-            <div style={{ marginBottom: "10px" }}>{state[id].createdAt}</div>
-            <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-              Dernière modification
-            </div>
-            <div style={{ marginBottom: "30px" }}>{state[id].updatedAt}</div>
+      {showModif && (
+        <Drawer
+          width="400"
+          visible={showModif}
+          onClose={() => setShowModif(false)}
+          title="Informations"
+        >
+          {state.length > 0 && (
+            <ConteneurInformations>
+              <div style={{ fontSize: "16px", fontWeight: "bold" }}>ID:</div>
+              <div style={{ marginBottom: "10px" }}>{state[id].id}</div>
+              <div style={{ fontSize: "16px", fontWeight: "bold" }}>
+                Date de création:
+              </div>
+              <div style={{ marginBottom: "10px" }}>{state[id].createdAt}</div>
+              <div style={{ fontSize: "16px", fontWeight: "bold" }}>
+                Dernière modification
+              </div>
+              <div style={{ marginBottom: "30px" }}>{state[id].updatedAt}</div>
 
-            <div style={{ fontSize: "16px", fontWeight: "bold" }}>Titre :</div>
-            <TextArea
-              ref={refTitre}
-              style={{ marginBottom: "10px" }}
-              defaultValue={state[id].Titre}
-            ></TextArea>
-            <div style={{ fontSize: "16px", fontWeight: "bold" }}>
-              Description :
-            </div>
-            <TextArea
-              ref={refDescription}
-              style={{ marginBottom: "10px", minHeight: "300px" }}
-              defaultValue={state[id].Description}
-            ></TextArea>
-            <Button
-              type="primary"
-              onMouseDown={() => {
-                Axios.post(`/Cours/${state[id].id}`, {
-                  Titre: refTitre.current.state.value,
-                  Description: refDescription.current.state.value
-                }).then(() => {
-                  setShowModif(false);
-                  setrefresh(refresh + 1);
-                });
-              }}
-            >
-              Enregistrer les modifications
-            </Button>
-          </ConteneurInformations>
-        )}
-      </Drawer>
+              <div style={{ fontSize: "16px", fontWeight: "bold" }}>
+                Titre :
+              </div>
+              <TextArea
+                ref={refTitre}
+                style={{ marginBottom: "10px" }}
+                defaultValue={state[id].Titre}
+              ></TextArea>
+              <div style={{ fontSize: "16px", fontWeight: "bold" }}>
+                Description :
+              </div>
+              <TextArea
+                ref={refDescription}
+                style={{ marginBottom: "10px", minHeight: "300px" }}
+                defaultValue={state[id].Description}
+              ></TextArea>
+              <Button
+                type="primary"
+                onMouseDown={() => {
+                  Axios.post(`/Cours/${state[id].id}`, {
+                    Titre: refTitre.current.state.value,
+                    Description: refDescription.current.state.value
+                  }).then(() => {
+                    setShowModif(false);
+                  });
+                }}
+              >
+                Enregistrer les modifications
+              </Button>
+            </ConteneurInformations>
+          )}
+        </Drawer>
+      )}
 
       <Button
         style={{ width: "200px" }}

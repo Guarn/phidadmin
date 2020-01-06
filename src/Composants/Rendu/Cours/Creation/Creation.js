@@ -143,6 +143,9 @@ const Creation = props => {
   }
 
   useEffect(() => {
+    if (state.ReadOnly === undefined) {
+      setState({ type: "ReadOnly", index: null });
+    }
     document.addEventListener("mousedown", clickOutside);
 
     return () => {
