@@ -565,9 +565,33 @@ const Element = ({ attributes, children, element }) => {
         </h3>
       );
     case "list-item":
-      return <li {...attributes}>{children}</li>;
+      return (
+        <li
+          style={{
+            textAlign: element.align,
+            marginLeft: element.marginLeft,
+            marginTop: "0px",
+            marginBottom: "0px"
+          }}
+          {...attributes}
+        >
+          {children}
+        </li>
+      );
     case "numbered-list":
-      return <ol {...attributes}>{children}</ol>;
+      return (
+        <ol
+          style={{
+            textAlign: element.align,
+            marginLeft: element.marginLeft,
+            marginTop: "0px",
+            marginBottom: "0px"
+          }}
+          {...attributes}
+        >
+          {children}
+        </ol>
+      );
     case "link":
       return <a {...attributes}>{children}</a>;
     default:

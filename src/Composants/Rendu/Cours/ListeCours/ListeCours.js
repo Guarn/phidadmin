@@ -205,10 +205,6 @@ const ListeCours = props => {
                                   <Button
                                     style={{ height: "45px", width: "45px" }}
                                     onClick={() => {
-                                      console.log(state);
-
-                                      console.log(state[index].Contenu);
-
                                       localStorage.setItem(
                                         "Cours",
                                         JSON.stringify({
