@@ -13,6 +13,7 @@ const Conteneur = styled.div`
   padding: 20px;
   display: flex;
   flex-direction: column;
+  overflow: auto;
 `;
 const ConteneurCours = styled.div`
   display: flex;
