@@ -136,16 +136,19 @@ export const ListeContext = createContext(null);
 export const clickHandlerContext = createContext(null);
 export const listeCoursContext = createContext(null);
 export const listeIndexContext = createContext(null);
+export const listeExercicesContext = createContext(null);
 
 const CreactionCours = props => {
   const [menuImage, setMenuImage] = useState(false);
   const [clickHandler, setClickHandler] = useState(false);
   const [ListeCours, setListeCours] = useState([]);
   const [ListeIndex, setListeIndex] = useState([]);
+  const [ListeExercices, setListesExercices] = useState([]);
   useEffect(() => {
     if (ListeCours.length === 0) {
       Axios.get("/cours").then(rep => setListeCours(rep.data));
       Axios.get("/indexes").then(rep => setListeIndex(rep.data));
+      Axios.get("/exercices").then(rep => setListesExercices(rep.data));
     }
   });
 
@@ -169,42 +172,46 @@ const CreactionCours = props => {
   const [state, setState] = useReducer(reducerCreationCours, init());
 
   return (
-    <listeCoursContext.Provider value={[ListeCours, setListeCours]}>
-      <listeIndexContext.Provider value={[ListeIndex, setListeIndex]}>
-        <clickHandlerContext.Provider value={[clickHandler, setClickHandler]}>
-          <ListeContext.Provider value={[state, setState]}>
-            <Conteneur id="ScrollConteneur" className="element">
-              <MenuParametres
-                menuImage={menuImage}
-                setMenuImage={val => setMenuImage(val)}
-              />
+    <listeExercicesContext.Provider
+      value={[ListeExercices, setListesExercices]}
+    >
+      <listeCoursContext.Provider value={[ListeCours, setListeCours]}>
+        <listeIndexContext.Provider value={[ListeIndex, setListeIndex]}>
+          <clickHandlerContext.Provider value={[clickHandler, setClickHandler]}>
+            <ListeContext.Provider value={[state, setState]}>
+              <Conteneur id="ScrollConteneur" className="element">
+                <MenuParametres
+                  menuImage={menuImage}
+                  setMenuImage={val => setMenuImage(val)}
+                />
 
-              <Card
-                style={{
-                  marginTop: "140px",
-                  marginBottom: "100px",
-                  marginLeft: "20px",
-                  width: "781px"
-                }}
-              >
-                <Creation modal={menuImage} />
-              </Card>
-              <Card
-                style={{
-                  position: "fixed",
-                  top: "196px",
-                  width: "250px",
-                  left: "1071px",
-                  zIndex: "1"
-                }}
-              >
-                <TableMatiere />
-              </Card>
-            </Conteneur>
-          </ListeContext.Provider>
-        </clickHandlerContext.Provider>
-      </listeIndexContext.Provider>
-    </listeCoursContext.Provider>
+                <Card
+                  style={{
+                    marginTop: "140px",
+                    marginBottom: "100px",
+                    marginLeft: "20px",
+                    width: "781px"
+                  }}
+                >
+                  <Creation modal={menuImage} />
+                </Card>
+                <Card
+                  style={{
+                    position: "fixed",
+                    top: "196px",
+                    width: "250px",
+                    left: "1071px",
+                    zIndex: "1"
+                  }}
+                >
+                  <TableMatiere />
+                </Card>
+              </Conteneur>
+            </ListeContext.Provider>
+          </clickHandlerContext.Provider>
+        </listeIndexContext.Provider>
+      </listeCoursContext.Provider>
+    </listeExercicesContext.Provider>
   );
 };
 export default CreactionCours;

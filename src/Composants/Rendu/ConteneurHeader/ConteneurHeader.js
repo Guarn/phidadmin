@@ -36,7 +36,7 @@ const ConteneurHeader = props => {
   const { location } = props;
 
   const deco = () => {
-    removeCookie("token");
+    removeCookie("token",{domain:".phidbac.fr"});
     userDP({ type: "CONNEXION" });
   };
 

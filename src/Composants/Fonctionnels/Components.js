@@ -2,12 +2,13 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import styled from "styled-components";
 import { useSlate } from "slate-react";
 import { GithubPicker } from "react-color";
-import { Icon, Select, Input, Popover, Radio } from "antd";
+import { Icon, Select, Input, Popover, Radio, Drawer } from "antd";
 import { Editor } from "slate";
 import {
   clickHandlerContext,
   listeCoursContext,
-  listeIndexContext
+  listeIndexContext,
+  listeExercicesContext
 } from "../Rendu/Cours/Creation/index";
 
 //SECTION STYLED COMPONENTS
@@ -524,7 +525,11 @@ export const FormatOrderedList = ({ selected }) => {
     </Outils>
   );
 };
-
+const radioStyle = {
+  display: "block",
+  height: "30px",
+  lineHeight: "30px"
+};
 export const FormatLink = ({ selected }) => {
   const editor = useSlate();
   const [clickHandler, setClickHandler] = useContext(clickHandlerContext);
@@ -534,6 +539,7 @@ export const FormatLink = ({ selected }) => {
   });
   const [listeIndex, setListeIndex] = useContext(listeIndexContext);
   const [listeCours, setListeCours] = useContext(listeCoursContext);
+  const [listeExercices, setListeExercices] = useContext(listeExercicesContext);
   useEffect(() => {
     if (selected) {
       setClickHandler(true);
@@ -542,42 +548,83 @@ export const FormatLink = ({ selected }) => {
     }
   });
   return (
-    <Popover
-      visible={selected}
-      placement="bottomRight"
-      content={
+    <>
+      <Outils
+        onMouseDown={event => {
+          event.stopPropagation();
+          if (!selected) {
+            editor.exec({ type: "insert_link", url: "url défaut" });
+          } else {
+            editor.exec({ type: "remove_link" });
+          }
+        }}
+      >
+        <Icon type="link" style={{ fontSize: "24px", height: "24px" }} />
+        <RectSelect selected={selected} />
+      </Outils>
+      <Drawer
+        closable={false}
+        visible={selected}
+        title="Type de lien"
+        mask={null}
+      >
         <div style={{ display: "flex", flexDirection: "column" }}>
           <Radio.Group
+            size="small"
             onChange={val => {
               editor.exec({
                 type: "insert_link",
                 select: val.target.value,
                 state: "",
                 paragraphe: "",
+                ouverture: "",
                 nom: ""
               });
             }}
             value={selected ? link[0].select : ""}
             buttonStyle="solid"
           >
-            <Radio.Button value="web">WEB</Radio.Button>
+            <Radio.Button block  value="web">WEB</Radio.Button>
             <Radio.Button value="cours">COURS</Radio.Button>
             <Radio.Button value="index">INDEX</Radio.Button>
+            <Radio.Button value="exercices">EXERCICES</Radio.Button>
           </Radio.Group>
           {selected && link[0].select === "web" && (
-            <Input
-              defaultValue={link[0].value}
-              style={{ marginTop: "10px" }}
-              onBlur={e => {
-                editor.exec({
-                  type: "insert_link",
-                  state: e.target.value,
-                  select: link[0].select,
-                  paragraphe: "",
-                  nom: ""
-                });
-              }}
-            />
+            <>
+              <Input
+                defaultValue={link[0].value}
+                style={{ marginTop: "10px" }}
+                onChange={e => {
+                  editor.exec({
+                    type: "insert_link",
+                    state: e.target.value,
+                    select: link[0].select
+                  });
+                }}
+              />
+              <div style={{ marginTop: "20px", fontWeight: "bold" }}>
+                Ouverture du lien :
+              </div>
+              <Radio.Group
+                onChange={val => {
+                  editor.exec({
+                    type: "insert_link",
+                    select: link[0].select,
+                    state: link[0].value,
+                    ouverture: val.target.value
+                  });
+                }}
+                value={selected ? link[0].ouverture : ""}
+                buttonStyle="solid"
+              >
+                <Radio style={radioStyle} value="same">
+                  Même onglet
+                </Radio>
+                <Radio style={radioStyle} value="new">
+                  Nouvel onglet
+                </Radio>
+              </Radio.Group>
+            </>
           )}
           {selected && link[0].select === "cours" && (
             <div style={{ display: "flex", flexDirection: "column" }}>
@@ -588,8 +635,9 @@ export const FormatLink = ({ selected }) => {
                     type: "insert_link",
                     select: link[0].select,
                     state: val,
-                    paragraph: "",
-                    nom: a.props.children
+                    paragraphe: "",
+                    nom: a.props.children,
+                    ouverture: link[0].ouverture
                   });
                 }}
                 style={{ marginTop: "10px" }}
@@ -610,6 +658,7 @@ export const FormatLink = ({ selected }) => {
                       type: "insert_link",
                       select: link[0].select,
                       state: link[0].value,
+                      ouverture: link[0].ouverture,
                       paragraphe: val,
                       nom: link[0].nom
                     });
@@ -627,46 +676,136 @@ export const FormatLink = ({ selected }) => {
                   })}
                 </Select>
               )}
+              <div style={{ marginTop: "20px", fontWeight: "bold" }}>
+                Ouverture du lien :
+              </div>
+              <Radio.Group
+                onChange={val => {
+                  editor.exec({
+                    type: "insert_link",
+                    select: link[0].select,
+                    state: link[0].value,
+                    paragraphe: link[0].paragraphe,
+                    ouverture: val.target.value
+                  });
+                }}
+                value={selected ? link[0].ouverture : ""}
+                buttonStyle="solid"
+              >
+                <Radio style={radioStyle} value="popup">
+                  Popup
+                </Radio>
+                <Radio style={radioStyle} value="same">
+                  Même onglet
+                </Radio>
+                <Radio style={radioStyle} value="new">
+                  Nouvel onglet
+                </Radio>
+              </Radio.Group>
             </div>
           )}
           {selected && link[0].select === "index" && (
-            <Select
-              onChange={(val, a) => {
-                editor.exec({
-                  type: "insert_link",
-                  select: link[0].select,
-                  state: val,
-                  nom: a.props.children
-                });
-              }}
-              defaultValue={link[0].value}
-              style={{ marginTop: "10px" }}
-            >
-              {listeIndex.map((el, index) => {
-                return (
-                  <Select.Option value={el.id} key={`index-${index}`}>
-                    {el.nom}
-                  </Select.Option>
-                );
-              })}
-            </Select>
+            <>
+              <Select
+                onChange={(val, a) => {
+                  editor.exec({
+                    type: "insert_link",
+                    select: link[0].select,
+                    state: val,
+                    ouverture: link[0].ouverture,
+                    nom: a.props.children
+                  });
+                }}
+                defaultValue={link[0].value}
+                style={{ marginTop: "10px" }}
+              >
+                {listeIndex.map((el, index) => {
+                  return (
+                    <Select.Option value={el.id} key={`index-${index}`}>
+                      {el.nom}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+              <Radio.Group
+                onChange={val => {
+                  editor.exec({
+                    type: "insert_link",
+                    select: link[0].select,
+                    state: link[0].value,
+                    ouverture: val.target.value
+                  });
+                }}
+                value={selected ? link[0].ouverture : ""}
+                buttonStyle="solid"
+              >
+                <div style={{ marginTop: "20px", fontWeight: "bold" }}>
+                  Ouverture du lien :
+                </div>
+                <Radio style={radioStyle} value="popup">
+                  Popup
+                </Radio>
+                <Radio style={radioStyle} value="same">
+                  Même onglet
+                </Radio>
+                <Radio style={radioStyle} value="new">
+                  Nouvel onglet
+                </Radio>
+              </Radio.Group>
+            </>
+          )}
+          {selected && link[0].select === "exercices" && (
+            <>
+              <Select
+                onChange={(val, a) => {
+                  editor.exec({
+                    type: "insert_link",
+                    select: link[0].select,
+                    state: val,
+                    ouverture: link[0].ouverture,
+                    nom: a.props.children
+                  });
+                }}
+                defaultValue={link[0].value}
+                style={{ marginTop: "10px" }}
+              >
+                {listeExercices.map((el, index) => {
+                  return (
+                    <Select.Option value={el.id} key={`exercice-${index}`}>
+                      {el.Titre}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+              <Radio.Group
+                onChange={val => {
+                  editor.exec({
+                    type: "insert_link",
+                    select: link[0].select,
+                    state: link[0].value,
+                    ouverture: val.target.value
+                  });
+                }}
+                value={selected ? link[0].ouverture : ""}
+                buttonStyle="solid"
+              >
+                <div style={{ marginTop: "20px", fontWeight: "bold" }}>
+                  Ouverture du lien :
+                </div>
+                <Radio style={radioStyle} value="popup">
+                  Popup
+                </Radio>
+                <Radio style={radioStyle} value="same">
+                  Même onglet
+                </Radio>
+                <Radio style={radioStyle} value="new">
+                  Nouvel onglet
+                </Radio>
+              </Radio.Group>
+            </>
           )}
         </div>
-      }
-    >
-      <Outils
-        onMouseDown={event => {
-          event.stopPropagation();
-          if (!selected) {
-            editor.exec({ type: "insert_link", url: "url défaut" });
-          } else {
-            editor.exec({ type: "remove_link" });
-          }
-        }}
-      >
-        <Icon type="link" style={{ fontSize: "24px", height: "24px" }} />
-        <RectSelect selected={selected} />
-      </Outils>
-    </Popover>
+      </Drawer>
+    </>
   );
 };

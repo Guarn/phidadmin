@@ -429,7 +429,7 @@ const Gestion = props => {
         setData(state);
       })
       .catch(err => {
-        removeCookie("token");
+        removeCookie("token", { domain: ".phidbac.fr" });
         userDP({ type: "CONNEXION" });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps

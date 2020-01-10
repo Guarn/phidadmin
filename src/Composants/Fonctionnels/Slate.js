@@ -196,7 +196,7 @@ const withLinks = editor => {
 
   editor.exec = command => {
     if (command.type === "insert_link") {
-      const { select, state, paragraphe, nom } = command;
+      const { select, state, paragraphe, nom, ouverture } = command;
 
       if (editor.selection) {
         const [link] = Editor.nodes(editor, {
@@ -212,7 +212,8 @@ const withLinks = editor => {
               value: state,
               paragraphe,
               nom,
-              children: link[0].children
+              children: link[0].children,
+              ouverture
             },
             { match: link[0] }
           );

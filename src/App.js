@@ -108,7 +108,7 @@ function App() {
           });
         })
         .catch(err => {
-          removeCookie("token");
+          removeCookie("token", { domain: ".phidbac.fr" });
         });
     }
   }, []);
