@@ -584,7 +584,9 @@ export const FormatLink = ({ selected }) => {
             value={selected ? link[0].select : ""}
             buttonStyle="solid"
           >
-            <Radio.Button block  value="web">WEB</Radio.Button>
+            <Radio.Button block value="web">
+              WEB
+            </Radio.Button>
             <Radio.Button value="cours">COURS</Radio.Button>
             <Radio.Button value="index">INDEX</Radio.Button>
             <Radio.Button value="exercices">EXERCICES</Radio.Button>
@@ -733,7 +735,8 @@ export const FormatLink = ({ selected }) => {
                     type: "insert_link",
                     select: link[0].select,
                     state: link[0].value,
-                    ouverture: val.target.value
+                    ouverture: val.target.value,
+                    nom: link[0].nom
                   });
                 }}
                 value={selected ? link[0].ouverture : ""}
@@ -783,7 +786,8 @@ export const FormatLink = ({ selected }) => {
                     type: "insert_link",
                     select: link[0].select,
                     state: link[0].value,
-                    ouverture: val.target.value
+                    ouverture: val.target.value,
+                    nom: link[0].nom
                   });
                 }}
                 value={selected ? link[0].ouverture : ""}
