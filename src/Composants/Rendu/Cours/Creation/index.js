@@ -597,6 +597,19 @@ const MenuParametres = ({ menuImage, setMenuImage }) => {
                 </div>
               )}
             </div>
+            <Checkbox
+              checked={state.Cours[state.ReadOnly].options.hidden}
+              onChange={e => {
+                setState({
+                  type: "Parametres",
+                  param: "hidden",
+                  value: e.target.checked
+                });
+              }}
+              style={{ marginLeft: "10px" }}
+            >
+              Bloc réponse
+            </Checkbox>
           </div>
           <div style={{ display: "flex" }}>
             <ConteneurMatieres>
