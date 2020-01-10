@@ -688,6 +688,7 @@ export const FormatLink = ({ selected }) => {
                     select: link[0].select,
                     state: link[0].value,
                     paragraphe: link[0].paragraphe,
+                    nom: link[0].nom,
                     ouverture: val.target.value
                   });
                 }}
