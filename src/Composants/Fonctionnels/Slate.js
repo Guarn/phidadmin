@@ -6,7 +6,7 @@ import React, {
   useContext
 } from "react";
 import isHotkey from "is-hotkey";
-import { Editable, withReact, Slate, useSlate } from "slate-react";
+import { Editable, withReact, Slate } from "slate-react";
 import { Editor, createEditor, Range } from "slate";
 import { withHistory } from "slate-history";
 import { isEqual } from "lodash";
@@ -31,12 +31,8 @@ import {
   FormatLink
 } from "./Components";
 import "./Slate.css";
-import {
-  ListeContext,
-  clickHandlerContext
-} from "../Rendu/Cours/Creation/index";
+import { ListeContext } from "../Rendu/Cours/Creation/index";
 import isUrl from "is-url";
-import { Tooltip, Popover, Input } from "antd";
 
 const HOTKEYS = {
   "mod+b": "bold",
@@ -296,7 +292,7 @@ const withRichText = editor => {
 
   editor.exec = command => {
     if (command.type === "marginLeft") {
-      const { format, type } = command;
+      const { format } = command;
       const [match] = Editor.nodes(editor, { match: "block", mode: "all" });
       let margin;
       if (format === "unfold") {
@@ -315,9 +311,7 @@ const withRichText = editor => {
       });
     }
     if (command.type === "alignement") {
-      const { format, type } = command;
-      const isActive = isFormatActive(editor, format);
-      const isAlign = isAlignActive(editor, type);
+      const { format } = command;
       const [match] = Editor.nodes(editor, { match: "block", mode: "all" });
       if (match)
         Editor.setNodes(editor, {
@@ -501,9 +495,6 @@ const isFormatActive = (editor, format) => {
 };
 
 const Element = ({ attributes, children, element }) => {
-  const [clickHandler, setClickHandler] = useContext(clickHandlerContext);
-  const editor = useSlate();
-
   switch (element.type) {
     case "citation":
       return (

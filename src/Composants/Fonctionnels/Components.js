@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from "react";
 import styled from "styled-components";
 import { useSlate } from "slate-react";
 import { GithubPicker } from "react-color";
-import { Icon, Select, Input, Popover, Radio, Drawer } from "antd";
+import { Icon, Select, Input, Radio, Drawer } from "antd";
 import { Editor } from "slate";
 import {
   clickHandlerContext,
@@ -87,18 +87,6 @@ const Couleur = styled.div`
     transform: scale(1.2);
     z-index: 100;
   }
-`;
-
-const Triangle = styled.div`
-  width: 0px;
-  height: 0px;
-  border-style: solid;
-  border-width: 0px 10px 10px 10px;
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  margin-left: -10px;
-  border-color: transparent transparent white;
 `;
 
 //!SECTION
