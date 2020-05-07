@@ -1,5 +1,5 @@
 <p><h1 align="center">PhidAdmin</h1>
-<p>CRM / Gestion de Phidbac.fr</p></p>
+<p align="center">CRM / Gestion de Phidbac.fr</p></p>
 
 ## PhidAdmin
 
