@@ -1,18 +1,15 @@
 import React, {
-  createContext,
   useState,
   useEffect,
-  useReducer,
   useRef,
-  forwardRef,
   useContext
 } from "react";
 import { Element } from "react-scroll";
 import styled from "styled-components";
 import { ListeContext } from "./index";
-import { Button, Icon, Drawer, Radio, Divider, Popover, Tooltip } from "antd";
+import { Button, Icon, Drawer, Radio, Popover, Tooltip } from "antd";
 import Slate from "../../../Fonctionnels/Slate";
-import { Resizable, ResizableBox } from "react-resizable";
+import { ResizableBox } from "react-resizable";
 import "./Creation.css";
 import TextArea from "antd/lib/input/TextArea";
 import { clickHandlerContext } from "./index";
@@ -34,28 +31,6 @@ const ConteneurSlate = styled.div`
   }
 `;
 
-const Icone = styled.div`
-  position: absolute;
-  font-size: 20px;
-  height: 30px;
-  width: 30px;
-  top: 5px;
-  right: 5px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: rgba(0, 0, 0, 0.2);
-  user-select: none;
-  cursor: pointer;
-  transition: all 0.2s;
-  &:hover {
-    border: 1px solid #1890ff;
-    color: #1890ff;
-  }
-`;
-
 const ConteneurWidget = styled.div`
   display: flex;
   flex-direction: column;
@@ -72,17 +47,14 @@ const FondWidget = styled.div`
 const Creation = props => {
   const [state, setState] = useContext(ListeContext);
   const refConteneur = useRef(null);
-  const ref = React.createRef();
   const [menuWidgets, setMenuWidgets] = useState(false);
   const [menuParametres, setMenuParametres] = useState(false);
   const [insertWidget, setInsertWidget] = useState(false);
   const [positionNewWidget, setPositionNewWidget] = useState(0);
-  const [clickHandler, setClickHandler] = useContext(clickHandlerContext);
+  const [clickHandler,] = useContext(clickHandlerContext);
   const reftableMatiere = document.getElementById("TableMatiere");
 
-  function changeState(val, index) {
-    setState({ type: "UpdateValue", value: val, index: index });
-  }
+
   function clickOutside(event) {
     let drawer = document.getElementById("drawerParametres");
 
@@ -168,7 +140,7 @@ const Creation = props => {
           }}
         />
       )}
-      {state.Cours.map((element, index) => {
+      {state.Cours && state.Cours.map((element, index) => {
         return (
           <Element
             id={`element-${index}`}
@@ -407,7 +379,7 @@ const Creation = props => {
 export default Creation;
 
 const MenuWidgets = ({ position }) => {
-  const [state, setState] = useContext(ListeContext);
+  const [, setState] = useContext(ListeContext);
   return (
     <ConteneurWidget>
       <FondWidget

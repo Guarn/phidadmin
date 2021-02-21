@@ -18,7 +18,7 @@ import {
   Form,
   Select
 } from "antd";
-import Axios from "../../Fonctionnels/Axios";
+import axios from "axios";
 
 const Conteneur = styled.div`
   background-color: rgba(0, 0, 0, 0.03);
@@ -44,6 +44,7 @@ const formItemLayout = {
 };
 const Formulaire = props => {
   const [etape, setEtape] = useState("init");
+  const [cookies] = useCookies();
   const valueButton = {
     init: props.user ? "Modifier  l'utilisateur" : "Créer l'utilisateur",
     update: props.user ? "En cours de modification" : "En cours de création",
@@ -68,7 +69,11 @@ const Formulaire = props => {
         setAttValid(true);
         setEtape("update");
         if (!props.user) {
-          Axios.post("/UtilisateurAjout", {
+          axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+          }).post("/UtilisateurAjout", {
             email: values.email,
             nom: values.nom,
             prenom: values.prenom,
@@ -86,7 +91,11 @@ const Formulaire = props => {
             })
             .catch(err => setEtape("finPasOk"));
         } else {
-          Axios.post("/UpdateUser", {
+          axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+          }).post("/UpdateUser", {
             email: values.email,
             nom: values.nom,
             prenom: values.prenom,
@@ -111,8 +120,8 @@ const Formulaire = props => {
   useEffect(() => {
     if (props.user) {
       setFieldsValue({
-        createdAt: props.user.createdAt,
-        updatedAt: props.user.updatedAt,
+        created_at: props.user.created_at,
+        updated_at: props.user.updated_at,
         prenom: props.user.prenom,
         nom: props.user.nom,
         ville: props.user.localisation,
@@ -130,7 +139,7 @@ const Formulaire = props => {
       {props.user && (
         <Item label="Créé le :" hasFeedback>
           {getFieldDecorator(
-            "createdAt",
+            "created_at",
             {}
           )(
             <Input
@@ -145,7 +154,7 @@ const Formulaire = props => {
       {props.user && (
         <Item label="Dernière MAJ :" hasFeedback>
           {getFieldDecorator(
-            "updatedAt",
+            "updated_at",
             {}
           )(
             <Input
@@ -285,7 +294,7 @@ const Formulaire = props => {
 };
 
 const Gestion = props => {
-  const [, , removeCookie] = useCookies();
+  const [cookies, , removeCookie] = useCookies();
   const [, userDP] = useContext(userPD);
   const [nouvelUtilisateur, setNouvelUtilisateur] = useState(false);
   const [modif, setModif] = useState(false);
@@ -295,18 +304,30 @@ const Gestion = props => {
   const [data, setData] = useState();
 
   const suppressionUtilisateur = id => {
-    Axios.post("/DestroyUser", { id }).then(rep => {
+    axios.create({
+      baseURL: "/api/",
+      headers: { authorization: cookies.token.substring(7) },
+      responseType: "json"
+    }).post("/DestroyUser", { id }).then(rep => {
       setModif(!modif);
     });
   };
 
   const bloquerUtilisateur = util => {
-    Axios.post("/updateuser", { id: util.id, actif: !util.actif }).then(rep => {
+    axios.create({
+      baseURL: "/api/",
+      headers: { authorization: cookies.token.substring(7) },
+      responseType: "json"
+    }).post("/updateuser", { id: util.id, actif: !util.actif }).then(rep => {
       setModif(!modif);
     });
   };
   const changePass = () => {
-    Axios.post("/ChangePass", { id: idSel, password: pass }).then(rep => {
+    axios.create({
+      baseURL: "/api/",
+      headers: { authorization: cookies.token.substring(7) },
+      responseType: "json"
+    }).post("/ChangePass", { id: idSel, password: pass }).then(rep => {
       setShowPass(false);
       setModif(!modif);
     });
@@ -396,32 +417,36 @@ const Gestion = props => {
 
   useEffect(() => {
     document.title = "PhidAdmin - Utilisateurs / Gestion ";
-    Axios.get("/Listeusers")
+    axios.create({
+      baseURL: "/api/",
+      headers: { authorization: cookies.token.substring(7) },
+      responseType: "json"
+    }).get("/users/Listeusers")
       .then(rep => {
         let state = [];
-        rep.data.listeUsers.map(el => {
-          let dateCreation = el.createdAt
+        rep.data.map(el => {
+          let dateCreation = el.created_at
             .split("T")[0]
             .split("-")
             .reverse()
             .join("/");
-          let heureCreation = el.createdAt
+          let heureCreation = el.created_at
             .split("T")[1]
             .split(":", 2)
             .join(":");
-          let dateMaj = el.updatedAt
+          let dateMaj = el.updated_at
             .split("T")[0]
             .split("-")
             .reverse()
             .join("/");
-          let heureMaj = el.updatedAt
+          let heureMaj = el.updated_at
             .split("T")[1]
             .split(":", 2)
             .join(":");
           let tempEl = {
             ...el,
-            createdAt: dateCreation + " " + heureCreation,
-            updatedAt: dateMaj + " " + heureMaj
+            created_at: dateCreation + " " + heureCreation,
+            updated_at: dateMaj + " " + heureMaj
           };
           state.push(tempEl);
           return null;
@@ -429,7 +454,7 @@ const Gestion = props => {
         setData(state);
       })
       .catch(err => {
-        removeCookie("token", { domain: ".phidbac.fr" });
+        removeCookie("token", { domain: ".phidbac.fr", path: '/' });
         userDP({ type: "CONNEXION" });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps

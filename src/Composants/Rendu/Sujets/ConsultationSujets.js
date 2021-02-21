@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import Editor from "../../Fonctionnels/Editor";
 import ReactQuill from "react-quill";
-import Axios from "../../Fonctionnels/Axios";
 import {
     Divider,
     Slider,
@@ -21,6 +20,8 @@ import {
 
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
+import axios from "axios";
+import { useCookies } from "react-cookie";
 
 const { Option } = Select;
 
@@ -158,7 +159,7 @@ const ContenuLabel = styled.div`
 
 const ConsultationSujets = () => {
     //SECTION STATE
-
+    const [cookies] = useCookies();
     const [modeEdition, setModeEdition] = useState(true);
     const [idTemp, setIdtemp] = useState();
     const [loading, setLoading] = useState(true);
@@ -215,7 +216,7 @@ const ConsultationSujets = () => {
     });
     const [state, setState] = useState({
         id: 0,
-        Sujet: {}
+        sujet: {}
     });
 
     //!SECTION
@@ -228,17 +229,17 @@ const ConsultationSujets = () => {
 
         if (filtres) {
             if (val === "+") {
-                setTexte1(sujets[idSujet + 1].Sujet1);
-                setTexte2(sujets[idSujet + 1].Sujet2);
-                setTexte3(sujets[idSujet + 1].Sujet3);
-                setState({ id: 0, Sujet: sujets[idSujet + 1] });
+                setTexte1(sujets[idSujet + 1].sujet1);
+                setTexte2(sujets[idSujet + 1].sujet2);
+                setTexte3(sujets[idSujet + 1].sujet3);
+                setState({ id: 0, sujet: sujets[idSujet + 1] });
                 setIdSujet(idSujet + 1);
             }
             if (val === "-") {
-                setTexte1(sujets[idSujet - 1].Sujet1);
-                setTexte2(sujets[idSujet - 1].Sujet2);
-                setTexte3(sujets[idSujet - 1].Sujet3);
-                setState({ id: 0, Sujet: sujets[idSujet - 1] });
+                setTexte1(sujets[idSujet - 1].sujet1);
+                setTexte2(sujets[idSujet - 1].sujet2);
+                setTexte3(sujets[idSujet - 1].sujet3);
+                setState({ id: 0, sujet: sujets[idSujet - 1] });
                 setIdSujet(idSujet - 1);
             }
         } else {
@@ -260,15 +261,19 @@ const ConsultationSujets = () => {
 
     const RechercheFiltres = () => {
         setMenuFiltres(false);
-        Axios.post("/resultatsAdmin", { elementsCoches }).then((rep) => {
+        axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+        }).post("/resultatsAdmin", { elementsCoches }).then((rep) => {
             if (rep.data.count > 0) {
                 let state1 = rep.data.rows;
                 setSujets(state1);
                 setNbResultats(rep.data.count);
-                setState({ ...state, Sujet: state1[0] });
-                setTexte1(state1[0].Sujet1);
-                setTexte2(state1[0].Sujet2);
-                setTexte3(state1[0].Sujet3);
+                setState({ ...state, sujet: state1[0] });
+                setTexte1(state1[0].sujet1);
+                setTexte2(state1[0].sujet2);
+                setTexte3(state1[0].sujet3);
                 setIdSujet(0);
                 setFiltres(true);
             } else {
@@ -283,7 +288,7 @@ const ConsultationSujets = () => {
     const ConfirmModif = () => {
         setState({
             ...state,
-            Sujet: { ...state.Sujet, Problemes: false }
+            sujet: { ...state.sujet, problemes: false }
         });
         const key = "updatable";
 
@@ -293,10 +298,13 @@ const ConsultationSujets = () => {
             message: "Mise à jour en cours",
             icon: <Icon type="loading" style={{ color: "#108ee9" }} />
         });
-
-        Axios.post(`/sujets/${state.Sujet.id}`, {
-            ...state.Sujet,
-            Problemes: false
+        axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+        }).post(`/sujets/${state.sujet.id}`, {
+            ...state.sujet,
+            problemes: false
         })
             .then((rep) => {
                 notification.open({
@@ -365,27 +373,27 @@ const ConsultationSujets = () => {
             setTexte1(val);
             setState({
                 ...state,
-                Sujet: {
-                    ...state.Sujet,
-                    Sujet1: val
+                sujet: {
+                    ...state.sujet,
+                    sujet1: val
                 }
             });
         } else if (texte === 2) {
             setTexte2(val);
             setState({
                 ...state,
-                Sujet: {
-                    ...state.Sujet,
-                    Sujet2: val
+                sujet: {
+                    ...state.sujet,
+                    sujet2: val
                 }
             });
         } else if (texte === 3) {
             setTexte3(val);
             setState({
                 ...state,
-                Sujet: {
-                    ...state.Sujet,
-                    Sujet3: val
+                sujet: {
+                    ...state.sujet,
+                    sujet3: val
                 }
             });
         }
@@ -395,10 +403,15 @@ const ConsultationSujets = () => {
 
     const PremierProbleme = () => {
         setLoading(true);
-        Axios.get("/problemesAdmin").then((rep) => {
-            setState({ ...state, Sujet: rep.data.Sujet[0] });
-            setNbResultats(rep.data.Count);
-            setSujets(rep.data.Sujet);
+        axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+        }).get("/problemesAdmin").then((rep) => {
+
+            setState({ ...state, sujet: rep.data.sujets[0] });
+            setNbResultats(rep.data.count);
+            setSujets(rep.data.sujets);
 
             if (filtres) {
                 RefNotions.current.rcSelect.state.value = [];
@@ -452,7 +465,7 @@ const ConsultationSujets = () => {
                 setFiltres(false);
             }
 
-            setIdSujet(rep.data.Sujet[0].id);
+            setIdSujet(rep.data.sujets[0].id);
         });
         setLoading(false);
 
@@ -467,16 +480,20 @@ const ConsultationSujets = () => {
         window.title = "PhidAdmin - Sujets / Consultation ";
         // ANCHOR Premier affichage ou filtres0
         if (sujets.length === 0) {
-            Axios.get(`/sujets/${idSujet}`).then((rep) => {
+            axios.create({
+                baseURL: "/api/",
+                headers: { authorization: cookies.token.substring(7) },
+                responseType: "json"
+            }).get(`/sujets/${idSujet}`).then((rep) => {
                 if (
-                    rep.data.Count > 0 &&
-                    idSujet <= rep.data.Count &&
+                    rep.data.count > 0 &&
+                    idSujet <= rep.data.count &&
                     idSujet >= 1
                 ) {
-                    let state1 = rep.data.Sujet;
+                    let state1 = rep.data.sujet;
                     setSujets(state1);
-                    setNbResultats(rep.data.Count);
-                    setState({ ...state, Sujet: rep.data.Sujet });
+                    setNbResultats(rep.data.count);
+                    setState({ ...state, sujet: rep.data.sujet });
                     let regex1 = /É/g;
                     let regex1b = /é/g;
                     let regex2 = /ù/g;
@@ -493,9 +510,9 @@ const ConsultationSujets = () => {
                     let regex12 = /À/g;
                     let regex13 = /ê/g;
                     let textesT = [
-                        rep.data.Sujet.Sujet1,
-                        rep.data.Sujet.Sujet2,
-                        rep.data.Sujet.Sujet3
+                        rep.data.sujet.sujet1,
+                        rep.data.sujet.sujet2,
+                        rep.data.sujet.sujet3
                     ];
                     let texte = [];
                     textesT.map((el, index) => {
@@ -544,22 +561,23 @@ const ConsultationSujets = () => {
                 let regex13 = /ê/g;
                 let textesT;
                 if (filtres) {
-                    setState({ ...state, Sujet: sujets[idSujet] });
+                    setState({ ...state, sujet: sujets[idSujet] });
 
                     textesT = [
-                        sujets[idSujet].Sujet1,
-                        sujets[idSujet].Sujet2,
-                        sujets[idSujet].Sujet3
+                        sujets[idSujet].sujet1,
+                        sujets[idSujet].sujet2,
+                        sujets[idSujet].sujet3
                     ];
                 } else {
-                    setState({ ...state, Sujet: sujets[0] });
+                    setState({ ...state, sujet: sujets[0] });
                     textesT = [
-                        sujets[0].Sujet1,
-                        sujets[0].Sujet2,
-                        sujets[0].Sujet3
+                        sujets[0].sujet1,
+                        sujets[0].sujet2,
+                        sujets[0].sujet3
                     ];
                 }
                 let texte = [];
+
                 textesT.map((el, index) => {
                     texte[index] = el.replace(regex1, "É");
                     texte[index] = texte[index].replace(regex1b, "é");
@@ -584,17 +602,21 @@ const ConsultationSujets = () => {
             }
         }
         if (!menu.annees) {
-            Axios.get("/menuAdmin").then((rep) => {
+            axios.create({
+                baseURL: "/api/",
+                headers: { authorization: cookies.token.substring(7) },
+                responseType: "json"
+            }).get("/menuAdmin").then((rep) => {
                 let state = rep.data;
-                state.annees.sort((a, b) => a["Annee"] - b["Annee"]);
+                state.annees.sort((a, b) => a["annee"] - b["annee"]);
                 state.auteurs.sort((a, b) =>
-                    a["Auteur"].localeCompare(b["Auteur"])
+                    a["auteur"].localeCompare(b["auteur"])
                 );
                 state.destinations.sort((a, b) =>
-                    a["Destination"].localeCompare(b["Destination"])
+                    a["destination"].localeCompare(b["destination"])
                 );
                 state.notions.sort((a, b) =>
-                    a["Notion"].localeCompare(b["Notion"])
+                    a["notion"].localeCompare(b["notion"])
                 );
                 setMenu(state);
             });
@@ -622,7 +644,7 @@ const ConsultationSujets = () => {
                     ref={RefNotions}
                     mode="multiple"
                     style={{ width: "100%" }}
-                    defaultValue={elementsCoches.Notions1}
+                    defaultValue={elementsCoches.notions1}
                     placeholder="Toutes les notions"
                     onChange={(e) => changeFiltres(e, "notions")}
                 >
@@ -630,14 +652,14 @@ const ConsultationSujets = () => {
                         menu.notions.map((el, index) => {
                             return (
                                 <Option
-                                    key={el["Notion"]}
+                                    key={el["notion"]}
                                     style={{
-                                        color: el["Au_Programme"]
+                                        color: el["au_programme"]
                                             ? "green"
                                             : "red"
                                     }}
                                 >
-                                    {el["Notion"]}
+                                    {el["notion"]}
                                 </Option>
                             );
                         })}
@@ -654,7 +676,7 @@ const ConsultationSujets = () => {
                     {menu.series &&
                         menu.series.map((el, index) => {
                             return (
-                                <Option key={el["Serie"]}>{el["Serie"]}</Option>
+                                <Option key={el["serie"]}>{el["serie"]}</Option>
                             );
                         })}
                 </Select>
@@ -669,8 +691,8 @@ const ConsultationSujets = () => {
                     {menu.destinations &&
                         menu.destinations.map((el, index) => {
                             return (
-                                <Option key={el["Destination"]}>
-                                    {el["Destination"]}
+                                <Option key={el["destination"]}>
+                                    {el["destination"]}
                                 </Option>
                             );
                         })}
@@ -686,8 +708,8 @@ const ConsultationSujets = () => {
                     {menu.auteurs &&
                         menu.auteurs.map((el) => {
                             return (
-                                <Option key={el["Auteur"]}>
-                                    {el["Auteur"] + " (" + el["NbSujets"] + ")"}
+                                <Option key={el["auteur"]}>
+                                    {el["auteur"] + " (" + el["NbSujets"] + ")"}
                                 </Option>
                             );
                         })}
@@ -955,23 +977,23 @@ const ConsultationSujets = () => {
                                 >
                                     <NomLabel>ID</NomLabel>
                                     <ContenuLabel>
-                                        {state.Sujet.id}
+                                        {state.sujet.id}
                                     </ContenuLabel>
                                 </DoubleLabel>
                                 <Button
                                     icon={
-                                        state.Sujet.Problemes ? "stop" : "check"
+                                        state.sujet.problemes ? "stop" : "check"
                                     }
                                     style={
-                                        state.Sujet.Problemes
+                                        state.sujet.problemes
                                             ? {
-                                                  color: "red",
-                                                  borderColor: "red"
-                                              }
+                                                color: "red",
+                                                borderColor: "red"
+                                            }
                                             : {
-                                                  color: "green",
-                                                  borderColor: "green"
-                                              }
+                                                color: "green",
+                                                borderColor: "green"
+                                            }
                                     }
                                     onClick={() => PremierProbleme()}
                                 />
@@ -984,8 +1006,8 @@ const ConsultationSujets = () => {
                                                 ? true
                                                 : false
                                             : idSujet === 0
-                                            ? true
-                                            : false
+                                                ? true
+                                                : false
                                     }
                                     onClick={() => {
                                         SwitchSujet("-");
@@ -1003,9 +1025,8 @@ const ConsultationSujets = () => {
                                         justifyContent: "center",
                                         display: "flex"
                                     }}
-                                >{`${
-                                    filtres ? idSujet + 1 : idSujet
-                                } / ${nbResultats}`}</NomLabel>
+                                >{`${filtres ? idSujet + 1 : idSujet
+                                    } / ${nbResultats}`}</NomLabel>
                                 <Button
                                     disabled={
                                         filtres
@@ -1013,8 +1034,8 @@ const ConsultationSujets = () => {
                                                 ? false
                                                 : true
                                             : idSujet < nbResultats
-                                            ? false
-                                            : true
+                                                ? false
+                                                : true
                                     }
                                     onClick={() => SwitchSujet("+")}
                                 >
@@ -1038,551 +1059,551 @@ const ConsultationSujets = () => {
                             />
                         </InfosEntete>
                         {//NOTE Sujet1
-                        modeEdition && (
-                            <ConteneurTextes>
-                                <Divider orientation="left">Sujet 1</Divider>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        marginBottom: "10px"
-                                    }}
-                                >
-                                    <NomChamp>Notions</NomChamp>
-                                    <Select
-                                        showArrow
-                                        mode="multiple"
-                                        value={state.Sujet.Notions1}
-                                        style={{ width: "100%" }}
-                                        onChange={(val) =>
-                                            setState({
-                                                ...state,
-                                                Sujet: {
-                                                    ...state.Sujet,
-                                                    Notions1: val
-                                                }
-                                            })
-                                        }
-                                        placeholder="Choisir une ou plusieurs notions"
-                                    >
-                                        {menu.notions &&
-                                            menu.notions.map((el, index) => {
-                                                return (
-                                                    <Option
-                                                        key={el["Notion"]}
-                                                        style={{
-                                                            color: el[
-                                                                "Au_Programme"
-                                                            ]
-                                                                ? "green"
-                                                                : "red"
-                                                        }}
-                                                    >
-                                                        {el["Notion"]}
-                                                    </Option>
-                                                );
-                                            })}
-                                    </Select>
-                                    <Tooltip
-                                        placement="topRight"
-                                        title="Ajouter une nouvelle notion"
-                                    >
-                                        <Button
-                                            icon="plus"
-                                            style={{
-                                                marginLeft: "5px",
-                                                width: "45px"
-                                            }}
-                                        />
-                                    </Tooltip>
-                                </div>
-                                <ReactQuill
-                                    value={texte1}
-                                    modules={modules}
-                                    theme="bubble"
-                                    onChange={(val) => changementTexte(val, 1)}
-                                />
-                                <Divider orientation="left">
-                                    {
-                                        //NOTE Sujet2
-                                    }
-                                    Sujet 2
-                                </Divider>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        marginBottom: "10px"
-                                    }}
-                                >
-                                    <NomChamp>Notions</NomChamp>
-                                    <Select
-                                        showArrow
-                                        value={state.Sujet.Notions2}
-                                        mode="multiple"
-                                        style={{ width: "100%" }}
-                                        placeholder="Choisir une ou plusieurs notions"
-                                        onChange={(val) =>
-                                            setState({
-                                                ...state,
-                                                Sujet: {
-                                                    ...state.Sujet,
-                                                    Notions2: val
-                                                }
-                                            })
-                                        }
-                                    >
-                                        {menu.notions &&
-                                            menu.notions.map((el, index) => {
-                                                return (
-                                                    <Option
-                                                        key={el["Notion"]}
-                                                        style={{
-                                                            color: el[
-                                                                "Au_Programme"
-                                                            ]
-                                                                ? "green"
-                                                                : "red"
-                                                        }}
-                                                    >
-                                                        {el["Notion"]}
-                                                    </Option>
-                                                );
-                                            })}
-                                    </Select>
-                                    <Tooltip
-                                        placement="topRight"
-                                        title="Ajouter une nouvelle notion"
-                                    >
-                                        <Button
-                                            icon="plus"
-                                            style={{
-                                                marginLeft: "5px",
-                                                width: "45px"
-                                            }}
-                                        />
-                                    </Tooltip>
-                                </div>
-                                <ReactQuill
-                                    value={texte2}
-                                    modules={modules}
-                                    theme="bubble"
-                                    onChange={(val) => {
-                                        changementTexte(val, 2);
-                                    }}
-                                />
-                                <Divider orientation="left">
-                                    {
-                                        //NOTE Sujet3
-                                    }
-                                    Sujet 3
-                                </Divider>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        marginBottom: "10px"
-                                    }}
-                                >
-                                    <NomChamp>Notions</NomChamp>
-                                    <Select
-                                        showArrow
-                                        value={state.Sujet.Notions3}
-                                        mode="multiple"
-                                        style={{ width: "100%" }}
-                                        placeholder="Choisir une ou plusieurs notions"
-                                        onChange={(val) =>
-                                            setState({
-                                                ...state,
-                                                Sujet: {
-                                                    ...state.Sujet,
-                                                    Notions3: val
-                                                }
-                                            })
-                                        }
-                                    >
-                                        {menu.notions &&
-                                            menu.notions.map((el, index) => {
-                                                return (
-                                                    <Option
-                                                        key={el["Notion"]}
-                                                        style={{
-                                                            color: el[
-                                                                "Au_Programme"
-                                                            ]
-                                                                ? "green"
-                                                                : "red"
-                                                        }}
-                                                    >
-                                                        {el["Notion"]}
-                                                    </Option>
-                                                );
-                                            })}
-                                    </Select>
-                                    <Tooltip
-                                        placement="topRight"
-                                        title="Ajouter une nouvelle notion"
-                                    >
-                                        <Button
-                                            icon="plus"
-                                            style={{
-                                                marginLeft: "5px",
-                                                width: "45px"
-                                            }}
-                                        />
-                                    </Tooltip>
-                                </div>
-
-                                <Editor
-                                    value={texte3}
-                                    changement={(val) => {
-                                        let t = val.replace(
-                                            "&amp;nbsp;",
-                                            "&nbsp;"
-                                        );
-                                        changementTexte(t, 3);
-                                    }}
-                                />
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        marginTop: "30px"
-                                    }}
-                                >
-                                    <NomChamp
+                            modeEdition && (
+                                <ConteneurTextes>
+                                    <Divider orientation="left">Sujet 1</Divider>
+                                    <div
                                         style={{
-                                            width: "130px"
+                                            display: "flex",
+                                            marginBottom: "10px"
                                         }}
                                     >
-                                        Code
-                                    </NomChamp>
-                                    <Input
-                                        value={state.Sujet.Code}
-                                        placeholder="Rentrez le code"
-                                        onChange={(val) => {
-                                            setState({
-                                                ...state,
-                                                Sujet: {
-                                                    ...state.Sujet,
-                                                    Code: val.target.value
-                                                }
-                                            });
-                                        }}
-                                    />
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        marginTop: "5px"
-                                    }}
-                                >
-                                    <NomChamp
-                                        style={{
-                                            width: "130px"
-                                        }}
-                                    >
-                                        Destinations
-                                    </NomChamp>
-                                    <Select
-                                        showArrow
-                                        mode="multiple"
-                                        value={state.Sujet.Destination}
-                                        style={{ width: "100%" }}
-                                        placeholder="Toutes les destinations"
-                                        onChange={(val) =>
-                                            setState({
-                                                ...state,
-                                                Sujet: {
-                                                    ...state.Sujet,
-                                                    Destination: val
-                                                }
-                                            })
-                                        }
-                                    >
-                                        {menu.destinations &&
-                                            menu.destinations.map(
-                                                (el, index) => {
+                                        <NomChamp>Notions</NomChamp>
+                                        <Select
+                                            showArrow
+                                            mode="multiple"
+                                            value={state.sujet.notions1}
+                                            style={{ width: "100%" }}
+                                            onChange={(val) =>
+                                                setState({
+                                                    ...state,
+                                                    sujet: {
+                                                        ...state.sujet,
+                                                        notions1: val
+                                                    }
+                                                })
+                                            }
+                                            placeholder="Choisir une ou plusieurs notions"
+                                        >
+                                            {menu.notions &&
+                                                menu.notions.map((el, index) => {
                                                     return (
                                                         <Option
-                                                            key={
-                                                                el[
-                                                                    "Destination"
+                                                            key={el["notion"]}
+                                                            style={{
+                                                                color: el[
+                                                                    "au_programme"
                                                                 ]
-                                                            }
+                                                                    ? "green"
+                                                                    : "red"
+                                                            }}
                                                         >
-                                                            {el["Destination"]}
+                                                            {el["notion"]}
                                                         </Option>
                                                     );
-                                                }
-                                            )}
-                                    </Select>
-                                    <Tooltip
-                                        placement="topRight"
-                                        title="Ajouter une nouvelle destination"
-                                    >
-                                        <Button
-                                            icon="plus"
-                                            style={{
-                                                marginLeft: "5px",
-                                                width: "45px"
-                                            }}
-                                        />
-                                    </Tooltip>
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        marginTop: "5px"
-                                    }}
-                                >
-                                    <NomChamp
-                                        style={{
-                                            width: "130px"
-                                        }}
-                                    >
-                                        Séries
-                                    </NomChamp>
-                                    <Select
-                                        style={{ width: "100%" }}
-                                        value={state.Sujet.Serie}
-                                        placeholder="Toutes les séries"
-                                        onChange={(val) =>
-                                            setState({
-                                                ...state,
-                                                Sujet: {
-                                                    ...state.Sujet,
-                                                    Serie: val
-                                                }
-                                            })
-                                        }
-                                    >
-                                        {menu.series &&
-                                            menu.series.map((el, index) => {
-                                                return (
-                                                    <Option key={el["Serie"]}>
-                                                        {el["Serie"]}
-                                                    </Option>
-                                                );
-                                            })}
-                                    </Select>
-                                    <Tooltip
-                                        placement="topRight"
-                                        title="Ajouter une nouvelle série"
-                                    >
-                                        <Button
-                                            icon="plus"
-                                            style={{
-                                                marginLeft: "5px",
-                                                width: "45px"
-                                            }}
-                                        />
-                                    </Tooltip>
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        marginTop: "5px"
-                                    }}
-                                >
-                                    <NomChamp
-                                        style={{
-                                            width: "130px"
-                                        }}
-                                    >
-                                        Auteur
-                                    </NomChamp>
-                                    <Select
-                                        showArrow
-                                        style={{ width: "100%" }}
-                                        value={state.Sujet.Auteur}
-                                        placeholder="Choisir un auteur"
-                                        onChange={(val) =>
-                                            setState({
-                                                ...state,
-                                                Sujet: {
-                                                    ...state.Sujet,
-                                                    Auteur: val
-                                                }
-                                            })
-                                        }
-                                    >
-                                        {menu.auteurs &&
-                                            menu.auteurs.map((el, index) => {
-                                                return (
-                                                    <Option key={el["Auteur"]}>
-                                                        {el["Auteur"]}
-                                                    </Option>
-                                                );
-                                            })}
-                                    </Select>
-                                    <Tooltip
-                                        placement="topRight"
-                                        title="Ajouter un nouvel auteur"
-                                    >
-                                        <Button
-                                            icon="plus"
-                                            style={{
-                                                marginLeft: "5px",
-                                                width: "45px"
-                                            }}
-                                        />
-                                    </Tooltip>
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        marginTop: "5px"
-                                    }}
-                                >
-                                    <NomChamp
-                                        style={{
-                                            width: "130px"
-                                        }}
-                                    >
-                                        Session
-                                    </NomChamp>
-                                    <Radio.Group
-                                        size="medium"
-                                        value={state.Sujet.Session}
-                                        onChange={(val) =>
-                                            setState({
-                                                ...state,
-                                                Sujet: {
-                                                    ...state.Sujet,
-                                                    Session: val.target.value
-                                                }
-                                            })
-                                        }
-                                    >
-                                        <Radio.Button value="TOUTES">
-                                            Toutes
-                                        </Radio.Button>
-                                        <Radio.Button value="NORMALE">
-                                            Norm.
-                                        </Radio.Button>
-                                        <Radio.Button value="REMPLACEMENT">
-                                            Rempl.
-                                        </Radio.Button>
-                                        <Radio.Button value="SECOURS">
-                                            Secours
-                                        </Radio.Button>
-                                    </Radio.Group>
-                                </div>
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        marginTop: "5px"
-                                    }}
-                                >
-                                    <NomChamp
-                                        style={{
-                                            width: "130px"
-                                        }}
-                                    >
-                                        Année
-                                    </NomChamp>
-                                    <InputNumber
-                                        key="RechercheID"
-                                        min={1996}
-                                        max={2019}
-                                        value={state.Sujet.Annee}
-                                        onChange={(val) =>
-                                            setState({
-                                                ...state,
-                                                Sujet: {
-                                                    ...state.Sujet,
-                                                    Annee: val
-                                                }
-                                            })
-                                        }
+                                                })}
+                                        </Select>
+                                        <Tooltip
+                                            placement="topRight"
+                                            title="Ajouter une nouvelle notion"
+                                        >
+                                            <Button
+                                                icon="plus"
+                                                style={{
+                                                    marginLeft: "5px",
+                                                    width: "45px"
+                                                }}
+                                            />
+                                        </Tooltip>
+                                    </div>
+                                    <ReactQuill
+                                        value={texte1}
+                                        modules={modules}
+                                        theme="bubble"
+                                        onChange={(val) => changementTexte(val, 1)}
                                     />
-                                </div>
-                                {
-                                    //NOTE Bouton confirm
-                                }
-                                <Button
-                                    size="large"
-                                    style={{ marginTop: "30px" }}
-                                    type="primary"
-                                    onClick={() => ConfirmModif()}
-                                    block
-                                >
-                                    Confirmer les changements
+                                    <Divider orientation="left">
+                                        {
+                                            //NOTE Sujet2
+                                        }
+                                    Sujet 2
+                                </Divider>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            marginBottom: "10px"
+                                        }}
+                                    >
+                                        <NomChamp>Notions</NomChamp>
+                                        <Select
+                                            showArrow
+                                            value={state.sujet.notions2}
+                                            mode="multiple"
+                                            style={{ width: "100%" }}
+                                            placeholder="Choisir une ou plusieurs notions"
+                                            onChange={(val) =>
+                                                setState({
+                                                    ...state,
+                                                    sujet: {
+                                                        ...state.sujet,
+                                                        notions2: val
+                                                    }
+                                                })
+                                            }
+                                        >
+                                            {menu.notions &&
+                                                menu.notions.map((el, index) => {
+                                                    return (
+                                                        <Option
+                                                            key={el["notion"]}
+                                                            style={{
+                                                                color: el[
+                                                                    "au_programme"
+                                                                ]
+                                                                    ? "green"
+                                                                    : "red"
+                                                            }}
+                                                        >
+                                                            {el["notion"]}
+                                                        </Option>
+                                                    );
+                                                })}
+                                        </Select>
+                                        <Tooltip
+                                            placement="topRight"
+                                            title="Ajouter une nouvelle notion"
+                                        >
+                                            <Button
+                                                icon="plus"
+                                                style={{
+                                                    marginLeft: "5px",
+                                                    width: "45px"
+                                                }}
+                                            />
+                                        </Tooltip>
+                                    </div>
+                                    <ReactQuill
+                                        value={texte2}
+                                        modules={modules}
+                                        theme="bubble"
+                                        onChange={(val) => {
+                                            changementTexte(val, 2);
+                                        }}
+                                    />
+                                    <Divider orientation="left">
+                                        {
+                                            //NOTE Sujet3
+                                        }
+                                    Sujet 3
+                                </Divider>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            marginBottom: "10px"
+                                        }}
+                                    >
+                                        <NomChamp>Notions</NomChamp>
+                                        <Select
+                                            showArrow
+                                            value={state.sujet.notions3}
+                                            mode="multiple"
+                                            style={{ width: "100%" }}
+                                            placeholder="Choisir une ou plusieurs notions"
+                                            onChange={(val) =>
+                                                setState({
+                                                    ...state,
+                                                    sujet: {
+                                                        ...state.sujet,
+                                                        notions3: val
+                                                    }
+                                                })
+                                            }
+                                        >
+                                            {menu.notions &&
+                                                menu.notions.map((el, index) => {
+                                                    return (
+                                                        <Option
+                                                            key={el["notion"]}
+                                                            style={{
+                                                                color: el[
+                                                                    "au_programme"
+                                                                ]
+                                                                    ? "green"
+                                                                    : "red"
+                                                            }}
+                                                        >
+                                                            {el["notion"]}
+                                                        </Option>
+                                                    );
+                                                })}
+                                        </Select>
+                                        <Tooltip
+                                            placement="topRight"
+                                            title="Ajouter une nouvelle notion"
+                                        >
+                                            <Button
+                                                icon="plus"
+                                                style={{
+                                                    marginLeft: "5px",
+                                                    width: "45px"
+                                                }}
+                                            />
+                                        </Tooltip>
+                                    </div>
+
+                                    <Editor
+                                        value={texte3}
+                                        changement={(val) => {
+                                            let t = val.replace(
+                                                "&amp;nbsp;",
+                                                "&nbsp;"
+                                            );
+                                            changementTexte(t, 3);
+                                        }}
+                                    />
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            marginTop: "30px"
+                                        }}
+                                    >
+                                        <NomChamp
+                                            style={{
+                                                width: "130px"
+                                            }}
+                                        >
+                                            Code
+                                    </NomChamp>
+                                        <Input
+                                            value={state.sujet.code}
+                                            placeholder="Rentrez le code"
+                                            onChange={(val) => {
+                                                setState({
+                                                    ...state,
+                                                    sujet: {
+                                                        ...state.sujet,
+                                                        code: val.target.value
+                                                    }
+                                                });
+                                            }}
+                                        />
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            marginTop: "5px"
+                                        }}
+                                    >
+                                        <NomChamp
+                                            style={{
+                                                width: "130px"
+                                            }}
+                                        >
+                                            Destinations
+                                    </NomChamp>
+                                        <Select
+                                            showArrow
+                                            mode="multiple"
+                                            value={state.sujet.destination}
+                                            style={{ width: "100%" }}
+                                            placeholder="Toutes les destinations"
+                                            onChange={(val) =>
+                                                setState({
+                                                    ...state,
+                                                    sujet: {
+                                                        ...state.sujet,
+                                                        destination: val
+                                                    }
+                                                })
+                                            }
+                                        >
+                                            {menu.destinations &&
+                                                menu.destinations.map(
+                                                    (el, index) => {
+                                                        return (
+                                                            <Option
+                                                                key={
+                                                                    el[
+                                                                    "destination"
+                                                                    ] + `-${index}`
+                                                                }
+                                                            >
+                                                                {el["destination"]}
+                                                            </Option>
+                                                        );
+                                                    }
+                                                )}
+                                        </Select>
+                                        <Tooltip
+                                            placement="topRight"
+                                            title="Ajouter une nouvelle destination"
+                                        >
+                                            <Button
+                                                icon="plus"
+                                                style={{
+                                                    marginLeft: "5px",
+                                                    width: "45px"
+                                                }}
+                                            />
+                                        </Tooltip>
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            marginTop: "5px"
+                                        }}
+                                    >
+                                        <NomChamp
+                                            style={{
+                                                width: "130px"
+                                            }}
+                                        >
+                                            Séries
+                                    </NomChamp>
+                                        <Select
+                                            style={{ width: "100%" }}
+                                            value={state.sujet.serie}
+                                            placeholder="Toutes les séries"
+                                            onChange={(val) =>
+                                                setState({
+                                                    ...state,
+                                                    sujet: {
+                                                        ...state.sujet,
+                                                        serie: val
+                                                    }
+                                                })
+                                            }
+                                        >
+                                            {menu.series &&
+                                                menu.series.map((el, index) => {
+                                                    return (
+                                                        <Option key={el["serie"]}>
+                                                            {el["serie"]}
+                                                        </Option>
+                                                    );
+                                                })}
+                                        </Select>
+                                        <Tooltip
+                                            placement="topRight"
+                                            title="Ajouter une nouvelle série"
+                                        >
+                                            <Button
+                                                icon="plus"
+                                                style={{
+                                                    marginLeft: "5px",
+                                                    width: "45px"
+                                                }}
+                                            />
+                                        </Tooltip>
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            marginTop: "5px"
+                                        }}
+                                    >
+                                        <NomChamp
+                                            style={{
+                                                width: "130px"
+                                            }}
+                                        >
+                                            Auteur
+                                    </NomChamp>
+                                        <Select
+                                            showArrow
+                                            style={{ width: "100%" }}
+                                            value={state.sujet.auteur}
+                                            placeholder="Choisir un auteur"
+                                            onChange={(val) =>
+                                                setState({
+                                                    ...state,
+                                                    sujet: {
+                                                        ...state.sujet,
+                                                        auteur: val
+                                                    }
+                                                })
+                                            }
+                                        >
+                                            {menu.auteurs &&
+                                                menu.auteurs.map((el, index) => {
+                                                    return (
+                                                        <Option key={el["auteur"]}>
+                                                            {el["auteur"]}
+                                                        </Option>
+                                                    );
+                                                })}
+                                        </Select>
+                                        <Tooltip
+                                            placement="topRight"
+                                            title="Ajouter un nouvel auteur"
+                                        >
+                                            <Button
+                                                icon="plus"
+                                                style={{
+                                                    marginLeft: "5px",
+                                                    width: "45px"
+                                                }}
+                                            />
+                                        </Tooltip>
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            marginTop: "5px"
+                                        }}
+                                    >
+                                        <NomChamp
+                                            style={{
+                                                width: "130px"
+                                            }}
+                                        >
+                                            Session
+                                    </NomChamp>
+                                        <Radio.Group
+                                            size="medium"
+                                            value={state.sujet.session}
+                                            onChange={(val) =>
+                                                setState({
+                                                    ...state,
+                                                    sujet: {
+                                                        ...state.sujet,
+                                                        session: val.target.value
+                                                    }
+                                                })
+                                            }
+                                        >
+                                            <Radio.Button value="TOUTES">
+                                                Toutes
+                                        </Radio.Button>
+                                            <Radio.Button value="NORMALE">
+                                                Norm.
+                                        </Radio.Button>
+                                            <Radio.Button value="REMPLACEMENT">
+                                                Rempl.
+                                        </Radio.Button>
+                                            <Radio.Button value="SECOURS">
+                                                Secours
+                                        </Radio.Button>
+                                        </Radio.Group>
+                                    </div>
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            marginTop: "5px"
+                                        }}
+                                    >
+                                        <NomChamp
+                                            style={{
+                                                width: "130px"
+                                            }}
+                                        >
+                                            Année
+                                    </NomChamp>
+                                        <InputNumber
+                                            key="RechercheID"
+                                            min={1996}
+                                            max={2019}
+                                            value={state.sujet.annee}
+                                            onChange={(val) =>
+                                                setState({
+                                                    ...state,
+                                                    sujet: {
+                                                        ...state.sujet,
+                                                        annee: val
+                                                    }
+                                                })
+                                            }
+                                        />
+                                    </div>
+                                    {
+                                        //NOTE Bouton confirm
+                                    }
+                                    <Button
+                                        size="large"
+                                        style={{ marginTop: "30px" }}
+                                        type="primary"
+                                        onClick={() => ConfirmModif()}
+                                        block
+                                    >
+                                        Confirmer les changements
                                 </Button>
-                            </ConteneurTextes>
-                        )}
+                                </ConteneurTextes>
+                            )}
                         {//NOTE Mode Vue
-                        !modeEdition && (
-                            <ConteneurTextes>
-                                <Sujet>
-                                    <TitreNotions>
-                                        <Titre>1</Titre>
-                                        <Notions>
-                                            {state.Sujet.Notions1.join(" ")}
-                                        </Notions>
-                                    </TitreNotions>
-                                    <CorpsSujet>
-                                        <ReactQuill
-                                            value={state.Sujet.Sujet1}
-                                            modules={modules}
-                                            readOnly
-                                            theme="bubble"
-                                        />
-                                    </CorpsSujet>
-                                </Sujet>
-                                <Sujet>
-                                    <TitreNotions>
-                                        <Titre>2</Titre>
-                                        <Notions>
-                                            {state.Sujet.Notions2.join(" ")}
-                                        </Notions>
-                                    </TitreNotions>
-                                    <CorpsSujet>
-                                        <ReactQuill
-                                            value={state.Sujet.Sujet2}
-                                            modules={modules}
-                                            readOnly
-                                            theme="bubble"
-                                        />
-                                    </CorpsSujet>
-                                </Sujet>
-                                <Sujet>
-                                    <TitreNotions>
-                                        <Titre>3</Titre>
-                                        <Notions>
-                                            {state.Sujet.Notions3.join(" ")}
-                                        </Notions>
-                                    </TitreNotions>
-                                    <CorpsSujet>
-                                        <ReactQuill
-                                            value={state.Sujet.Sujet3}
-                                            modules={modules}
-                                            readOnly
-                                            theme="bubble"
-                                        />
-                                    </CorpsSujet>
-                                </Sujet>
-                                <Details>
-                                    <PartieGauche>
-                                        <Etiquette>{state.Sujet.id}</Etiquette>
-                                        <Etiquette>
-                                            {state.Sujet.Annee}
-                                        </Etiquette>
-                                        <Etiquette>
-                                            {state.Sujet.Serie}
-                                        </Etiquette>
-                                        <Etiquette>
-                                            {state.Sujet.Destination.join(
-                                                " / "
-                                            )}
-                                        </Etiquette>
-                                        <Etiquette>
-                                            {state.Sujet.Session}
-                                        </Etiquette>
-                                        <Etiquette>
-                                            {state.Sujet.Code}
-                                        </Etiquette>
-                                    </PartieGauche>
-                                </Details>
-                            </ConteneurTextes>
-                        )}
+                            !modeEdition && (
+                                <ConteneurTextes>
+                                    <Sujet>
+                                        <TitreNotions>
+                                            <Titre>1</Titre>
+                                            <Notions>
+                                                {state.sujet.notions1.join(" ")}
+                                            </Notions>
+                                        </TitreNotions>
+                                        <CorpsSujet>
+                                            <ReactQuill
+                                                value={state.sujet.sujet1}
+                                                modules={modules}
+                                                readOnly
+                                                theme="bubble"
+                                            />
+                                        </CorpsSujet>
+                                    </Sujet>
+                                    <Sujet>
+                                        <TitreNotions>
+                                            <Titre>2</Titre>
+                                            <Notions>
+                                                {state.sujet.notions2.join(" ")}
+                                            </Notions>
+                                        </TitreNotions>
+                                        <CorpsSujet>
+                                            <ReactQuill
+                                                value={state.sujet.sujet2}
+                                                modules={modules}
+                                                readOnly
+                                                theme="bubble"
+                                            />
+                                        </CorpsSujet>
+                                    </Sujet>
+                                    <Sujet>
+                                        <TitreNotions>
+                                            <Titre>3</Titre>
+                                            <Notions>
+                                                {state.sujet.notions3.join(" ")}
+                                            </Notions>
+                                        </TitreNotions>
+                                        <CorpsSujet>
+                                            <ReactQuill
+                                                value={state.sujet.sujet3}
+                                                modules={modules}
+                                                readOnly
+                                                theme="bubble"
+                                            />
+                                        </CorpsSujet>
+                                    </Sujet>
+                                    <Details>
+                                        <PartieGauche>
+                                            <Etiquette>{state.sujet.id}</Etiquette>
+                                            <Etiquette>
+                                                {state.sujet.annee}
+                                            </Etiquette>
+                                            <Etiquette>
+                                                {state.sujet.serie}
+                                            </Etiquette>
+                                            <Etiquette>
+                                                {state.sujet.destination.join(
+                                                    " / "
+                                                )}
+                                            </Etiquette>
+                                            <Etiquette>
+                                                {state.sujet.session}
+                                            </Etiquette>
+                                            <Etiquette>
+                                                {state.sujet.code}
+                                            </Etiquette>
+                                        </PartieGauche>
+                                    </Details>
+                                </ConteneurTextes>
+                            )}
                     </Card>
                 )}
                 {nbResultats === 0 && (

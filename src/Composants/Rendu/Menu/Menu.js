@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import styled from "styled-components";
 import { Divider, Icon } from "antd";
 import { ReactComponent as Logo } from "../../Assets/Logo.svg";
-import { withRouter, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const ConteneurMenu = styled.div`
   display: flex;
@@ -67,7 +67,7 @@ const Menu = () => {
     history.push(UrlPage);
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
 
   return (
     <ConteneurMenu>
@@ -76,7 +76,7 @@ const Menu = () => {
         <HeaderTexte>Administration</HeaderTexte>
       </ConteneurMenuHeader>
       <ConteneurMenuLiens>
-        <Lien style={{ marginTop: "10px" }} onClick={() => changementPage("/")}>
+        <Lien style={{ marginTop: "10px" }} onClick={() => changementPage("/admin/")}>
           <Icon
             style={{
               fontSize: "25px",
@@ -89,7 +89,7 @@ const Menu = () => {
         </Lien>
         <Categorie>
           <Divider orientation="left">Sujets</Divider>
-          <Lien onClick={() => changementPage("/Sujets/Creation")}>
+          <Lien onClick={() => changementPage("/admin/Sujets/Creation")}>
             <Icon
               style={{
                 fontSize: "25px",
@@ -100,7 +100,7 @@ const Menu = () => {
             />
             <TexteLien>Création</TexteLien>
           </Lien>
-          <Lien onClick={() => changementPage("/Sujets/Consultation")}>
+          <Lien onClick={() => changementPage("/admin/Sujets/Consultation")}>
             <Icon
               style={{
                 fontSize: "25px",
@@ -111,7 +111,7 @@ const Menu = () => {
             />
             <TexteLien>Consultation</TexteLien>
           </Lien>
-          <Lien onClick={() => changementPage("/Sujets/Parametres")}>
+          <Lien onClick={() => changementPage("/admin/Sujets/Parametres")}>
             <Icon
               style={{
                 fontSize: "25px",
@@ -125,7 +125,7 @@ const Menu = () => {
         </Categorie>
         <Categorie>
           <Divider orientation="left">Utilisateurs</Divider>
-          <Lien onClick={() => changementPage("/Utilisateurs/Gestion")}>
+          <Lien onClick={() => changementPage("/admin/Utilisateurs/Gestion")}>
             <Icon
               style={{
                 fontSize: "25px",
@@ -142,7 +142,7 @@ const Menu = () => {
           <Lien
             onClick={() => {
               if (JSON.parse(localStorage.getItem("Cours"))) {
-                changementPage("/Cours/Creation");
+                changementPage("/admin/Cours/Creation");
               }
             }}
           >
@@ -166,7 +166,7 @@ const Menu = () => {
               Création
             </TexteLien>
           </Lien>
-          <Lien onClick={() => changementPage("/Cours/Modification")}>
+          <Lien onClick={() => changementPage("/admin/Cours/Modification")}>
             <Icon
               style={{
                 fontSize: "25px",
@@ -177,7 +177,7 @@ const Menu = () => {
             />
             <TexteLien>Pages uniques</TexteLien>
           </Lien>
-          <Lien onClick={() => changementPage("/Cours/ListeCours")}>
+          <Lien onClick={() => changementPage("/admin/Cours/ListeCours")}>
             <Icon
               style={{
                 fontSize: "25px",
@@ -188,7 +188,7 @@ const Menu = () => {
             />
             <TexteLien>Cours</TexteLien>
           </Lien>
-          <Lien onClick={() => changementPage("/Cours/ListeExercices")}>
+          <Lien onClick={() => changementPage("/admin/Cours/ListeExercices")}>
             <Icon
               style={{
                 fontSize: "25px",
@@ -202,7 +202,7 @@ const Menu = () => {
         </Categorie>
         <Categorie>
           <Divider orientation="left">Index</Divider>
-          <Lien onClick={() => changementPage("/Index/Gestion")}>
+          <Lien onClick={() => changementPage("/admin/Index/Gestion")}>
             <Icon
               style={{
                 fontSize: "25px",

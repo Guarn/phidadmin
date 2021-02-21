@@ -9,11 +9,7 @@ import styled from "styled-components";
 import {
   Card,
   Icon,
-  Drawer,
-  Radio,
-  Divider,
   Button,
-  InputNumber,
   Input,
   Switch,
   Tooltip,
@@ -24,21 +20,16 @@ import Creation from "./Creation";
 import {
   initialValueCours,
   initialValueExercice,
-  initialValueIndexes,
   reducerCreationCours
 } from "./reducer";
 import { GithubPicker } from "react-color";
 import TableMatiere from "./TableMatiere";
 import {
-  Link,
   Element,
-  Events,
-  animateScroll as scroll,
-  scrollSpy,
-  scroller
 } from "react-scroll";
-import Axios from "../../../Fonctionnels/Axios";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
+import { useCookies } from "react-cookie";
 
 const Conteneur = styled(Element)`
   width: 100%;
@@ -139,6 +130,7 @@ export const listeIndexContext = createContext(null);
 export const listeExercicesContext = createContext(null);
 
 const CreactionCours = props => {
+  const [cookies] = useCookies();
   const [menuImage, setMenuImage] = useState(false);
   const [clickHandler, setClickHandler] = useState(false);
   const [ListeCours, setListeCours] = useState([]);
@@ -146,9 +138,21 @@ const CreactionCours = props => {
   const [ListeExercices, setListesExercices] = useState([]);
   useEffect(() => {
     if (ListeCours.length === 0) {
-      Axios.get("/cours").then(rep => setListeCours(rep.data));
-      Axios.get("/indexes").then(rep => setListeIndex(rep.data));
-      Axios.get("/exercices").then(rep => setListesExercices(rep.data));
+      axios.create({
+        baseURL: "/api/",
+        headers: { authorization: cookies.token.substring(7) },
+        responseType: "json"
+      }).get("/cours").then(rep => setListeCours(rep.data));
+      axios.create({
+        baseURL: "/api/",
+        headers: { authorization: cookies.token.substring(7) },
+        responseType: "json"
+      }).get("/indexes").then(rep => setListeIndex(rep.data));
+      axios.create({
+        baseURL: "/api/",
+        headers: { authorization: cookies.token.substring(7) },
+        responseType: "json"
+      }).get("/exercices").then(rep => setListesExercices(rep.data));
     }
   });
 
@@ -233,7 +237,7 @@ const MenuParametres = ({ menuImage, setMenuImage }) => {
   function getMeta(url) {
     var img = new Image();
     img.src = url;
-    img.onload = async function() {
+    img.onload = async function () {
       await setState({
         type: "ImageOptions",
         option: "width",
@@ -543,7 +547,7 @@ const MenuParametres = ({ menuImage, setMenuImage }) => {
                     <Input
                       placeholder={
                         state.Cours[state.ReadOnly].imageOptions.src ===
-                        "https://www.mydiscprofile.com/fr-fr/_images/homepage-free-personality-test.png"
+                          "https://www.mydiscprofile.com/fr-fr/_images/homepage-free-personality-test.png"
                           ? "Url de l'image"
                           : state.Cours[state.ReadOnly].imageOptions.src
                       }
@@ -738,30 +742,38 @@ const ConteneurDescription = styled.div`
 const DescriptionCours = () => {
   const reftableMatiere = document.getElementById("TableMatiere");
 
-  const [state, setState] = useContext(ListeContext);
+  const [state,] = useContext(ListeContext);
   const history = useHistory();
   function saveBDD(refresh) {
     if (state.type === "indexes") {
-      Axios.post("/IndexesUpdate", {
+      axios.create({
+        baseURL: "/api/",
+        headers: { authorization: document.cookie.token.substring(7) },
+        responseType: "json"
+      }).post("/IndexesUpdate", {
         id: state.id,
         description: state.Cours
       }).then(() => {
         if (refresh) {
           localStorage.removeItem("Cours");
-          history.push("/Index/Gestion");
+          history.push("/admin/Index/Gestion");
         }
       });
     } else {
-      Axios.post(`/Cours${state.id}`, {
+      axios.create({
+        baseURL: "/api/",
+        headers: { authorization: document.cookie.token.substring(7) },
+        responseType: "json"
+      }).post(`/Cours${state.id}`, {
         Titre: state.Titre,
         Description: state.Description,
         Contenu: JSON.stringify(state.Cours)
       }).then(() => {
         if (refresh) {
           localStorage.removeItem("Cours");
-          if (state.type === "PageUnique") history.push("/Cours/Modification");
-          if (state.type === "Cours") history.push("/Cours/ListeCours");
-          if (state.type === "Exercice") history.push("/Cours/ListeExercices");
+          if (state.type === "PageUnique") history.push("/admin/Cours/Modification");
+          if (state.type === "Cours") history.push("/admin/Cours/ListeCours");
+          if (state.type === "Exercice") history.push("/admin/Cours/ListeExercices");
         }
       });
     }

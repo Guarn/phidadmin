@@ -14,10 +14,11 @@ import {
     Icon
 } from "antd";
 import ReactQuill from "react-quill";
-import Axios from "../../Fonctionnels/Axios";
 import Editor from "../../Fonctionnels/Editor";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.bubble.css";
+import { useCookies } from "react-cookie";
+import axios from "axios";
 
 const { Option } = Select;
 
@@ -68,6 +69,7 @@ const Creation = (props) => {
     const [texte1, setTexte1] = useState("");
     const [texte2, setTexte2] = useState("");
     const [texte3, setTexte3] = useState("");
+    const [cookies] = useCookies();
 
     const changementTexte = (val, texte) => {
         if (texte === 1) {
@@ -113,7 +115,11 @@ const Creation = (props) => {
             icon: <Icon type="loading" style={{ color: "#108ee9" }} />
         });
 
-        Axios.post(`/SujetAjout`, {
+        axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+        }).post(`/SujetAjout`, {
             ...state.Sujet,
             Problemes: false
         })
@@ -155,17 +161,21 @@ const Creation = (props) => {
 
     useEffect(() => {
         document.title = "PhidAdmin - Sujets / Création ";
-        Axios.get("/menuAdmin").then((rep) => {
+        axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+        }).get("/menuAdmin").then((rep) => {
             let state1 = rep.data;
-            state1.annees.sort((a, b) => a["Annee"] - b["Annee"]);
+            state1.annees.sort((a, b) => a["annee"] - b["annee"]);
             state1.auteurs.sort((a, b) =>
-                a["Auteur"].localeCompare(b["Auteur"])
+                a["auteur"].localeCompare(b["auteur"])
             );
             state1.destinations.sort((a, b) =>
-                a["Destination"].localeCompare(b["Destination"])
+                a["destination"].localeCompare(b["destination"])
             );
             state1.notions.sort((a, b) =>
-                a["Notion"].localeCompare(b["Notion"])
+                a["notion"].localeCompare(b["notion"])
             );
             setMenu(state1);
         });
@@ -207,14 +217,14 @@ const Creation = (props) => {
                                     menu.notions.map((el, index) => {
                                         return (
                                             <Option
-                                                key={el["Notion"]}
+                                                key={el["notion"]}
                                                 style={{
-                                                    color: el["Au_Programme"]
+                                                    color: el["au_programme"]
                                                         ? "green"
                                                         : "red"
                                                 }}
                                             >
-                                                {el["Notion"]}
+                                                {el["notion"]}
                                             </Option>
                                         );
                                     })}
@@ -270,14 +280,14 @@ const Creation = (props) => {
                                     menu.notions.map((el, index) => {
                                         return (
                                             <Option
-                                                key={el["Notion"]}
+                                                key={el["notion"]}
                                                 style={{
-                                                    color: el["Au_Programme"]
+                                                    color: el["au_programme"]
                                                         ? "green"
                                                         : "red"
                                                 }}
                                             >
-                                                {el["Notion"]}
+                                                {el["notion"]}
                                             </Option>
                                         );
                                     })}
@@ -336,14 +346,14 @@ const Creation = (props) => {
                                     menu.notions.map((el, index) => {
                                         return (
                                             <Option
-                                                key={el["Notion"]}
+                                                key={el["notion"]}
                                                 style={{
-                                                    color: el["Au_Programme"]
+                                                    color: el["au_programme"]
                                                         ? "green"
                                                         : "red"
                                                 }}
                                             >
-                                                {el["Notion"]}
+                                                {el["notion"]}
                                             </Option>
                                         );
                                     })}
@@ -426,8 +436,8 @@ const Creation = (props) => {
                                 {menu.destinations &&
                                     menu.destinations.map((el, index) => {
                                         return (
-                                            <Option key={el["Destination"]}>
-                                                {el["Destination"]}
+                                            <Option key={el["destination"]}>
+                                                {el["destination"]}
                                             </Option>
                                         );
                                     })}
@@ -474,8 +484,8 @@ const Creation = (props) => {
                                 {menu.series &&
                                     menu.series.map((el, index) => {
                                         return (
-                                            <Option key={el["Serie"]}>
-                                                {el["Serie"]}
+                                            <Option key={el["serie"]}>
+                                                {el["serie"]}
                                             </Option>
                                         );
                                     })}
@@ -523,8 +533,8 @@ const Creation = (props) => {
                                 {menu.auteurs &&
                                     menu.auteurs.map((el, index) => {
                                         return (
-                                            <Option key={el["Auteur"]}>
-                                                {el["Auteur"]}
+                                            <Option key={el["auteur"]}>
+                                                {el["auteur"]}
                                             </Option>
                                         );
                                     })}

@@ -1,12 +1,10 @@
 import React, { useContext, useEffect } from "react";
 import styled from "styled-components";
 import { ListeContext } from "./index";
-import Scroll, {
+import {
   Link,
   Events,
   scrollSpy,
-  animateScroll,
-  Element
 } from "react-scroll";
 
 const Conteneur = styled.div`
@@ -54,12 +52,12 @@ const El4 = styled.div`
 `;
 
 const TableMatiere = props => {
-  const [state, setState] = useContext(ListeContext);
+  const [state,] = useContext(ListeContext);
 
   useEffect(() => {
-    Events.scrollEvent.register("begin", function() {});
+    Events.scrollEvent.register("begin", function () { });
 
-    Events.scrollEvent.register("end", function() {});
+    Events.scrollEvent.register("end", function () { });
 
     scrollSpy.update();
     return () => {
@@ -69,7 +67,7 @@ const TableMatiere = props => {
   });
   return (
     <Conteneur id="TableMatiere">
-      {state.Cours.map((element, index) => {
+      {state.Cours && state.Cours.map((element, index) => {
         if (element.TableMatiere.actif) {
           switch (element.TableMatiere.type) {
             case "titre":

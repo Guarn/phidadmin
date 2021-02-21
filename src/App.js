@@ -4,14 +4,14 @@ import "./App.css";
 import Menu from "./Composants/Rendu/Menu/Menu";
 import ConteneurHeader from "./Composants/Rendu/ConteneurHeader/ConteneurHeader";
 import { Card, Input } from "antd";
-import Axios from "./Composants/Fonctionnels/Axios";
 import { useCookies } from "react-cookie";
 import Chargement from "./Composants/Rendu/Chargement/Chargement";
 import { RDuser } from "./Composants/reducers";
 import Creation from "./Composants/Rendu/Cours/Creation";
 import ModificationCours from "./Composants/Rendu/Cours/Modification/Modification";
-import { Switch, Route, useLocation, Redirect } from "react-router-dom";
+import { Switch, Route, } from "react-router-dom";
 import ListeCours from "./Composants/Rendu/Cours/ListeCours/ListeCours";
+import axios from "axios";
 const ConsultationSujets = React.lazy(() =>
   import("./Composants/Rendu/Sujets/ConsultationSujets")
 );
@@ -27,7 +27,6 @@ const GestionUtilisateurs = React.lazy(() =>
 );
 const Index = React.lazy(() => import("./Composants/Rendu/Index/Index"));
 
-const Cours = React.lazy(() => import("./Composants/Rendu/Cours/Cours"));
 const ConteneurGlobal = styled.div`
   width: 100%;
   height: 100%;
@@ -64,16 +63,19 @@ function App() {
   let formPass = "";
 
   const identification = () => {
+
     if (formIdent !== "" && formPass !== "") {
-      Axios.post("/login", { email: formIdent, password: formPass })
+      axios.create({
+        baseURL: "/api/",
+        responseType: "json"
+      }).post("/login", { login: formIdent, pass: formPass })
         .then(rep => {
           let dateExp = new Date(Date.now());
           dateExp.setDate(365);
 
           setCookie("token", "Bearer " + rep.data.token, {
             path: "/",
-            domain: ".phidbac.fr",
-            expires: dateExp
+            domain: ".phidbac.fr"
           });
           DPuser({
             type: "UPDATE",
@@ -94,7 +96,11 @@ function App() {
 
   useEffect(() => {
     if (cookies.token && cookies.token !== "") {
-      Axios.get("/p")
+      axios.create({
+        baseURL: "/api/",
+        headers: { authorization: cookies.token.substring(7) },
+        responseType: "json"
+      }).get("/authentication")
         .then(rep => {
           DPuser({
             type: "UPDATE",
@@ -108,10 +114,10 @@ function App() {
           });
         })
         .catch(err => {
-          removeCookie("token", { domain: ".phidbac.fr" });
+          removeCookie("token", { domain: ".phidbac.fr", path: "/" });
         });
     }
-  }, []);
+  }, [cookies, removeCookie]);
   return (
     <userPD.Provider value={[user, DPuser]}>
       {user.connecte &&
@@ -122,35 +128,35 @@ function App() {
               <ConteneurHeader />
               <Switch>
                 <Suspense fallback={<Chargement />}>
-                  <Route exact path="/">
+                  <Route exact path="/admin">
                     <Tableau />
                   </Route>
                   <Route
-                    path="/Sujets/Consultation"
+                    path="/admin/Sujets/Consultation"
                     component={ConsultationSujets}
                   />
-                  <Route path="/Sujets/Parametres">
+                  <Route path="/admin/Sujets/Parametres">
                     <ParametresSujets />
                   </Route>
-                  <Route path="/Sujets/Creation">
+                  <Route path="/admin/Sujets/Creation">
                     <CreationSujets />
                   </Route>
-                  <Route path="/Utilisateurs/Gestion">
+                  <Route path="/admin/Utilisateurs/Gestion">
                     <GestionUtilisateurs />
                   </Route>
-                  <Route path="/Cours/Creation">
+                  <Route path="/admin/Cours/Creation">
                     <Creation />
                   </Route>
-                  <Route path="/Cours/Modification">
+                  <Route path="/admin/Cours/Modification">
                     <ModificationCours />
                   </Route>
-                  <Route path="/Cours/ListeCours">
+                  <Route path="/admin/Cours/ListeCours">
                     <ListeCours type="Cours" />
                   </Route>
-                  <Route path="/Cours/ListeExercices">
+                  <Route path="/admin/Cours/ListeExercices">
                     <ListeCours type="Exercices" />
                   </Route>
-                  <Route path="/Index/Gestion">
+                  <Route path="/admin/Index/Gestion">
                     <Index />
                   </Route>
                 </Suspense>

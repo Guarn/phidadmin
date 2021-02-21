@@ -36,7 +36,7 @@ const ConteneurHeader = props => {
   const { location } = props;
 
   const deco = () => {
-    removeCookie("token",{domain:".phidbac.fr"});
+    removeCookie("token", { domain: ".phidbac.fr", path: "/" });
     userDP({ type: "CONNEXION" });
   };
 
@@ -45,11 +45,11 @@ const ConteneurHeader = props => {
       <Menu.Item onClick={deco}>Se déconnecter</Menu.Item>
     </Menu>
   );
-  useEffect(() => {}, []);
+  useEffect(() => { }, []);
   return (
     <ContenuHeader>
       <ConteneurChemin>
-        {location.pathname === "/" ? "/Tableau de bord" : location.pathname}
+        {location.pathname === "/admin/" ? "/Tableau de bord" : location.pathname.substring(6)}
       </ConteneurChemin>
       <PartieD>
         <Badge count={5} style={{ marginRight: "25px" }}>

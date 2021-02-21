@@ -13,8 +13,9 @@ import {
     Popconfirm,
     Icon
 } from "antd";
-import Axios from "../../Fonctionnels/Axios";
 import "./Parametres.css";
+import { useCookies } from "react-cookie";
+import axios from "axios";
 
 const { Option } = Select;
 
@@ -42,9 +43,14 @@ const Parametres = (props) => {
 
     const [notCheck, setNotCheck] = useState(false);
     const [selNot, setSelNot] = useState();
+    const [cookies] = useCookies();
 
     const change = (targetKeys, direction, moveKeys) => {
-        Axios.post("/NotionProgramme", {
+        axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+        }).post("/NotionProgramme", {
             notion: moveKeys,
             prog: direction === "left" ? false : true
         })
@@ -55,7 +61,11 @@ const Parametres = (props) => {
     };
 
     const nouvelleNotion = () => {
-        Axios.post("/NotionAjout", { notion: notion, prog: notCheck }).then(
+        axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+        }).post("/NotionAjout", { notion: notion, prog: notCheck }).then(
             (rep) => {
                 if (rep.status === 201) {
                     notification["success"]({
@@ -73,7 +83,11 @@ const Parametres = (props) => {
     };
     const suppressionNotion = () => {
         if (selNot !== "") {
-            Axios.post("/NotionSuppression", {
+            axios.create({
+                baseURL: "/api/",
+                headers: { authorization: cookies.token.substring(7) },
+                responseType: "json"
+            }).post("/NotionSuppression", {
                 notion: selNot
             }).then((rep) => {
                 if (rep.status === 201) {
@@ -92,7 +106,11 @@ const Parametres = (props) => {
     };
 
     const nouvelAuteur = () => {
-        Axios.post("/AuteurAjout", { auteur: auteur }).then((rep) => {
+        axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+        }).post("/AuteurAjout", { auteur: auteur }).then((rep) => {
             if (rep.status === 201) {
                 notification["success"]({
                     message: "Nouvel Auteur ajouté"
@@ -109,7 +127,11 @@ const Parametres = (props) => {
 
     const suppressionAuteur = () => {
         if (selAuteur !== "") {
-            Axios.post("/AuteurSuppression", { auteur: selAuteur }).then(
+            axios.create({
+                baseURL: "/api/",
+                headers: { authorization: cookies.token.substring(7) },
+                responseType: "json"
+            }).post("/AuteurSuppression", { auteur: selAuteur }).then(
                 (rep) => {
                     if (rep.status === 201) {
                         notification["success"]({
@@ -127,7 +149,11 @@ const Parametres = (props) => {
         }
     };
     const nouvelleDestination = () => {
-        Axios.post("/DestinationAjout", { destination: destination }).then(
+        axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+        }).post("/DestinationAjout", { destination: destination }).then(
             (rep) => {
                 if (rep.status === 201) {
                     notification["success"]({
@@ -146,7 +172,11 @@ const Parametres = (props) => {
 
     const suppressionDestination = () => {
         if (selAuteur !== "") {
-            Axios.post("/DestinationSuppression", {
+            axios.create({
+                baseURL: "/api/",
+                headers: { authorization: cookies.token.substring(7) },
+                responseType: "json"
+            }).post("/DestinationSuppression", {
                 destination: selDestination
             })
                 .then((rep) => {
@@ -232,25 +262,37 @@ const Parametres = (props) => {
         document.title = "PhidAdmin - Sujets / Paramètres ";
         let tab = [];
         let prog = [];
-        Axios.get("/notionsAdmin").then((rep) => {
+        axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+        }).get("/notionsAdmin").then((rep) => {
             rep.data.map((el, id) => {
                 tab.push({
-                    title: el.Notion,
-                    key: el.Notion,
-                    prog: el.Au_Programme
+                    title: el.notion,
+                    key: el.notion,
+                    prog: el.au_programme
                 });
-                if (el.Au_Programme) {
-                    prog.push(el.Notion);
+                if (el.au_programme) {
+                    prog.push(el.notion);
                 }
                 return null;
             });
             setDataSource(tab);
             setCoc(prog);
         });
-        Axios.get("/auteurs").then((rep) => {
+        axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+        }).get("/auteurs").then((rep) => {
             setAuteurs(rep.data);
         });
-        Axios.get("/destinations").then((rep) => {
+        axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+        }).get("/destinations").then((rep) => {
             setDestinations(rep.data);
         });
     }, []);
@@ -359,8 +401,8 @@ const Parametres = (props) => {
                     {auteurs &&
                         auteurs.map((el, index) => {
                             return (
-                                <Option key={index} value={el.Auteur}>
-                                    {el.Auteur}
+                                <Option key={index} value={el.auteur}>
+                                    {el.auteur}
                                 </Option>
                             );
                         })}
@@ -412,8 +454,8 @@ const Parametres = (props) => {
                     {destinations &&
                         destinations.map((el, index) => {
                             return (
-                                <Option key={index} value={el.Destination}>
-                                    {el.Destination}
+                                <Option key={index} value={el.destination}>
+                                    {el.destination}
                                 </Option>
                             );
                         })}

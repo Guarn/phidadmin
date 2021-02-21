@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Button, Icon, Tooltip, Drawer, Popconfirm } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import Axios from "../../../Fonctionnels/Axios";
 import { useHistory } from "react-router-dom";
+import { useCookies } from "react-cookie";
+import axios from "axios";
 
 const Conteneur = styled.div`
   height: 100%;
@@ -60,10 +61,16 @@ const Modification = props => {
   const refTitre = useRef(null);
   const refDescription = useRef(null);
   const [refresh, setrefresh] = useState(1);
+  const [cookies] = useCookies();
 
   useEffect(() => {
-    Axios.get("/Cours/1").then(rep => setState(rep.data));
-  }, [refresh]);
+    if (state.length === 0)
+      axios.create({
+        baseURL: "/api/",
+        headers: { authorization: cookies.token.substring(7) },
+        responseType: "json"
+      }).get("/Cours/1").then(rep => setState(rep.data[0]));
+  });
   return (
     <Conteneur>
       <ConteneurCours key={`Programme`}>
@@ -72,18 +79,18 @@ const Modification = props => {
             localStorage.setItem(
               "Cours",
               JSON.stringify({
-                Cours: JSON.parse(state.Contenu),
+                Cours: JSON.parse(state.contenu),
                 id: "/" + state.id,
-                Titre: state.Titre,
-                Description: state.Description,
+                titre: state.titre,
+                description: state.description,
                 type: "PageUnique"
               })
             );
-            history.push("/Cours/Creation");
+            history.push("/admin/Cours/Creation");
           }}
         >
-          <Titre>{state.Titre}</Titre>
-          <Description>{state.Description}</Description>
+          <Titre>{state.titre}</Titre>
+          <Description>{state.description}</Description>
         </ConteneurTitreDesc>
         <ConteneurIcone>
           <div
@@ -111,10 +118,10 @@ const Modification = props => {
                   localStorage.setItem(
                     "Cours",
                     JSON.stringify({
-                      Cours: JSON.parse(state.Contenu)
+                      Cours: JSON.parse(state.contenu)
                     })
                   );
-                  history.push("/Cours/Creation");
+                  history.push("/admin/Cours/Creation");
                 }}
               >
                 <Icon type="edit" />
@@ -146,7 +153,7 @@ const Modification = props => {
           <TextArea
             ref={refTitre}
             style={{ marginBottom: "10px" }}
-            defaultValue={state.Titre}
+            defaultValue={state.titre}
           ></TextArea>
           <div style={{ fontSize: "16px", fontWeight: "bold" }}>
             Description :
@@ -154,12 +161,16 @@ const Modification = props => {
           <TextArea
             ref={refDescription}
             style={{ marginBottom: "10px", minHeight: "300px" }}
-            defaultValue={state.Description}
+            defaultValue={state.description}
           ></TextArea>
           <Button
             type="primary"
             onMouseDown={() => {
-              Axios.post(`/Cours/${state.id}`, {
+              axios.create({
+                baseURL: "/api/",
+                headers: { authorization: cookies.token.substring(7) },
+                responseType: "json"
+              }).post(`/Cours/${state.id}`, {
                 Titre: refTitre.current.state.value,
                 Description: refDescription.current.state.value
               }).then(() => {

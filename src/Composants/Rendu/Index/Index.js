@@ -11,10 +11,11 @@ import {
   Popconfirm,
   Select
 } from "antd";
-import Axios from "../../Fonctionnels/Axios";
 import { useRef } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { initialValueIndexes } from "../Cours/Creation/reducer";
+import axios from "axios";
+import { useCookies } from "react-cookie";
 
 const Conteneur = styled.div`
   background-color: rgba(0, 0, 0, 0.03);
@@ -50,10 +51,15 @@ const Nom = styled.div`
 
 const Index = props => {
   let location = useLocation();
+  const [cookies] = useCookies();
 
   if (location.hash !== "" && location.hash.charAt(0) === "#") {
     let iD = location.hash.substring(1);
-    Axios.get("/Indexes/" + iD).then(rep => {
+    axios.create({
+      baseURL: "/api/",
+      headers: { authorization: cookies.token.substring(7) },
+      responseType: "json"
+    }).get("/Indexes/" + iD).then(rep => {
       localStorage.setItem(
         "Cours",
         JSON.stringify({
@@ -65,7 +71,7 @@ const Index = props => {
           type: "indexes"
         })
       );
-      history.push("/Cours/Creation");
+      history.push("/admin/Cours/Creation");
     });
   }
   const [state, setState] = useState({
@@ -78,11 +84,15 @@ const Index = props => {
   const [refresh, setRefresh] = useState(0);
   const [menuIndex, setMenuIndex] = useState(false);
   const [idParam, setIdParam] = useState(null);
-  const [popCreation, setPopCreation] = useState(false);
+  const [, setPopCreation] = useState(false);
   const history = useHistory();
 
   useEffect(() => {
-    Axios.get("/Indexes").then(rep => {
+    axios.create({
+      baseURL: "/api/",
+      headers: { authorization: cookies.token.substring(7) },
+      responseType: "json"
+    }).get("/Indexes").then(rep => {
       let newState = { notions: [], termes: [], auteurs: [] };
       rep.data.map(el => {
         switch (el.type) {
@@ -104,7 +114,7 @@ const Index = props => {
 
       setState(newState);
     });
-  }, [refresh]);
+  }, [refresh, cookies.token]);
 
   return (
     <Conteneur>
@@ -130,7 +140,11 @@ const Index = props => {
                   onMouseDown={() => {
                     setPopCreation(false);
 
-                    Axios.post("/Indexes", {
+                    axios.create({
+                      baseURL: "/api/",
+                      headers: { authorization: cookies.token.substring(7) },
+                      responseType: "json"
+                    }).post("/Indexes", {
                       nom: refChamp.current.state.value,
                       type: "notion",
                       lettre: refChamp.current.state.value
@@ -189,7 +203,11 @@ const Index = props => {
                   type="primary"
                   size="small"
                   onMouseDown={() => {
-                    Axios.post("/Indexes", {
+                    axios.create({
+                      baseURL: "/api/",
+                      headers: { authorization: cookies.token.substring(7) },
+                      responseType: "json"
+                    }).post("/Indexes", {
                       nom: refChamp.current.state.value,
                       type: "terme",
                       lettre: refChamp.current.state.value
@@ -248,7 +266,11 @@ const Index = props => {
                   type="primary"
                   size="small"
                   onMouseDown={() => {
-                    Axios.post("/Indexes", {
+                    axios.create({
+                      baseURL: "/api/",
+                      headers: { authorization: cookies.token.substring(7) },
+                      responseType: "json"
+                    }).post("/Indexes", {
                       nom: refChamp.current.state.value,
                       type: "auteur",
                       lettre: refChamp.current.state.value
@@ -292,7 +314,11 @@ const Index = props => {
           visible={menuIndex}
           onClose={() => {
             setMenuIndex(false);
-            Axios.post(`/IndexesUpdate`, {
+            axios.create({
+              baseURL: "/api/",
+              headers: { authorization: cookies.token.substring(7) },
+              responseType: "json"
+            }).post(`/IndexesUpdate`, {
               id: idParam.id,
               nom: idParam.nom,
               type: idParam.type,
@@ -329,13 +355,21 @@ const Index = props => {
             />
             <Button
               onMouseDown={() => {
-                Axios.post(`/IndexesUpdate`, {
+                axios.create({
+                  baseURL: "/api/",
+                  headers: { authorization: cookies.token.substring(7) },
+                  responseType: "json"
+                }).post(`/IndexesUpdate`, {
                   id: idParam.id,
                   nom: idParam.nom,
                   type: idParam.type,
                   lettre: idParam.lettre
                 });
-                Axios.get("/Indexes/" + idParam.id).then(rep => {
+                axios.create({
+                  baseURL: "/api/",
+                  headers: { authorization: cookies.token.substring(7) },
+                  responseType: "json"
+                }).get("/Indexes/" + idParam.id).then(rep => {
                   localStorage.setItem(
                     "Cours",
                     JSON.stringify({
@@ -347,7 +381,7 @@ const Index = props => {
                       type: "indexes"
                     })
                   );
-                  history.push("/Cours/Creation");
+                  history.push("/admin/Cours/Creation");
                 });
               }}
             >
@@ -360,7 +394,11 @@ const Index = props => {
               okText="Supprimer"
               onConfirm={() => {
                 setMenuIndex(false);
-                Axios.post("/IndexesDestroy", { id: idParam.id }).then(() =>
+                axios.create({
+                  baseURL: "/api/",
+                  headers: { authorization: cookies.token.substring(7) },
+                  responseType: "json"
+                }).post("/IndexesDestroy", { id: idParam.id }).then(() =>
                   setRefresh(refresh + 1)
                 );
               }}

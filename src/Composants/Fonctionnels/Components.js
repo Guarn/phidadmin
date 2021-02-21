@@ -57,37 +57,6 @@ const RectSelect = styled.div`
     props.selected ? "translate3d(0,0,0)" : "translate3d(17px,0,0)"};
 `;
 
-const ConteneurChoixCouleur = styled.div`
-  position: absolute;
-  transition: all 0.2s;
-  bottom: ${props => (props.actif ? "-30px" : "2px")};
-  height: 20px;
-  left: 20px;
-  width: ${props => props.children.length * 20 + "px"};
-  padding: 5px;
-  background: #b1b1b1;
-  border-radius: 0px 0px 5px 5px;
-  display: flex;
-  z-index: -1;
-`;
-
-const Couleur = styled.div`
-  cursor: pointer;
-  height: 20px;
-  width: 20px;
-  background-color: ${props => props.type};
-  box-sizing: border-box;
-  transform: scale(1);
-  transition: all 0.2s;
-  z-index: 1;
-
-  &:hover {
-    border: 2px solid white;
-    box-shadow: 0 0 10px grey;
-    transform: scale(1.2);
-    z-index: 100;
-  }
-`;
 
 //!SECTION
 
@@ -299,28 +268,6 @@ export const FormatCouleurBackground = ({ selected, couleurBackground }) => {
     </>
   );
 };
-const ChoixCouleur = ({ actif, setCouleur, setMenuVisible }) => {
-  function changementCouleur(event, couleur) {
-    event.preventDefault();
-    setCouleur(couleur);
-  }
-  return (
-    <ConteneurChoixCouleur
-      onMouseLeave={() => setMenuVisible(false)}
-      actif={actif}
-    >
-      <Couleur onMouseDown={e => changementCouleur(e, "red")} type="red" />
-      <Couleur onMouseDown={e => changementCouleur(e, "blue")} type="blue" />
-      <Couleur type="yellow" />
-      <Couleur type="green" />
-      <Couleur type="lightgreen" />
-      <Couleur type="salmon" />
-      <Couleur type="lightsalmon" />
-      <Couleur type="lightblue" />
-      <Couleur type="red" />
-    </ConteneurChoixCouleur>
-  );
-};
 
 export const FormatAlignLeft = ({ selected }) => {
   const editor = useSlate();
@@ -520,14 +467,14 @@ const radioStyle = {
 };
 export const FormatLink = ({ selected }) => {
   const editor = useSlate();
-  const [clickHandler, setClickHandler] = useContext(clickHandlerContext);
+  const [, setClickHandler] = useContext(clickHandlerContext);
   const [link] = Editor.nodes(editor, {
     match: { type: "link" },
     split: true
   });
-  const [listeIndex, setListeIndex] = useContext(listeIndexContext);
-  const [listeCours, setListeCours] = useContext(listeCoursContext);
-  const [listeExercices, setListeExercices] = useContext(listeExercicesContext);
+  const [listeIndex,] = useContext(listeIndexContext);
+  const [listeCours,] = useContext(listeCoursContext);
+  const [listeExercices,] = useContext(listeExercicesContext);
   useEffect(() => {
     if (selected) {
       setClickHandler(true);

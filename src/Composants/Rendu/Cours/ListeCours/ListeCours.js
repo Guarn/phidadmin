@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { Button, Icon, Tooltip, Drawer, Popconfirm } from "antd";
 import TextArea from "antd/lib/input/TextArea";
-import Axios from "../../../Fonctionnels/Axios";
 import { useHistory } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { initialValueCours } from "../Creation/reducer";
+import axios from "axios";
+import { useCookies } from "react-cookie";
 const Conteneur = styled.div`
   height: 100%;
   width: 100%;
@@ -83,6 +84,7 @@ const ListeCours = props => {
   const history = useHistory();
   const refTitre = useRef(null);
   const refDescription = useRef(null);
+  const [cookies] = useCookies();
 
   function onDragEnd(result) {
     if (!result.destination) {
@@ -96,11 +98,15 @@ const ListeCours = props => {
       return { id: el.id, position: index + 1 };
     });
 
-    Axios.post("/PositionCours", ordre);
+    axios.create({ baseURL: "/api", auth: document.cookie.token.substring(7), responseType: "json" }).post("/PositionCours", ordre);
   }
 
   function ajoutCours() {
-    Axios.post(`/Cours`, {
+    axios.create({
+      baseURL: "/api/",
+      headers: { authorization: cookies.token.substring(7) },
+      responseType: "json"
+    }).post(`/Cours`, {
       Titre: "Nouveau Cours",
       Description: "Description manquante",
       Contenu: JSON.stringify(initialValueCours.Cours),
@@ -112,7 +118,11 @@ const ListeCours = props => {
   }
 
   function ajoutExercice() {
-    Axios.post(`/Cours`, {
+    axios.create({
+      baseURL: "/api/",
+      headers: { authorization: cookies.token.substring(7) },
+      responseType: "json"
+    }).post(`/Cours`, {
       Titre: "Nouvel exercice",
       Description: "Description manquante",
       Contenu: JSON.stringify(initialValueCours.Cours),
@@ -124,7 +134,11 @@ const ListeCours = props => {
   }
   useEffect(() => {
     if (state.length === 0) {
-      Axios.get(`/${props.type}`).then(rep => {
+      axios.create({
+        baseURL: "/api/",
+        headers: { authorization: cookies.token.substring(7) },
+        responseType: "json"
+      }).get(`/${props.type}`).then(rep => {
         setState(rep.data);
       });
     }
@@ -163,18 +177,18 @@ const ListeCours = props => {
                                 localStorage.setItem(
                                   "Cours",
                                   JSON.stringify({
-                                    Cours: JSON.parse(state[index].Contenu),
+                                    Cours: JSON.parse(state[index].contenu),
                                     id: "/" + state[index].id,
-                                    Titre: state[index].Titre,
-                                    Description: state[index].Description,
+                                    titre: state[index].titre,
+                                    description: state[index].description,
                                     type: state[index].type
                                   })
                                 );
-                                history.push("/Cours/Creation");
+                                history.push("/admin/Cours/Creation");
                               }}
                             >
-                              <Titre>{el.Titre}</Titre>
-                              <Description>{el.Description}</Description>
+                              <Titre>{el.titre}</Titre>
+                              <Description>{el.description}</Description>
                             </ConteneurTitreDesc>
                             <ConteneurIcone>
                               <div
@@ -209,16 +223,16 @@ const ListeCours = props => {
                                       localStorage.setItem(
                                         "Cours",
                                         JSON.stringify({
-                                          Cours: JSON.parse(
-                                            state[index].Contenu
+                                          cours: JSON.parse(
+                                            state[index].contenu
                                           ),
                                           id: "/" + state[index].id,
-                                          Titre: state[index].Titre,
-                                          Description: state[index].Description,
+                                          titre: state[index].titre,
+                                          description: state[index].description,
                                           type: state[index].type
                                         })
                                       );
-                                      history.push("/Cours/Creation");
+                                      history.push("/admin/Cours/Creation");
                                     }}
                                   >
                                     <Icon type="edit" />
@@ -231,8 +245,12 @@ const ListeCours = props => {
                                 okText="Supprimer"
                                 cancelText="Annuler"
                                 onConfirm={() => {
-                                  if (state[index].id != 1) {
-                                    Axios.post(
+                                  if (state[index].id !== 1) {
+                                    axios.create({
+                                      baseURL: "/api/",
+                                      headers: { authorization: cookies.token.substring(7) },
+                                      responseType: "json"
+                                    }).post(
                                       `/SuppressionCours/${state[index].id}`
                                     ).then(() => {
                                       let item = JSON.parse(
@@ -283,11 +301,11 @@ const ListeCours = props => {
               <div style={{ fontSize: "16px", fontWeight: "bold" }}>
                 Date de création:
               </div>
-              <div style={{ marginBottom: "10px" }}>{state[id].createdAt}</div>
+              <div style={{ marginBottom: "10px" }}>{state[id].created_at}</div>
               <div style={{ fontSize: "16px", fontWeight: "bold" }}>
                 Dernière modification
               </div>
-              <div style={{ marginBottom: "30px" }}>{state[id].updatedAt}</div>
+              <div style={{ marginBottom: "30px" }}>{state[id].updated_at}</div>
 
               <div style={{ fontSize: "16px", fontWeight: "bold" }}>
                 Titre :
@@ -295,7 +313,7 @@ const ListeCours = props => {
               <TextArea
                 ref={refTitre}
                 style={{ marginBottom: "10px" }}
-                defaultValue={state[id].Titre}
+                defaultValue={state[id].titre}
               ></TextArea>
               <div style={{ fontSize: "16px", fontWeight: "bold" }}>
                 Description :
@@ -303,12 +321,16 @@ const ListeCours = props => {
               <TextArea
                 ref={refDescription}
                 style={{ marginBottom: "10px", minHeight: "300px" }}
-                defaultValue={state[id].Description}
+                defaultValue={state[id].description}
               ></TextArea>
               <Button
                 type="primary"
                 onMouseDown={() => {
-                  Axios.post(`/Cours/${state[id].id}`, {
+                  axios.create({
+                    baseURL: "/api/",
+                    headers: { authorization: cookies.token.substring(7) },
+                    responseType: "json"
+                  }).post(`/Cours/${state[id].id}`, {
                     Titre: refTitre.current.state.value,
                     Description: refDescription.current.state.value
                   }).then(() => {

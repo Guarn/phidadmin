@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Card, Progress, Icon } from "antd";
-import Axios from "../../Fonctionnels/Axios";
+import axios from "axios";
+import { useCookies } from "react-cookie";
 
 const Conteneur = styled.div`
     background-color: rgba(0, 0, 0, 0.03);
@@ -15,11 +16,16 @@ const Tableau = (props) => {
     const [countSujets, setCountSujets] = useState(0);
     const [countProb, setCountProb] = useState(0);
 
+    const [cookies] = useCookies();
     const [t, tt] = useState(false);
 
     useEffect(() => {
         document.title = "PhidAdmin - Tableau de bord ";
-        Axios.get("/Tableau").then((rep) => {
+        axios.create({
+            baseURL: "/api/",
+            headers: { authorization: cookies.token.substring(7) },
+            responseType: "json"
+        }).get("/Tableau").then((rep) => {
             setCountProb(rep.data.countProblemes);
             setCountSujets(rep.data.countSujets);
         });
